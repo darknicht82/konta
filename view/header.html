@@ -1,282 +1,294 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es" class="{$gsc->user->thema}">
-   <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-      <title>{if="$gsc->empresa->nombrecomercial"}{$gsc->empresa->nombrecomercial}{else}{$gsc->empresa->razonsocial}{/if}</title>
-      <meta name="description" content="GSC_Systems"/>
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      {if="!$gsc->empresa->logo"}
-         <link rel="shortcut icon" href="{#JG_PATH#}view/img/favicon.ico" />
-      {elseif="file_exists($gsc->empresa->logo)"}
-         <link rel="shortcut icon" href="{$gsc->empresa->logo}" />
-      {else}
-         <link rel="shortcut icon" href="{#JG_PATH#}view/img/favicon.ico" />
-      {/if}
-      <!--Cargo CSS-->
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/simplebar.css"/>
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/perfect-scrollbar.css"/>
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/metisMenu.min.css"/>
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/bootstrap.min.css"/>
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/bootstrap-extended.css"/>
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/style.css"/>
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/icons.css"/>
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/pace.min.css"/>
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/select2.css"/>
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/select2.min.css"/>
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/select2-bootstrap-5-theme.min.css"/>
-      <!--Propios funcionamiento-->
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/datepicker.css" />
-      <!--Temas-->
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/dark-theme.css"/>
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/light-theme.css"/>
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/semi-dark.css"/>
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/header-colors.css"/>
 
-      <!--Cargas de Internet-->
-      <!--link href="https://fonts.googleapis.com/css/lib2?family=Roboto:wght@400;500&display=swap" rel="stylesheet"-->
-      <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/bootstrap-icons.css"/>
-      <!--Cargo JS-->
-      <script src="{#JG_PATH#}view/js/lib/bootstrap.bundle.min.js"></script>
-      <script src="{#JG_PATH#}view/js/lib/jquery.min.js"></script>
-      <script src="{#JG_PATH#}view/js/lib/jquery-ui.min.js"></script>
-      <script src="{#JG_PATH#}view/js/lib/pace.min.js"></script>
-      <script src="{#JG_PATH#}view/js/lib/simplebar.min.js"></script>
-      <script src="{#JG_PATH#}view/js/lib/metisMenu.min.js"></script>
-      <script src="{#JG_PATH#}view/js/lib/perfect-scrollbar.js"></script>
-      <script src="{#JG_PATH#}view/js/lib/bootbox.min.js"></script>
-      <script src="{#JG_PATH#}view/js/lib/select2.full.js"></script>
-      <script src="{#JG_PATH#}view/js/lib/select2.full.min.js"></script>
-      <!--Propios funcionamiento-->
-      <script type="text/javascript" src="{#JG_PATH#}view/js/lib/bootstrap-datepicker.js" charset="UTF-8"></script>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+   <title>Konta</title>
+   <meta name="description" content="Konta" />
+   <meta name="viewport" content="width=device-width, initial-scale=1" />
+   {if="!$gsc->empresa->logo"}
+   <link rel="shortcut icon" href="{#JG_PATH#}view/img/favicon.ico" />
+   {elseif="file_exists($gsc->empresa->logo)"}
+   <link rel="shortcut icon" href="{$gsc->empresa->logo}" />
+   {else}
+   <link rel="shortcut icon" href="{#JG_PATH#}view/img/favicon.ico" />
+   {/if}
+   <!--Cargo CSS-->
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/simplebar.css" />
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/perfect-scrollbar.css" />
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/metisMenu.min.css" />
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/bootstrap.min.css" />
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/bootstrap-extended.css" />
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/style.css" />
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/icons.css" />
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/pace.min.css" />
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/select2.css" />
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/select2.min.css" />
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/select2-bootstrap-5-theme.min.css" />
+   <!--Propios funcionamiento-->
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/datepicker.css" />
+   <!--Temas-->
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/dark-theme.css" />
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/light-theme.css" />
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/semi-dark.css" />
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/header-colors.css" />
 
-      <script type="text/javascript" src="{$gsc->get_js_location('base.js')}?v=3"></script>
+   <!--Cargas de Internet-->
+   <!--link href="https://fonts.googleapis.com/css/lib2?family=Roboto:wght@400;500&display=swap" rel="stylesheet"-->
+   <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/bootstrap-icons.css" />
+   <!--Cargo JS-->
+   <script src="{#JG_PATH#}view/js/lib/bootstrap.bundle.min.js"></script>
+   <script src="{#JG_PATH#}view/js/lib/jquery.min.js"></script>
+   <script src="{#JG_PATH#}view/js/lib/jquery-ui.min.js"></script>
+   <script src="{#JG_PATH#}view/js/lib/pace.min.js"></script>
+   <script src="{#JG_PATH#}view/js/lib/simplebar.min.js"></script>
+   <script src="{#JG_PATH#}view/js/lib/metisMenu.min.js"></script>
+   <script src="{#JG_PATH#}view/js/lib/perfect-scrollbar.js"></script>
+   <script src="{#JG_PATH#}view/js/lib/bootbox.min.js"></script>
+   <script src="{#JG_PATH#}view/js/lib/select2.full.js"></script>
+   <script src="{#JG_PATH#}view/js/lib/select2.full.min.js"></script>
+   <!--Propios funcionamiento-->
+   <script type="text/javascript" src="{#JG_PATH#}view/js/lib/bootstrap-datepicker.js" charset="UTF-8"></script>
 
-      <script type="text/javascript">
-         $(document).ready(function() {
-            $(function () {
-              $('[data-bs-toggle="tooltip"]').tooltip();
-            })
-            $(".nav-toggle-icon").on("click", function() {
-               $(".wrapper").toggleClass("toggled")
-            })
+   <script type="text/javascript" src="{$gsc->get_js_location('base.js')}?v=3"></script>
 
-            $(".mobile-toggle-icon").on("click", function() {
-               $(".wrapper").addClass("toggled")
-            })
+   <script type="text/javascript">
+      $(document).ready(function () {
+         $(function () {
+            $('[data-bs-toggle="tooltip"]').tooltip();
+         })
+         $(".nav-toggle-icon").on("click", function () {
+            $(".wrapper").toggleClass("toggled")
+         })
 
-            $(".toggle-icon").click(function() {
-               $(".wrapper").hasClass("toggled") ? ($(".wrapper").removeClass("toggled"), $(".sidebar-wrapper").unbind("hover")) : ($(".wrapper").addClass("toggled"), $(".sidebar-wrapper").hover(function() {
-                  $(".wrapper").addClass("sidebar-hovered")
-               }, function() {
-                  $(".wrapper").removeClass("sidebar-hovered")
-               }))
-            })
+         $(".mobile-toggle-icon").on("click", function () {
+            $(".wrapper").addClass("toggled")
+         })
 
-            $(function() {
-               $("#menu").metisMenu();
-            })
+         $(".toggle-icon").click(function () {
+            $(".wrapper").hasClass("toggled") ? ($(".wrapper").removeClass("toggled"), $(".sidebar-wrapper").unbind("hover")) : ($(".wrapper").addClass("toggled"), $(".sidebar-wrapper").hover(function () {
+               $(".wrapper").addClass("sidebar-hovered")
+            }, function () {
+               $(".wrapper").removeClass("sidebar-hovered")
+            }))
+         })
 
-            $(window).on("scroll", function() {
-               $(this).scrollTop() > 300 ? $(".back-to-top").fadeIn() : $(".back-to-top").fadeOut()
-            }), $(".back-to-top").on("click", function() {
-               return $("html, body").animate({
-                  scrollTop: 0
-               }, 600), !1
-            })
-         });
-         $(document).on('select2:open', () => {
-            document.querySelector('.select2-search__field').focus();
-         });
-      </script>
-   </head>
-   <body class="pace-done">
-      <div class="pace pace-inactive">
-         <div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
-            <div class="pace-progress-inner"></div>
-         </div>
-         <div class="pace-activity"></div>
+         $(function () {
+            $("#menu").metisMenu();
+         })
+
+         $(window).on("scroll", function () {
+            $(this).scrollTop() > 300 ? $(".back-to-top").fadeIn() : $(".back-to-top").fadeOut()
+         }), $(".back-to-top").on("click", function () {
+            return $("html, body").animate({
+               scrollTop: 0
+            }, 600), !1
+         })
+      });
+      $(document).on('select2:open', () => {
+         document.querySelector('.select2-search__field').focus();
+      });
+   </script>
+</head>
+
+<body class="pace-done">
+   <div class="pace pace-inactive">
+      <div class="pace-progress" data-progress-text="100%" data-progress="99"
+         style="transform: translate3d(100%, 0px, 0px);">
+         <div class="pace-progress-inner"></div>
       </div>
-      <div class="wrapper">
-         <header class="top-header">
-            <nav class="navbar navbar-expand">
-               <div class="topbar-logo-header d-none d-xl-flex">
-                  <div>
-                     {if="$gsc->empresa->logo"}
-                        <img src="{$gsc->empresa->logo}" alt="{$gsc->empresa->razonsocial}" class="logo-icon">
-                     {else}
-                        <img src="{#JG_PATH#}view/img/logo.png" alt="" class="logo-icon">
-                     {/if}
-                  </div>
-                  <div>
-                     <h4 class="logo-text">{$gsc->empresa->nombrecomercial}</h4>
-                  </div>
+      <div class="pace-activity"></div>
+   </div>
+   <div class="wrapper">
+      <header class="top-header">
+         <nav class="navbar navbar-expand">
+            <div class="topbar-logo-header d-none d-xl-flex">
+               <div>
+                  {if="$gsc->empresa->logo"}
+                  <img src="{$gsc->empresa->logo}" alt="{$gsc->empresa->razonsocial}" class="logo-icon">
+                  {else}
+                  <img src="{#JG_PATH#}view/img/logo.png" alt="" class="logo-icon">
+                  {/if}
                </div>
-               <div class="mobile-toggle-icon d-xl-none">
-                  <i class="bi bi-list"></i>
+               <div>
+                  <h4 class="logo-text">Konta</h4>
                </div>
-               <div class="top-navbar d-none d-xl-block ms-3">
-                  <ul class="navbar-nav align-items-center">
-                     {loop="$gsc->user->get_menu()"}
-                        {if="$value->important"}
-                           <li class="nav-item"><a class="nav-link" href="{$value->url()}">{$value->title}</a></li>                              
-                        {/if}
-                     {/loop}
-                  </ul>
-               </div>
-               <div class="d-xl-none ms-auto">
-               </div>
-               <div class="d-none d-xl-flex ms-auto">
-               </div>
-               <div class="top-navbar-right ms-3">
-                  <ul class="navbar-nav align-items-center">
-                     <li class="nav-item dropdown dropdown-large">
-                        <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                           <div class="user-setting d-flex align-items-center gap-1">
-                              <img src="{#JG_PATH#}view/img/user-img.png" class="user-img" alt="">
-                              <div class="user-name d-none d-sm-block">{$gsc->user->nick}</div>
-                           </div>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" data-bs-popper="none">
-                           <li>
-                              <a class="dropdown-item" href="#">
-                                 <div class="d-flex align-items-center">
-                                    <img src="{#JG_PATH#}view/img/user-img.png" alt="" class="rounded-circle" width="60" height="60">
-                                    <div class="ms-3">
-                                       <h6 class="mb-0 dropdown-user-name">{$gsc->user->apellidos}, {$gsc->user->nombres}</h6>
-                                       <small class="mb-0 dropdown-user-designation text-secondary">{$gsc->user->nick}</small>
-                                    </div>
+            </div>
+            <div class="mobile-toggle-icon d-xl-none">
+               <i class="bi bi-list"></i>
+            </div>
+            <div class="top-navbar d-none d-xl-block ms-3">
+               <ul class="navbar-nav align-items-center">
+                  {loop="$gsc->user->get_menu()"}
+                  {if="$value->important"}
+                  <li class="nav-item"><a class="nav-link" href="{$value->url()}">{$value->title}</a></li>
+                  {/if}
+                  {/loop}
+               </ul>
+            </div>
+            <div class="d-xl-none ms-auto">
+            </div>
+            <div class="d-none d-xl-flex ms-auto">
+            </div>
+            <div class="top-navbar-right ms-3">
+               <ul class="navbar-nav align-items-center">
+                  <li class="nav-item dropdown dropdown-large">
+                     <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <div class="user-setting d-flex align-items-center gap-1">
+                           <img src="{#JG_PATH#}view/img/user-img.png" class="user-img" alt="">
+                           <div class="user-name d-none d-sm-block">{$gsc->user->nick}</div>
+                        </div>
+                     </a>
+                     <ul class="dropdown-menu dropdown-menu-end" data-bs-popper="none">
+                        <li>
+                           <a class="dropdown-item" href="#">
+                              <div class="d-flex align-items-center">
+                                 <img src="{#JG_PATH#}view/img/user-img.png" alt="" class="rounded-circle" width="60"
+                                    height="60">
+                                 <div class="ms-3">
+                                    <h6 class="mb-0 dropdown-user-name">{$gsc->user->apellidos}, {$gsc->user->nombres}
+                                    </h6>
+                                    <small
+                                       class="mb-0 dropdown-user-designation text-secondary">{$gsc->user->nick}</small>
                                  </div>
-                              </a>
-                           </li>
-                           <li><hr class="dropdown-divider"></li>
-                           <li>
-                              <a class="dropdown-item" href="{$gsc->user->url()}">
-                                 <div class="d-flex align-items-center">
-                                    <div class="setting-icon"><i class="bi bi-person-fill"></i></div>
-                                    <div class="setting-text ms-3"><span>Perfil de Usuario</span></div>
-                                 </div>
-                              </a>
-                              {if="$gsc->user->have_access_to('informacion_plan')"}
-                                 <a class="dropdown-item" href="index.php?page=informacion_plan">
-                                    <div class="d-flex align-items-center">
-                                       <div class="setting-icon"><i class="bi bi-info-circle-fill"></i></div>
-                                       <div class="setting-text ms-3"><span>Info. del Plan</span></div>
-                                    </div>
-                                 </a>
-                              {/if}
-                              {if="$gsc->user->have_access_to('mis_facturas')"}
-                                 <a class="dropdown-item" href="index.php?page=mis_facturas">
-                                    <div class="d-flex align-items-center">
-                                       <div class="setting-icon"><i class="bi bi-list-columns-reverse"></i></div>
-                                       <div class="setting-text ms-3"><span>Mis Facturas</span></div>
-                                    </div>
-                                 </a>
-                              {/if}
-                           </li>
-                           <li><hr class="dropdown-divider"></li>
-                           <li>
+                              </div>
+                           </a>
+                        </li>
+                        <li>
+                           <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                           <a class="dropdown-item" href="{$gsc->user->url()}">
+                              <div class="d-flex align-items-center">
+                                 <div class="setting-icon"><i class="bi bi-person-fill"></i></div>
+                                 <div class="setting-text ms-3"><span>Perfil de Usuario</span></div>
+                              </div>
+                           </a>
+                           {if="$gsc->user->have_access_to('informacion_plan')"}
+                           <a class="dropdown-item" href="index.php?page=informacion_plan">
+                              <div class="d-flex align-items-center">
+                                 <div class="setting-icon"><i class="bi bi-info-circle-fill"></i></div>
+                                 <div class="setting-text ms-3"><span>Info. del Plan</span></div>
+                              </div>
+                           </a>
+                           {/if}
+                           {if="$gsc->user->have_access_to('mis_facturas')"}
+                           <a class="dropdown-item" href="index.php?page=mis_facturas">
+                              <div class="d-flex align-items-center">
+                                 <div class="setting-icon"><i class="bi bi-list-columns-reverse"></i></div>
+                                 <div class="setting-text ms-3"><span>Mis Facturas</span></div>
+                              </div>
+                           </a>
+                           {/if}
+                        </li>
+                        <li>
+                           <hr class="dropdown-divider">
+                        </li>
+                        <li>
                            <a class="dropdown-item" href="{$gsc->url()}&logout=TRUE">
                               <div class="d-flex align-items-center">
                                  <div class="setting-icon"><i class="bi bi-lock-fill"></i></div>
                                  <div class="setting-text ms-3"><span>Cerrar sesión</span></div>
                               </div>
-                              </a>
-                           </li>
-                        </ul>
-                     </li>
-                  </ul>
-               </div>
-            </nav>
-         </header>
-         <div class="nav-container">
-            <div class="mobile-topbar-header">
-               <div>
-                  {if="file_exists(JG_MYDOCS.'images/logo.png')"}
-                     <img src="images/logo.png" alt="{$gsc->empresa->nombre}" class="logo-icon">
-                  {elseif="file_exists(JG_MYDOCS.'images/logo.jpg')"}
-                     <img src="images/logo.jpg" alt="{$gsc->empresa->nombre}" class="logo-icon">
-                  {else}
-                     <img src="{#JG_PATH#}view/img/logo.png" alt="" class="logo-icon">
-                  {/if}
-               </div>
-               <div>
-                  <h4 class="logo-text">{$gsc->empresa->nombrecomercial}</h4>
-               </div>
-               <div class="toggle-icon ms-auto"><i class="bi bi-chevron-double-left"></i>
-               </div>
+                           </a>
+                        </li>
+                     </ul>
+                  </li>
+               </ul>
             </div>
-            <nav class="topbar-nav">
-               <ul class="metismenu" id="menu">
-                  {loop="$gsc->folders()"}
+         </nav>
+      </header>
+      <div class="nav-container">
+         <div class="mobile-topbar-header">
+            <div>
+               {if="file_exists(JG_MYDOCS.'images/logo.png')"}
+               <img src="images/logo.png" alt="{$gsc->empresa->nombre}" class="logo-icon">
+               {elseif="file_exists(JG_MYDOCS.'images/logo.jpg')"}
+               <img src="images/logo.jpg" alt="{$gsc->empresa->nombre}" class="logo-icon">
+               {else}
+               <img src="{#JG_PATH#}view/img/logo.png" alt="" class="logo-icon">
+               {/if}
+            </div>
+            <div>
+               <h4 class="logo-text">Konta</h4>
+            </div>
+            <div class="toggle-icon ms-auto"><i class="bi bi-chevron-double-left"></i>
+            </div>
+         </div>
+         <nav class="topbar-nav">
+            <ul class="metismenu" id="menu">
+               {loop="$gsc->folders()"}
+               <li>
+                  <a href="javascript:;" class="has-arrow">
+                     <div class="parent-icon"><i class="bi bi-menu-button"></i></div>
+                     <div class="menu-title">{$value1}</div>
+                  </a>
+                  <ul class="mm-collapse">
+                     {loop="$gsc->pages($value1)"}
+                     {if="$value2->subfolder"}
                      <li>
                         <a href="javascript:;" class="has-arrow">
-                           <div class="parent-icon"><i class="bi bi-menu-button"></i></div>
-                           <div class="menu-title">{$value1}</div>                           
+                           <i class="{$value2->icono}"></i>
+                           <div class="menu-title">{$value2->subfolder}</div>
                         </a>
                         <ul class="mm-collapse">
-                           {loop="$gsc->pages($value1)"}
-                              {if="$value2->subfolder"}
-                                 <li>
-                                    <a href="javascript:;" class="has-arrow">
-                                       <i class="{$value2->icono}"></i>
-                                       <div class="menu-title">{$value2->subfolder}</div>                           
-                                    </a>
-                                    <ul class="mm-collapse">
-                                       {loop="$gsc->subpages($value2->subfolder, $value2->folder)"}
-                                          <li><a href="{$value3->url()}"><i class="{$value3->icono}" style="margin-left: 25px"></i>{$value3->title}</a></li>
-                                       {/loop}
-                                    </ul>
-                                 </li>
-                              {else}
-                                 <li><a href="{$value2->url()}"><i class="{$value2->icono}"></i>{$value2->title}</a></li>
-                              {/if}
+                           {loop="$gsc->subpages($value2->subfolder, $value2->folder)"}
+                           <li><a href="{$value3->url()}"><i class="{$value3->icono}"
+                                    style="margin-left: 25px"></i>{$value3->title}</a></li>
                            {/loop}
                         </ul>
                      </li>
-                  {/loop}
-               </ul>
-            </nav>
+                     {else}
+                     <li><a href="{$value2->url()}"><i class="{$value2->icono}"></i>{$value2->title}</a></li>
+                     {/if}
+                     {/loop}
+                  </ul>
+               </li>
+               {/loop}
+            </ul>
+         </nav>
+      </div>
+      <main class="page-content">
+         {if="$gsc->get_errors()"}
+         <div class="alert alert-danger alert-dismissible fade show">
+            <div class="d-flex align-items-center">
+               <div class="fs-3 text-danger"><i class="bi bi-exclamation-triangle-fill"></i>
+               </div>
+               <div class="ms-3">
+                  <div class="text-danger">
+                     <ul>{loop="$gsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
+                  </div>
+               </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
          </div>
-         <main class="page-content">
-            {if="$gsc->get_errors()"}
-               <div class="alert alert-danger alert-dismissible fade show">
-                  <div class="d-flex align-items-center">
-                     <div class="fs-3 text-danger"><i class="bi bi-exclamation-triangle-fill"></i>
-                     </div>
-                     <div class="ms-3">
-                        <div class="text-danger">
-                           <ul>{loop="$gsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
-                        </div>
-                     </div>
-                  </div>
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         {/if}
+         {if="$gsc->get_messages()"}
+         <div class="alert alert-success alert-dismissible fade show">
+            <div class="d-flex align-items-center">
+               <div class="fs-3 text-success"><i class="bi bi-check-circle-fill"></i>
                </div>
-            {/if}
-            {if="$gsc->get_messages()"}
-               <div class="alert alert-success alert-dismissible fade show">
-                  <div class="d-flex align-items-center">
-                     <div class="fs-3 text-success"><i class="bi bi-check-circle-fill"></i>
-                     </div>
-                     <div class="ms-3">
-                        <div class="text-success">
-                           <ul>{loop="$gsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
-                        </div>
-                     </div>
+               <div class="ms-3">
+                  <div class="text-success">
+                     <ul>{loop="$gsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
                   </div>
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                </div>
-            {/if}
-            {if="$gsc->get_advices()"}
-               <div class="alert alert-info alert-dismissible fade show">
-                  <div class="d-flex align-items-center">
-                     <div class="fs-3 text-info"><i class="bi bi-info-circle-fill"></i>
-                     </div>
-                     <div class="ms-3">
-                        <div class="text-info">
-                           <ul>{loop="$gsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
-                        </div>
-                     </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+         {/if}
+         {if="$gsc->get_advices()"}
+         <div class="alert alert-info alert-dismissible fade show">
+            <div class="d-flex align-items-center">
+               <div class="fs-3 text-info"><i class="bi bi-info-circle-fill"></i>
+               </div>
+               <div class="ms-3">
+                  <div class="text-info">
+                     <ul>{loop="$gsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
                   </div>
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                </div>
-            {/if}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+         {/if}

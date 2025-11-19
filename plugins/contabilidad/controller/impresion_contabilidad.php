@@ -114,7 +114,7 @@ class impresion_contabilidad extends controller
     {
         $this->template = false;
         $objPHPExcel    = new PHPExcel();
-        $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("PLAN DE CUENTAS");
+        $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("PLAN DE CUENTAS");
         $sheet = $objPHPExcel->getActiveSheet();
         $sheet->setTitle("Plan de Cuentas");
         $titulo  = $this->empresa->razonsocial;

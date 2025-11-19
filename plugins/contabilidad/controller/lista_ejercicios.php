@@ -126,7 +126,7 @@ class lista_ejercicios extends controller
     {
         $this->template = false;
         $objPHPExcel    = new PHPExcel();
-        $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("Plan de Cuentas");
+        $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("Plan de Cuentas");
         $sheet = $objPHPExcel->getActiveSheet();
         $sheet->setTitle("Plan de Cuentas");
         $titulo  = $this->empresa->razonsocial;

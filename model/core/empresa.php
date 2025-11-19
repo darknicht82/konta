@@ -122,7 +122,7 @@ class empresa extends \model
 
     protected function install()
     {
-        return "INSERT INTO " . $this->table_name . " (razonsocial, nombrecomercial, ruc, telefono, email, direccion, mail_mailer, mail_host, mail_port, mail_enc, mail_low_security, fec_creacion, nick_creacion) VALUES ('GSC SYSTEMS', 'GSC SYSTEMS', '9999999999999', '222222222', 'info@gscsystemsec.com', 'Quito', 'smtp', 'smtp.gmail.com', '465', 'ssl', " . $this->var2str(false) . ", '" . date('Y-m-d') . "', 'admin');";
+        return "INSERT INTO " . $this->table_name . " (razonsocial, nombrecomercial, ruc, telefono, email, direccion, mail_mailer, mail_host, mail_port, mail_enc, mail_low_security, fec_creacion, nick_creacion) VALUES ('Konta', 'Konta', '9999999999999', '222222222', 'info@gscsystemsec.com', 'Quito', 'smtp', 'smtp.gmail.com', '465', 'ssl', " . $this->var2str(false) . ", '" . date('Y-m-d') . "', 'admin');";
     }
 
     /**

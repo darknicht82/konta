@@ -208,7 +208,7 @@ class informes_articulos extends controller
         if ($datos) {
             $this->template = false;
             $objPHPExcel    = new PHPExcel();
-            $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("INFORME DE EXISTENCIAS DE ARTÍCULOS");
+            $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("INFORME DE EXISTENCIAS DE ARTÍCULOS");
             $sheet = $objPHPExcel->getActiveSheet();
             $sheet->setTitle("Existencias");
             $titulo  = $this->empresa->razonsocial;
@@ -390,7 +390,7 @@ class informes_articulos extends controller
         if ($datos) {
             $this->template = false;
             $objPHPExcel    = new PHPExcel();
-            $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("INFORME DE EXISTENCIAS DE ARTÍCULOS");
+            $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("INFORME DE EXISTENCIAS DE ARTÍCULOS");
             $sheet = $objPHPExcel->getActiveSheet();
             $sheet->setTitle("Existencias");
             $titulo  = $this->empresa->razonsocial;
@@ -573,7 +573,7 @@ class informes_articulos extends controller
         if ($datos) {
             $this->template = false;
             $objPHPExcel    = new PHPExcel();
-            $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("INFORME DE STOCK POR ARTICULO Y ESTABLECIMIENTO");
+            $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("INFORME DE STOCK POR ARTICULO Y ESTABLECIMIENTO");
             $sheet = $objPHPExcel->getActiveSheet();
             $sheet->setTitle("Stock Por Articulo");
             $titulo  = $this->empresa->razonsocial;

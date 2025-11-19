@@ -245,7 +245,7 @@ class estado_cuenta_proveedor extends controller
         if ($datos) {
             $this->template = false;
             $objPHPExcel    = new PHPExcel();
-            $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("ESTADO DE CUENTA TOTALIZADO DE PROVEEDORES");
+            $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("ESTADO DE CUENTA TOTALIZADO DE PROVEEDORES");
             $sheet = $objPHPExcel->getActiveSheet();
             $sheet->setTitle("Estado de Cuenta");
             $titulo  = $this->empresa->razonsocial;

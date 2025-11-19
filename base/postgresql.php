@@ -528,7 +528,7 @@ class postgresql extends db_engine
      */
     private function compare_data_types($db_type, $xml_type)
     {
-        if (JG_CHECK_DB_TYPES != 1) {
+        if (defined('JG_CHECK_DB_TYPES') && JG_CHECK_DB_TYPES != 1) {
             /// si está desactivada la comprobación de tipos, devolvemos que son iguales.
             return TRUE;
         } else if ($db_type == $xml_type) {

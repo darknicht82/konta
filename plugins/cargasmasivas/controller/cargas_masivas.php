@@ -72,7 +72,7 @@ class cargas_masivas extends controller
     {
         $this->template = false;
         $objPHPExcel    = new PHPExcel();
-        $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("FORMATOS DE CARGA");
+        $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("FORMATOS DE CARGA");
         $sheet = $objPHPExcel->getActiveSheet();
         $sheet->setTitle("FORMATO DE CARGA");
         $titulo = $this->empresa->razonsocial;
@@ -140,8 +140,8 @@ class cargas_masivas extends controller
                 ->setCellValue('G3', 'FECHA FACTURA')
                 ->setCellValue('H3', 'DIAS DE CREDITO')
                 ->setCellValue('I3', 'TOTAL');
-            $objPHPExcel->getActiveSheet()->getComment('B3')->setAuthor('GSC Systems');
-            $objCommentRichText = $objPHPExcel->getActiveSheet()->getComment('B3')->getText()->createTextRun('GSC Systems:');
+            $objPHPExcel->getActiveSheet()->getComment('B3')->setAuthor('Konta');
+            $objCommentRichText = $objPHPExcel->getActiveSheet()->getComment('B3')->getText()->createTextRun('Konta:');
             $objCommentRichText->getFont()->setBold(true);
             $objPHPExcel->getActiveSheet()->getComment('B3')->getText()->createTextRun("\r\n");
             $objPHPExcel->getActiveSheet()->getComment('B3')->getText()->createTextRun("R: RUC\nC: CEDULA\nP: PASAPORTE\n");
@@ -157,8 +157,8 @@ class cargas_masivas extends controller
                 ->setCellValue('G3', 'FECHA FACTURA')
                 ->setCellValue('H3', 'DIAS DE CREDITO')
                 ->setCellValue('I3', 'TOTAL');
-            $objPHPExcel->getActiveSheet()->getComment('B3')->setAuthor('GSC Systems');
-            $objCommentRichText = $objPHPExcel->getActiveSheet()->getComment('B3')->getText()->createTextRun('GSC Systems:');
+            $objPHPExcel->getActiveSheet()->getComment('B3')->setAuthor('Konta');
+            $objCommentRichText = $objPHPExcel->getActiveSheet()->getComment('B3')->getText()->createTextRun('Konta:');
             $objCommentRichText->getFont()->setBold(true);
             $objPHPExcel->getActiveSheet()->getComment('B3')->getText()->createTextRun("\r\n");
             $objPHPExcel->getActiveSheet()->getComment('B3')->getText()->createTextRun("R: RUC\nC: CEDULA\nP: PASAPORTE\n");
@@ -175,8 +175,8 @@ class cargas_masivas extends controller
                     ->setCellValue('G3', 'NUM. MEDIDOR')
                     ->setCellValue('H3', 'CONSUMO INICIAL');
             }
-            $objPHPExcel->getActiveSheet()->getComment('B3')->setAuthor('GSC Systems');
-            $objCommentRichText = $objPHPExcel->getActiveSheet()->getComment('B3')->getText()->createTextRun('GSC Systems:');
+            $objPHPExcel->getActiveSheet()->getComment('B3')->setAuthor('Konta');
+            $objCommentRichText = $objPHPExcel->getActiveSheet()->getComment('B3')->getText()->createTextRun('Konta:');
             $objCommentRichText->getFont()->setBold(true);
             $objPHPExcel->getActiveSheet()->getComment('B3')->getText()->createTextRun("\r\n");
             $objPHPExcel->getActiveSheet()->getComment('B3')->getText()->createTextRun("R: RUC\nC: CEDULA\nP: PASAPORTE\n");

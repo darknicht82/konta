@@ -85,7 +85,7 @@ class informes_sri extends controller
         $this->template = false;
 
         $objPHPExcel = new PHPExcel();
-        $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("FORMULARIO 104");
+        $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("FORMULARIO 104");
         $inputFileName = 'formatos/sri/FORM104.xlsx';
         $objReader     = PHPExcel_IOFactory::createReader('Excel2007');
         $objPHPExcel   = $objReader->load($inputFileName);
@@ -532,7 +532,7 @@ class informes_sri extends controller
         $this->template = false;
 
         $objPHPExcel = new PHPExcel();
-        $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("FORMULARIO 103");
+        $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("FORMULARIO 103");
         $inputFileName = 'formatos/sri/FORM103.xlsx';
         $objReader     = PHPExcel_IOFactory::createReader('Excel2007');
         $objPHPExcel   = $objReader->load($inputFileName);

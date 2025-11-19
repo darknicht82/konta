@@ -370,7 +370,7 @@ class informes_retenciones_clientes extends controller
         if ($retren || $retiva) {
             $this->template = false;
             $objPHPExcel    = new PHPExcel();
-            $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("INFORME RETENCIONES DE VENTAS");
+            $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("INFORME RETENCIONES DE VENTAS");
             $sheet = $objPHPExcel->getActiveSheet();
             $sheet->setTitle("INFORME RETENCIONES DE VENTAS");
             $titulo  = $this->empresa->razonsocial;

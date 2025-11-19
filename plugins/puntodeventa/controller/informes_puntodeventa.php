@@ -205,7 +205,7 @@ class informes_puntodeventa extends controller
         if ($datos) {
             $this->template = false;
             $objPHPExcel    = new PHPExcel();
-            $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("INFORME DE STOCK POR ARTICULO Y ESTABLECIMIENTO");
+            $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("INFORME DE STOCK POR ARTICULO Y ESTABLECIMIENTO");
             $sheet = $objPHPExcel->getActiveSheet();
             $sheet->setTitle("Stock Por Articulo");
             $titulo  = $this->empresa->razonsocial;
@@ -409,7 +409,7 @@ class informes_puntodeventa extends controller
         if ($datos) {
             $this->template = false;
             $objPHPExcel    = new PHPExcel();
-            $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("INFORME DE VENTAS POR ARTICULO");
+            $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("INFORME DE VENTAS POR ARTICULO");
             $sheet = $objPHPExcel->getActiveSheet();
             $sheet->setTitle("Ventas Por Articulo");
             $titulo  = $this->empresa->razonsocial;

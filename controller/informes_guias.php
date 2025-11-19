@@ -262,7 +262,7 @@ class informes_guias extends controller
 
             $this->template = false;
             $objPHPExcel    = new PHPExcel();
-            $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("INFORME GUIAS DE REMISION");
+            $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("INFORME GUIAS DE REMISION");
             $sheet = $objPHPExcel->getActiveSheet();
             $sheet->setTitle("Informe Guias de Remisión");
             $titulo  = $this->empresa->razonsocial;

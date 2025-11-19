@@ -304,7 +304,7 @@ class informes_compras extends controller
 
             $this->template = false;
             $objPHPExcel    = new PHPExcel();
-            $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("INFORME TOTALIZADO DE COMPRAS");
+            $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("INFORME TOTALIZADO DE COMPRAS");
             $sheet = $objPHPExcel->getActiveSheet();
             $sheet->setTitle("Informe Totalizado Compras");
             $titulo  = $this->empresa->razonsocial;
@@ -717,7 +717,7 @@ class informes_compras extends controller
         if ($articulos || $servicios) {
             $this->template = false;
             $objPHPExcel    = new PHPExcel();
-            $objPHPExcel->getProperties()->setCreator("GSC Systems")->setTitle("INFORME DETALLADO DE COMPRAS");
+            $objPHPExcel->getProperties()->setCreator("Konta")->setTitle("INFORME DETALLADO DE COMPRAS");
             $sheet = $objPHPExcel->getActiveSheet();
             $sheet->setTitle("Informe Detallado Compras");
             $titulo  = $this->empresa->razonsocial;
