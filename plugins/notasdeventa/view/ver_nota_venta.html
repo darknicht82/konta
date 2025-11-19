@@ -1,0 +1,536 @@
+{include="header"}
+{if="$gsc->factura"}
+   <script type="text/javascript">
+      let impuestos = {function="json_encode(listar_impuestos())"};
+      let factura_url = "{$gsc->factura->url()}";
+      let url = "{$gsc->url()}";
+      let allow_delete = "{$gsc->allow_delete}";
+      let anulado = "{$gsc->factura->anulado}";
+      let impresion = "{$gsc->impresion}";
+      let idfacturacli = "{$gsc->factura->idfacturacli}";
+      let establecimiento = "{$gsc->factura->idestablecimiento}";
+      let unidad_med = 0;
+      {if="complemento_exists('unidadesmedida')"}
+         unidad_med = 1;
+      {/if}
+      let editar = 0;
+      {if="$gsc->allow_modify"}
+         editar = 1;
+      {/if}
+   </script>
+   <script src="{#JG_PATH#}plugins/notasdeventa/view/js/ver_nota_venta.js"></script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-sm-6">
+                  <div class="btn-group">
+                     <a class="btn btn-sm btn-secondary" href="index.php?page=lista_notas_de_venta">
+                        <span class="bi bi-arrow-left"></span>
+                        {if="JG_ECAUTE == 1"}
+                           <span class="d-none d-sm-block">&nbsp; Prefacturas</span>
+                        {else}
+                           <span class="d-none d-sm-block">&nbsp; Nota de Ventas</span>
+                        {/if}
+                     </a>
+                     <a class="btn btn-sm btn-dark" href="{$gsc->factura->url()}" title="recargar la página">
+                        <span class="bi bi-bootstrap-reboot"></span>
+                     </a>
+                     <a class="btn btn-sm btn btn-success" href="index.php?page=crear_venta" title="Nueva Nota de Venta">
+                        <span class="bi bi-plus"></span>
+                     </a>
+                     {if="$gsc->impresion"}
+                        <a class="btn btn-sm btn-primary" href="#" id="btn_opciones" type="button">
+                           <span class="bi bi-diagram-3-fill"></span>
+                           <span class="d-none d-sm-block">&nbsp; Opciones</span>
+                        </a>
+                     {/if}
+                  </div>
+               </div>
+               <div class="col-sm-6" style="text-align: right;">
+                  {if="!$gsc->factura->anulado || $gsc->user->admin"}
+                     <div class="btn-group">
+                        {if="$gsc->allow_modify"}
+                           <a href="#" id="b_editar_documento" class="btn btn-sm btn-warning">
+                              <span class="bi bi-pencil-square"></span>
+                              <span class="d-none d-sm-block">&nbsp;Editar</span>
+                           </a>
+                        {/if}
+                        {if="$gsc->allow_delete"}
+                           <a href="#" id="b_anular_documento" class="btn btn-sm btn-dark">
+                              <span class="bi bi-exclamation-octagon"></span>
+                              <span class="d-none d-sm-block">&nbsp;Anular</span>
+                           </a>
+                           <a href="#" id="b_eliminar_factura" class="btn btn-sm btn-danger">
+                              <span class="bi bi-trash3"></span>
+                              <span class="d-none d-sm-block">&nbsp;Eliminar</span>
+                           </a>
+                        {/if}
+                        {if="!complemento_exists('facturador') || complemento_exists('pagosycobros')"}
+                           {if="$gsc->factura->idfactura_mod && $gsc->factura->coddocumento == '04'"}
+                           {else}
+                              <button class="btn btn-sm btn-info" id="btn_cobros" type="button">
+                                 <span class="bi bi-cash-coin"></span>
+                                 <span class="d-none d-sm-block">&nbsp;Ver Cobros</span>
+                              </button>
+                           {/if}
+                        {/if}
+                     </div>
+                  {/if}
+               </div>
+            </div>
+            <hr>
+            <div class="row">
+               <div class="col-sm-12">
+                  <div class="page-header">
+                     <h1>
+                        <i class="bi bi-person-circle" aria-hidden="true"></i>
+                        {$gsc->factura->get_tipodoc()} {if="$gsc->factura->anulado"}anulada{/if} <small class="fs-6">{$gsc->factura->numero_documento} de {$gsc->factura->razonsocial} </small>
+                     </h1>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+               <a class="nav-link active" data-bs-toggle="tab" href="#datos" role="tab" aria-selected="true">
+                  <div class="d-flex align-items-center"> 
+                     <div class="tab-icon"><i class="bi bi-person-circle"></i></div>
+                     <div class="tab-title">&nbsp;Datos {$gsc->factura->get_tipodoc()}</div>
+                  </div>
+               </a>
+            </li>
+         </ul>
+         <div class="tab-content py-3">
+            <div class="tab-pane fade active show" id="datos" role="tabpanel">
+               <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+                  <div class="card-body">
+                     <div class="table-responsive">
+                        <table class="table table-borderless">
+                           <tbody>
+                              <tr>
+                                 <th colspan="2">Numero de {$gsc->factura->get_tipodoc()}</th>
+                                 <th>Razón Social</th>
+                                 <th>Identificación</th>
+                              </tr>
+                              <tr>
+                                 <td colspan="2">{$gsc->factura->numero_documento}</td>
+                                 <td>
+                                    <a href="{$gsc->factura->get_cliente()->url()}" target="_blank">{$gsc->factura->razonsocial}</a>
+                                 </td>
+                                 <td>{$gsc->factura->identificacion}</td>
+                              </tr>
+                              <tr>
+                                 <th>Establecimiento</th>
+                                 <th>Dirección Cliente</th>
+                                 <th>Fecha Emisión</th>
+                                 <th>Vencimiento</th>
+                              </tr>
+                              <tr>
+                                 <td>{$gsc->factura->get_nombreestablecimiento()}</td>
+                                 <td>{$gsc->factura->direccion}</td>
+                                 <td>{$gsc->factura->fec_emision}</td>
+                                 <td>{$gsc->factura->vencimiento()}</td>
+                              </tr>
+                              <tr>
+                                 <th colspan="4">Observaciones</th>
+                              </tr>
+                              <tr>
+                                 <td colspan="4">{$gsc->factura->observaciones}</td>
+                              </tr>
+                           </tbody>
+                           {if="$gsc->factura->coddocumento == '04' || $gsc->factura->coddocumento == '05'"}
+                              <tfoot style="background-color: #D6EAF8; font-weight:bold;">
+                                 <tr><th colspan="4"></th></tr>
+                                 <tr>
+                                    <th>Documento Modificado</th>
+                                    <th>Numero de Autorización Doc. Modificado</th>
+                                    <th>Fecha Doc. Modificado</th>
+                                    <th></th>
+                                 </tr>
+                                 <tr>
+                                    <td>
+                                       {if="$gsc->factura->idfactura_mod"}
+                                          <a href="index.php?page=ver_factura_cliente&id={$gsc->factura->idfactura_mod}" target="_blank">
+                                       {/if} 
+                                          {$gsc->factura->numero_documento_mod}
+                                       {if="$gsc->factura->idfactura_mod"}
+                                          </a>
+                                       {/if}
+                                    </td>
+                                    <td>{$gsc->factura->nro_autorizacion_mod}</td>
+                                    <td>{$gsc->factura->fec_emision_mod}</td>
+                                    <td></td>
+                                 </tr>
+                              </tfoot>
+                           {/if}
+                        </table>
+                     </div>
+                  </div>
+               </div>
+               {if="!$gsc->factura->anulado"}
+               <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+                  <div class="card-body">
+                     <div class="row">
+                        <div class="col-sm-6">
+                           <div class="form-group">
+                              <label for="codbarras" class="col-form-label">Código de Barras</label>
+                              <div class="input-group input-group-sm">
+                                 <span class="input-group-text" id="codbarras">
+                                    <i class="bi bi-upc-scan"></i>
+                                 </span>
+                                 <input type="text" class="form-control form-control-sm" id="codigobarras" placeholder="Código de Barras" autofocus="true">
+                              </div>
+                           </div>
+                        </div>
+                        <div class="col-sm-6">
+                           <div class="form-group">
+                              <label for="idarticulo" class="col-form-label">Buscar Artículo:</label>
+                              <select id="idarticulo" class="form-select"></select>
+                           </div>
+                        </div>
+                     </div>
+                     {if="$gsc->allow_modify"}
+                        <div class="row"><br></div>
+                        <form name="f_nueva_linea" id="f_nueva_linea" class="form" role="form" action="{$gsc->url()}" method="post">
+                           <input type="hidden" name="nueva_linea">
+                           <input type="hidden" name="valoriva" id="valoriva">
+                           <input type="hidden" name="idarticulo" id="idarticulo_linea">
+                           <div class="row">
+                              <div class="col-sm-2">
+                                 <div class="form-group">
+                                    <label for="stock" class="col-form-label">Stock</label>
+                                    <input style="text-align: right;" type="text" class="form-control form-control-sm" id="stock" placeholder="Stock" readonly autofocus="false" autocomplete="false" required>
+                                 </div>
+                              </div>
+                              <div class="col-sm-2">
+                                 <div class="form-group">
+                                    <label for="codprincipal" class="col-form-label">Código Principal:</label>
+                                    <input type="text" class="form-control form-control-sm" id="codprincipal" name="codprincipal" placeholder="Código Principal" autofocus="false" autocomplete="false" required maxlength="100">
+                                 </div>
+                              </div>
+                              <div class="col-sm-8">
+                                 <div class="form-group">
+                                    <label for="descripcion" class="col-form-label">Descripción:</label>
+                                    <input type="text" class="form-control form-control-sm" id="descripcion" name="descripcion" placeholder="Descripción" autofocus="false" autocomplete="false" required maxlength="250">
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row">
+                              <div class="col-sm-2">
+                                 <div class="form-group">
+                                    <label for="cantidad" class="col-form-label">Cantidad:</label>
+                                    <input style="text-align: right;" type="text" class="form-control form-control-sm" id="cantidad" name="cantidad" placeholder="Cantidad" autofocus="false" autocomplete="false" onblur="calcular_total()" required>
+                                 </div>
+                              </div>
+                              <div class="col-sm-2">
+                                 <div class="form-group">
+                                    <label for="pvpunitario" class="col-form-label">PVP Unitario:</label>
+                                    <input style="text-align: right;" type="text" class="form-control form-control-sm" id="pvpunitario" name="pvpunitario" placeholder="PVP Unitario" autofocus="false" autocomplete="false" onblur="calcular_total()" required>
+                                 </div>
+                              </div>
+                              <div class="col-sm-2">
+                                 <div class="form-group">
+                                    <label for="dto" class="col-form-label">% Descuento:</label>
+                                    <input style="text-align: right;" type="text" class="form-control form-control-sm" id="dto" name="dto" placeholder="Descripción" autofocus="false" autocomplete="false" onblur="calcular_total()" required>
+                                 </div>
+                              </div>
+                              <div class="col-sm-2">
+                                 <div class="form-group">
+                                    <label for="pvptotal" class="col-form-label">Subtotal:</label>
+                                    <input style="text-align: right;" type="text" class="form-control form-control-sm" id="pvptotal" name="pvptotal" placeholder="Subtotal" autofocus="false" autocomplete="false" onblur="calcular_costounit()" required>
+                                 </div>
+                              </div>
+                              <!--div class="col-sm-2">
+                                 <div class="form-group">
+                                    <label for="valorice" class="col-form-label">ICE:</label>
+                                    <input style="text-align: right;" type="text" class="form-control form-control-sm" id="valorice" name="valorice" placeholder="ICE" autofocus="false" autocomplete="false" onblur="calcular_total()" required>
+                                 </div>
+                              </div-->
+                              <div class="col-sm-2">
+                                 <div class="form-group">
+                                    <label for="idimpuesto" class="col-form-label">Impuesto:</label>
+                                    <select class="form-control form-control-sm" name="idimpuesto" id="idimpuesto" onchange="calcular_total()" required>
+                                       <option value="">Seleccione Impuesto</option>
+                                       {loop="function=listar_impuestos()"}
+                                          <option value="{$value->idimpuesto}">{$value->nombre}</option>
+                                       {/loop}
+                                    </select>
+                                 </div>
+                              </div>
+                              <div class="col-sm-2">
+                                 <div class="form-group">
+                                    <label for="total" class="col-form-label">Total:</label>
+                                    <input style="text-align: right;" type="text" class="form-control form-control-sm" id="total" placeholder="Total" autofocus="false" autocomplete="false" readonly required>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="row"><br></div>
+                           <div class="row">
+                              <div class="col-sm-12" style="text-align: right;">
+                                 <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-warning" type="button" onclick="limpiar_campos()">
+                                       <span class="bi bi-arrow-repeat"></span>
+                                       <span class="d-none d-sm-block">&nbsp;Limpiar</span>
+                                    </button>
+                                    <button class="btn btn-sm btn-success" type="submit">
+                                       <span class="bi bi-bag-plus"></span>
+                                       <span class="d-none d-sm-block">&nbsp;Añadir</span>
+                                    </button>
+                                 </div>
+                              </div>
+                           </div>
+                        </form>
+                     {/if}
+                  </div>
+               </div>
+               {/if}
+               <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+                  <div class="card-body">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th width="8%" style="text-align: center;">Código</th>
+                                 <th width="30%" style="text-align: center;">Nombre</th>
+                                 {if="complemento_exists('unidadesmedida')"}
+                                    <th width="6%" style="text-align: center;">Cantidad</th>
+                                    <th width="2%" style="text-align: center;">Unidad</th>
+                                 {else}
+                                    <th width="8%" style="text-align: center;">Cantidad</th>
+                                 {/if}
+                                 <th width="8%" style="text-align: center;">PVP Unitario</th>
+                                 <th width="8%" style="text-align: center;">Descuento</th>
+                                 <!--th width="8%" style="text-align: center;">ICE</th-->
+                                 <th width="8%" style="text-align: center;">IVA</th>
+                                 <th width="8%" style="text-align: center;">Total</th>
+                                 <th width="9%" style="text-align: center;"></th>
+                              </tr>
+                           </thead>
+                           <tbody id="detalle_fac">
+                           </tbody>
+                           <tfoot>
+                              <tr>
+                                 <th style="text-align: right;" {if="complemento_exists('unidadesmedida')"}colspan="7"{else}colspan="6"{/if}>Subtotal Gravado</th>
+                                 <th style="text-align: right;" id="base_gra">0.00</th>
+                                 <th>$</th>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: right;" {if="complemento_exists('unidadesmedida')"}colspan="7"{else}colspan="6"{/if}>Subtotal 0%</th>
+                                 <th style="text-align: right;" id="base_0">0.00</th>
+                                 <th>$</th>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: right;" {if="complemento_exists('unidadesmedida')"}colspan="7"{else}colspan="6"{/if}>Subtotal No Objeto de IVA</th>
+                                 <th style="text-align: right;" id="base_noi">0.00</th>
+                                 <th>$</th>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: right;" {if="complemento_exists('unidadesmedida')"}colspan="7"{else}colspan="6"{/if}>Subtotal Excento de IVA</th>
+                                 <th style="text-align: right;" id="base_exc">0.00</th>
+                                 <th>$</th>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: right;" {if="complemento_exists('unidadesmedida')"}colspan="7"{else}colspan="6"{/if}>Subtotal Sin Impuestos</th>
+                                 <th style="text-align: right;" id="subtotal">0.00</th>
+                                 <th>$</th>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: right;" {if="complemento_exists('unidadesmedida')"}colspan="7"{else}colspan="6"{/if}>Total Descuento</th>
+                                 <th style="text-align: right;" id="totaldescuento">0.00</th>
+                                 <th>$</th>
+                              </tr>
+                              <!--tr>
+                                 <th style="text-align: right;" colspan="7">ICE</th>
+                                 <th style="text-align: right;" id="totalice">0.00</th>
+                                 <th>$</th>
+                              </tr-->
+                              <tr>
+                                 <th style="text-align: right;" {if="complemento_exists('unidadesmedida')"}colspan="7"{else}colspan="6"{/if}>IVA</th>
+                                 <th style="text-align: right;" id="totaliva">0.00</th>
+                                 <th>$</th>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: right;" {if="complemento_exists('unidadesmedida')"}colspan="7"{else}colspan="6"{/if}>Total</th>
+                                 <th style="text-align: right;" id="totalfac">0.00</th>
+                                 <th>$</th>
+                              </tr>
+                           </tfoot>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   {if="$gsc->allow_modify
+   "}
+      <div class="modal" id="modal_editar_documento">
+         <form name="f_nuevo_cobro" id="f_editar_documento" class="form" role="form" action="{$gsc->factura->url()}" method="post">
+            <input type="hidden" name="editar_doc">
+            <input type="hidden" id="dircliente">
+            <input type="hidden" id="emailcliente">
+            <input type="hidden" id="identcliente" name="identcliente">
+            <input type="hidden" id="tipidencliente" name="tipidencliente">
+            <input type="hidden" id="razonscliente" name="razonscliente">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-pencil-square" aria-hidden="true"></i>&nbsp; Editar Documento</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <label for="idcliente" class="col-form-label">Cliente:</label>
+                           <select id="idcliente" class="form-select" name="idcliente" required>
+                           </select>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-7">
+                           <label for="direccion" class="col-form-label">Dirección:</label>
+                           <input type="text" class="form-control form-control-sm" id="direccion" name="direccion" placeholder="Dirección" minlength="1" maxlength="250" required>
+                        </div>
+                        <div class="col-sm-5">
+                           <label for="email" class="col-form-label">Email</label>
+                           <input type="email" class="form-control form-control-sm" id="email" name="email" placeholder="Email" minlength="1" maxlength="150" required>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <label for="observaciones" class="col-form-label">Observaciones:</label>
+                           <textarea cols="5" name="observaciones" id="observaciones" class="form-control" maxlength="300"></textarea>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button class="btn btn-sm btn-success" type="submit">
+                        <span class="bi bi-pencil-square"></span>&nbsp; Editar
+                     </button>
+                     <button class="btn btn-sm btn-info" type="button" onclick='$("#direccion").val($("#dircliente").val());$("#email").val($("#emailcliente").val())' title="Recuperar los datos de la ficha del Cliente.">
+                        <span class="bi bi-pen"></span>&nbsp; Actualizar
+                     </button>
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+   {/if}
+   <div class="modal" id="modal_ver_cobros">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title"><i class="bi bi-cash-stack" aria-hidden="true"></i>&nbsp; Cobros Nota de Venta</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+               <form name="f_nuevo_cobro" id="f_nuevo_cobro" class="form" role="form" action="{$gsc->url()}" method="post">
+                  <input type="hidden" name="nuevo_cobro">
+                  <div class="row" style="justify-content: center;" id="div_nuevo_cobro">
+                     <div class="col-sm-3">
+                        <label for="idformapago" class="col-form-label">Forma de Pago:</label>
+                        <select class="form-control form-control-sm" name="idformapago" id="idformapago" onchange="buscar_fp()" required>
+                           <option value="">Seleccione</option>
+                           {loop="function=buscar_formaspago('', $gsc->empresa->idempresa)"}
+                              {if="$value->esventa && !$value->escredito"}
+                                 <option value="{$value->idformapago}">{$value->nombre}</option>
+                              {/if}
+                           {/loop}
+                        </select>
+                     </div>
+                     <div class="col-sm-3">
+                        <label for="fecha_trans" class="col-form-label">Fecha Transacción:</label>
+                        <input type="date" class="form-control form-control-sm" id="fecha_trans" name="fecha_trans" value="{$gsc->today()}" placeholder="Fecha Transacción" required>
+                     </div>
+                     <div class="col-sm-3" style="display: none;" id="div_numdoc">
+                        <label for="num_doc" class="col-form-label">Nro. Documento:</label>
+                        <input type="text" class="form-control form-control-sm" id="num_doc" name="num_doc" placeholder="Nro. Documento">
+                     </div>
+                     <div class="col-sm-3">
+                        <div class="form-group">
+                           <label for="valor" class="col-form-label">Valor:</label>
+                           <div class="input-group">
+                              <input type="text" class="form-control form-control-sm" id="valor" name="valor" placeholder="Valor" required style="text-align: right;">
+                              <button class="btn btn-sm btn-success" id="btn_add_cobro" type="submit">
+                                 <span class="bi bi-plus-square-dotted"></span>
+                              </button>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </form>
+               <div class="row"><br></div>
+               <div class="row">
+                  <div class="table-responsive">
+                     <table class="table table-hover">
+                        <thead>
+                           <tr>
+                              <th width="20%" style="text-align: center;">Tipo</th>
+                              <th width="15%" style="text-align: center;">Fecha</th>
+                              <th width="40%" style="text-align: center;">Forma de Pago</th>
+                              <th width="15%" style="text-align: center;">Valor</th>
+                              <th width="10%" style="text-align: center;"></th>
+                           </tr>
+                        </thead>
+                        <tbody id="det_cobros"></tbody>
+                        <tfoot id="sal_cobros"></tfoot>
+                     </table>
+                  </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                  <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+               </button>
+            </div>
+         </div>
+      </div>
+   </div>
+   {if="$gsc->impresion"}
+      <div class="modal" id="modal_ver_opciones">
+         <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-diagram-3-fill" aria-hidden="true"></i>&nbsp; Opciones Nota de Venta</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="row">
+                     <h5>Impresiones</h5>
+                     <hr>
+                     <div class="d-grid gap-2">
+                        <a class="btn btn-outline-dark" target="_blank" href="index.php?page=impresion_ventas&tipo=fact&id={$gsc->factura->idfacturacli}">{$gsc->factura->get_tipodoc()}</a>
+                        <a class="btn btn-outline-dark" target="_blank" href="index.php?page=impresion_ventas&tipo=facta5&id={$gsc->factura->idfacturacli}">{$gsc->factura->get_tipodoc()} (A5)</a>
+                        {if="!$gsc->factura->anulado"}
+                           {if="$gsc->factura->coddocumento == '02'"}
+                              <a class="btn btn-outline-dark" href="index.php?page=impresion_ventas&tipo=ticket&id={$gsc->factura->idfacturacli}">Ticket</a>
+                           {/if}
+                        {/if}
+                     </div>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-outline-dark" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+               </div>
+            </div>
+         </div>
+      </div>
+   {/if}
+{else}
+   <div class="thumbnail">
+      <center>
+         <img src="{#JG_PATH#}view/img/fuuu_face.png" alt="fuuuuu"/>
+      </center>
+   </div>
+{/if}
+{include="footer"}

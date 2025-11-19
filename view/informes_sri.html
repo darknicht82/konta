@@ -1,0 +1,196 @@
+{include="header"}
+   <script type="text/javascript">
+      let url = "{$gsc->url()}";
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-robot" aria-hidden="true"></i>
+               Informes SRI
+            </h2>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row"><hr></div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="col-sm-6">
+            <form target="_blank" name="f_inf_103" action="{$gsc->page->url()}" method="post" class="form" role="form">
+               <input type="hidden" name="tipo" value="mensual">
+               <input type="hidden" name="reporte" value="103">
+               <div class="card">
+                  <div class="card-header bg-info text-white">
+                     <h5><center><b>Formulario 103 Mensual</b></center></h5>
+                  </div>
+                  <div class="card-body">
+                     <div class="col-sm-12">
+                        <label for="periodo" class="col-form-label">Periodo:</label>
+                        <input type="month" class="form-control form-control-sm" id="periodo" name="periodo" required>
+                     </div>
+                  </div>
+                  <div class="card-footer">
+                     <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-outline-primary" type="submit">Generar</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div class="col-sm-6">
+            <form target="_blank" name="f_inf_103_semestral" action="{$gsc->page->url()}" method="post" class="form" role="form">
+               <input type="hidden" name="tipo" value="semestral">
+               <input type="hidden" name="reporte" value="103">
+               <div class="card">
+                  <div class="card-header bg-info text-white">
+                     <h5><center><b>Formulario 103 Semestral</b></center></h5>
+                  </div>
+                  <div class="card-body">
+                     <div class="col-sm-12">
+                        <label for="anio" class="col-form-label">Año:</label>
+                        <input type="number" min="2020" max="2100" step="1" value="{function="date('Y')"}" id="anio" name="anio" class="form-control form-control-sm" />
+                     </div>
+                     <div class="col-sm-12">
+                        <label for="periodo" class="col-form-label">Semestre:</label>
+                        <select class="form-select form-select-sm" required name="periodo" id="periodo">
+                           <option value="" selected>Selecione</option>
+                           <option value="IP">1er Periodo (Ene-Jun)</option>
+                           <option value="IIP">2do Periodo (Jul-Dic)</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="card-footer">
+                     <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-outline-primary" type="submit">Generar</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-sm-6">
+            <form target="_blank" name="f_inf_104" action="{$gsc->page->url()}" method="post" class="form" role="form">
+               <input type="hidden" name="tipo" value="mensual">
+               <input type="hidden" name="reporte" value="104">
+               <div class="card">
+                  <div class="card-header bg-info text-white">
+                     <h5><center><b>Formulario 104 Mensual</b></center></h5>
+                  </div>
+                  <div class="card-body">
+                     <div class="col-sm-12">
+                        <label for="periodo" class="col-form-label">Periodo:</label>
+                        <input type="month" class="form-control form-control-sm" id="periodo" name="periodo" required>
+                     </div>
+                  </div>
+                  <div class="card-footer">
+                     <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-outline-primary" type="submit">Generar</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div class="col-sm-6">
+            <form target="_blank" name="f_inf_104_semestral" action="{$gsc->page->url()}" method="post" class="form" role="form">
+               <input type="hidden" name="tipo" value="semestral">
+               <input type="hidden" name="reporte" value="104">
+               <div class="card">
+                  <div class="card-header bg-info text-white">
+                     <h5><center><b>Formulario 104 Semestral</b></center></h5>
+                  </div>
+                  <div class="card-body">
+                     <div class="col-sm-12">
+                        <label for="anio" class="col-form-label">Año:</label>
+                        <input type="number" min="2020" max="2100" step="1" value="{function="date('Y')"}" id="anio" name="anio" class="form-control form-control-sm" />
+                     </div>
+                     <div class="col-sm-12">
+                        <label for="periodo" class="col-form-label">Semestre:</label>
+                        <select class="form-select form-select-sm" required name="periodo" id="periodo">
+                           <option value="" selected>Selecione</option>
+                           <option value="IP">1er Periodo (Ene-Jun)</option>
+                           <option value="IIP">2do Periodo (Jul-Dic)</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="card-footer">
+                     <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-outline-primary" type="submit">Generar</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-sm-6">
+            <form target="_blank" name="f_inf_ats" action="{$gsc->page->url()}" method="post" class="form" role="form">
+               <input type="hidden" name="tipo" value="mensual">
+               <input type="hidden" name="reporte" value="ats">
+               <div class="card">
+                  <div class="card-header bg-info text-white">
+                     <h5><center><b>ATS Mensual</b></center></h5>
+                  </div>
+                  <div class="card-body">
+                     <div class="col-sm-12">
+                        <label for="periodo" class="col-form-label">Periodo:</label>
+                        <input type="month" class="form-control form-control-sm" id="periodo" name="periodo" required>
+                     </div>
+                  </div>
+                  <div class="card-footer">
+                     <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-outline-primary" type="submit">Generar</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div class="col-sm-6">
+            <form target="_blank" name="f_inf_ats_semestral" action="{$gsc->page->url()}" method="post" class="form" role="form">
+               <input type="hidden" name="tipo" value="semestral">
+               <input type="hidden" name="reporte" value="ats">
+               <div class="card">
+                  <div class="card-header bg-info text-white">
+                     <h5><center><b>ATS Semestral</b></center></h5>
+                  </div>
+                  <div class="card-body">
+                     <div class="col-sm-12">
+                        <label for="anio" class="col-form-label">Año:</label>
+                        <input type="number" min="2020" max="2100" step="1" value="{function="date('Y')"}" id="anio" name="anio" class="form-control form-control-sm" />
+                     </div>
+                     <div class="col-sm-12">
+                        <label for="periodo" class="col-form-label">Semestre:</label>
+                        <select class="form-select form-select-sm" required name="periodo" id="periodo">
+                           <option value="" selected>Selecione</option>
+                           <option value="IP">1er Periodo (Ene-Jun)</option>
+                           <option value="IIP">2do Periodo (Jul-Dic)</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="card-footer">
+                     <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-outline-primary" type="submit">Generar</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+{include="footer"}

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : cab_bandejasri.xml
+    Author     : Jonathan Guamba
+    Description:
+        Estructura de la tabla cab_bandejasri.
+-->
+<tabla>
+    <columna>
+        <nombre>idbandejasri</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('idbandejasri_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>idempresa</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>estado</nombre>
+        <tipo>integer</tipo>
+        <nulo>0</nulo>
+    </columna>
+    <columna>
+        <nombre>idproveedor</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idcliente</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>coddocumento</nombre>
+        <tipo>character varying(5)</tipo>
+        <nulo>NO</nulo>
+        <defecto>'01'::character varying</defecto>
+    </columna>
+    <columna>
+        <nombre>iddocumento</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>tipoid</nombre>
+        <tipo>character varying(1)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>identificacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>razonsocial</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nombrecomercial</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>email</nombre>
+        <tipo>character varying(150)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>direccion</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>numero_documento</nombre>
+        <tipo>character varying(17)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nro_autorizacion</nombre>
+        <tipo>character varying(49)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_autorizacion</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>hor_autorizacion</nombre>
+        <tipo>time</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fecdoc_modificado</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>diascredito</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>fec_emision</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>hora_emision</nombre>
+        <tipo>time</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_caducidad</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_registro</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>base_noi</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>base_0</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>base_gra</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>base_exc</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>totaldescuento</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>totalice</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>totaliva</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>totalirbp</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>total</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>idfactura</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idretencion</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idfactura_mod</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>coddocumento_mod</nombre>
+        <tipo>character varying(5)</tipo>
+        <nulo>NO</nulo>
+        <defecto>'01'::character varying</defecto>
+    </columna>
+    <columna>
+        <nombre>iddocumento_mod</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>numero_documento_mod</nombre>
+        <tipo>character varying(17)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nro_autorizacion_mod</nombre>
+        <tipo>character varying(49)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_creacion</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_creacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_modificacion</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_modificacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>cab_bandejasri_pkey</nombre>
+        <consulta>PRIMARY KEY (idbandejasri)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_empresa_cab_bandejasri</nombre>
+        <consulta>FOREIGN KEY (idempresa) REFERENCES empresa (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_proveedores_cab_bandejasri</nombre>
+        <consulta>FOREIGN KEY (idproveedor) REFERENCES proveedores (idproveedor) ON DELETE SET NULL ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_clientes_cab_bandejasri</nombre>
+        <consulta>FOREIGN KEY (idcliente) REFERENCES clientes (idcliente) ON DELETE SET NULL ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_documentos_cab_bandejasri</nombre>
+        <consulta>FOREIGN KEY (iddocumento) REFERENCES documentos (iddocumento) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

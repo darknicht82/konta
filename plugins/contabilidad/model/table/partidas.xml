@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : partidas.xml
+    Author     : Jonathan Guamba
+    Description:
+        Estructura de la tabla partidas.
+-->
+<tabla>
+    <columna>
+        <nombre>idpartida</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('partida_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>idempresa</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idasiento</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idsubcuenta</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>debe</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>haber</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>idarticulo</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idimpuesto</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idfacturacli</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idtranspago</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idtranscobro</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_creacion</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_creacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_modificacion</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_modificacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>partidas_pkey</nombre>
+        <consulta>PRIMARY KEY (idpartida)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_empresa_partidas</nombre>
+        <consulta>FOREIGN KEY (idempresa) REFERENCES empresa (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_asientos_partidas</nombre>
+        <consulta>FOREIGN KEY (idasiento) REFERENCES asientos (idasiento) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_plancuentas_partidas</nombre>
+        <consulta>FOREIGN KEY (idsubcuenta) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_articulos_partidas</nombre>
+        <consulta>FOREIGN KEY (idarticulo) REFERENCES articulos (idarticulo) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_impuestos_partidas</nombre>
+        <consulta>FOREIGN KEY (idimpuesto) REFERENCES impuestos (idimpuesto) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_facturascli_partidas</nombre>
+        <consulta>FOREIGN KEY (idfacturacli) REFERENCES idfacturacli (idfacturacli) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_trans_pagos_partidas</nombre>
+        <consulta>FOREIGN KEY (idtranspago) REFERENCES trans_pagos (idtranspago) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_trans_cobros_partidas</nombre>
+        <consulta>FOREIGN KEY (idtranscobro) REFERENCES trans_cobros (idtranscobro) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

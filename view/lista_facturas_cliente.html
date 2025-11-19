@@ -1,0 +1,285 @@
+{include="header"}
+   <script type="text/javascript">
+      $(document).ready(function() {
+         $("#b_cliente").select2({
+            language: {
+               noResults: function() {
+                  return "No hay resultado"; 
+               },
+               searching: function() {
+                  return "Buscando...";
+               },
+               inputTooShort: function () {
+                  return "Ingrese al menos 3 caracteres para realizar la busqueda";
+               },
+            },
+            ajax: {
+               url: "{$gsc->url()}",
+               dataType: 'json',
+               delay: 250,
+               data: function (params) {
+                  return {
+                     buscar_cliente: params.term
+                  };
+               },
+               processResults: function (data, params) {
+                  return {
+                     results: $.map(data, function(obj, index) {
+                        return { id: obj.idcliente, text: obj.identificacion +" - "+ obj.razonsocial };
+                     })
+                  };
+               },
+               cache: true
+            },
+            placeholder: 'Buscar Cliente',
+            minimumInputLength: 3,
+            theme: 'bootstrap-5',
+            allowClear: true
+         });
+         {if="$gsc->empresa->activafacelec"}
+            $("#btn_autorizar_masivo").click(function(event) {
+               event.preventDefault();
+               $("#modal_autorizacion_masiva").modal('show');
+            });
+         {/if}
+
+         {if="$gsc->url_recarga"}
+            setInterval(actualizar('{$gsc->url_recarga}'), 5000);
+         {/if}
+      });
+      $(document).on('select2:open', () => {
+         document.querySelector('.select2-search__field').focus();
+      });
+
+      function actualizar(url) {
+         window.location.href = url;
+      }
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+               {if="$gsc->access_crear"}
+                  <a class="btn btn-sm btn-success" href="index.php?page=crear_venta">
+                     <span class="bi bi-person-plus-fill"></span>
+                     <span class="d-none d-sm-block">&nbsp; Nueva</span>
+                  </a>
+               {/if}
+               {if="$gsc->empresa->activafacelec"}
+                  <a class="btn btn-sm btn-info" href="#" id="btn_autorizar_masivo">
+                     <span class="bi bi-send-check-fill"></span>
+                     <span class="d-none d-sm-block">&nbsp; Autorizacion Masiva</span>
+                  </a>
+               {/if}
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-cart-dash-fill" aria-hidden="true"></i>
+               Facturas de Cliente <span class="badge bg-secondary">{$gsc->cantidad}</span>
+            </h2>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row"><hr></div>
+      <div class="row">
+         <form name="f_buscador" action="{$gsc->page->url()}" method="post" class="form" role="form">
+            <div class="row">
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="query" class="col-form-label">Buscador:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="query">
+                           <i class="bi bi-search"></i>
+                        </span>
+                        <input class="form-control form-control-sm" type="text" name="query" value="{$gsc->query}" id="query" autocomplete="off" placeholder="Buscador" onchange="this.form.submit()" autofocus=""/>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <label for="b_cliente" class="col-form-label">Cliente:</label>
+                  <select id="b_cliente" name="idcliente" class="form-select" onchange="this.form.submit()">
+                     {if="$gsc->nom_cliente != ''"}
+                        <option value="{$gsc->idcliente}">{$gsc->nom_cliente}</option>
+                     {/if}
+                  </select>
+               </div>
+               <div class="col-sm-2">
+                  <label for="iddocumento" class="col-form-label">Tipo Documento:</label>
+                  <select id="iddocumento" name="iddocumento" class="form-select" onchange="this.form.submit()">
+                        <option value="" selected>Seleccione</option>
+                     {loop="$gsc->documentos->all()"}
+                        {if="$value->codigo == '01' OR $value->codigo == '04' OR $value->codigo == '05'"}
+                           <option value="{$value->iddocumento}" {if="$value->iddocumento == $gsc->iddocumento"}selected{/if}>{$value->nombre}</option>
+                        {/if}
+                     {/loop}
+                  </select>
+               </div>
+               <div class="col-sm-2">
+                  <div class="form-group">
+                     <label for="desde" class="col-form-label">Fecha Desde:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="desde">
+                           <i class="bi bi-calendar-date-fill"></i>
+                        </span>
+                        <input class="form-control form-control-sm" type="date" name="desde" id="desde" value="{$gsc->desde}" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-2">
+                  <div class="form-group">
+                     <label for="hasta" class="col-form-label">Fecha Hasta:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="hasta">
+                           <i class="bi bi-calendar-date-fill"></i>
+                        </span>
+                        <input class="form-control form-control" type="date" name="hasta" id="hasta" value="{$gsc->hasta}" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="row"><br></div>
+            <div class="row">
+               <div class="col-sm-2">
+                  <div class="form-check form-switch">
+                     <input class="form-check-input" type="checkbox" id="anuladas" name="anuladas" onchange="this.form.submit()" {if="$gsc->anuladas"}checked{/if}>
+                     <label class="form-check-label" for="anuladas">Anuladas</label>
+                  </div>
+               </div>
+               <div class="col-sm-2">
+                  <div class="form-check form-switch">
+                     <input class="form-check-input" type="checkbox" id="saldosini" name="saldosini" onchange="this.form.submit()" {if="$gsc->saldosini"}checked{/if}>
+                     <label class="form-check-label" for="saldosini">Saldos Iniciales</label>
+                  </div>
+               </div>
+               {if="$gsc->empresa->activafacelec"}
+                  <div class="col-sm-2">
+                     <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="autorizadas" name="autorizadas" onchange="this.form.submit()" {if="$gsc->autorizadas"}checked{/if}>
+                        <label class="form-check-label" for="autorizadas">Autorizadas</label>
+                     </div>
+                  </div>
+                  <div class="col-sm-2">
+                     <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="sinautorizar" name="sinautorizar" onchange="this.form.submit()" {if="$gsc->sinautorizar"}checked{/if}>
+                        <label class="form-check-label" for="sinautorizar">Sin Autorizar</label>
+                     </div>
+                  </div>
+               {/if}
+            </div>
+         </form>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th>Fecha Emisión</th>
+                     <th>Nro. Documento</th>
+                     <th>Tipo de Documento</th>
+                     <th>Razón Social</th>
+                     <th style="text-align: center;">Total</th>
+                     {if="$gsc->empresa->activafacelec"}
+                        <th style="text-align: center;">Estado SRI</th>
+                     {/if}
+                  </tr>
+               </thead>
+               <tbody>
+                  {loop="$gsc->resultados"}
+                     <tr {if="$value->anulado"}class="table-warning"{elseif="$value->saldoinicial"}class="table-info" title="Es un Saldo Inicial"{/if}>
+                        <td title="Vencimiento: {$value->vencimiento()}">{$value->fec_emision}</td>
+                        <td><a href="{$value->url()}" target="_blank">{$value->numero_documento}</a></td>
+                        <td>{$value->get_tipodoc()}</td>
+                        <td>{$value->razonsocial}</td>
+                        <td style="text-align: right;">{function="show_numero($value->total)"} $</td>
+                        {if="$gsc->empresa->activafacelec"}
+                           <td style="text-align: right;" {if="$value->anulado || $value->saldoinicial"}{elseif="$value->estado_sri == 'AUTORIZADO'"}class="table-success" title="Fecha Autorización: {$value->fec_autorizacion} {$value->hor_autorizacion}"{elseif="$value->estado_sri == 'PENDIENTE'"}class="table-danger"{/if}>
+                              {if="$value->anulado"}
+                                 ANULADO
+                              {elseif="$value->saldoinicial"}
+                                 SALDO INICIAL
+                              {else}
+                                 {$value->estado_sri}
+                              {/if}
+                           </td>
+                        {/if}
+                     </tr>
+                  {else}
+                     <tr class="table-info">
+                        {if="$gsc->empresa->activafacelec"}
+                           <td colspan="6">Sin Resultados.!</td>
+                        {else}
+                           <td colspan="5">Sin Resultados.!</td>
+                        {/if}
+                     </tr>
+                  {/loop}
+               </tbody>
+            </table>
+         </div>
+      </div>
+      {if="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+         <div class="row"><br></div>
+         <div class="row">
+            <div class="col-sm-12 ">
+               <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+                     {loop="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+                        <li class="page-item {if="$value['actual']"}active{/if}">
+                           <a class="page-link" href="{$value['url']}">{$value['num']}</a>
+                        </li>
+                     {/loop}
+                  </ul>
+               </nav>
+            </div>
+         </div>
+      {/if}
+   </div>
+   {if="$gsc->empresa->activafacelec"}
+      <div class="modal" id="modal_autorizacion_masiva">
+         <form name="f_autorizacion_masiva" id="f_autorizacion_masiva" class="form" role="form" action="{$gsc->url()}" method="post">
+            <input type="hidden" name="aut_masivo">
+            <div class="modal-dialog modal-dialog-centered">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-send-check-fill" aria-hidden="true"></i>&nbsp; Autorizacion Masiva</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <label for="desde" class="col-form-label">Desde:</label>
+                           <input type="date" id="desde" class="form-control form-control-sm" name="desde_aut" value="">
+                        </div>
+                        <div class="col-sm-12">
+                           <label for="hasta" class="col-form-label">Hasta:</label>
+                           <input type="date" id="hasta" class="form-control form-control-sm" name="hasta_aut" value="">
+                        </div>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button class="btn btn-sm btn-success" type="submit">
+                        <span class="bi bi-send-check"></span>&nbsp; Autorizar
+                     </button>
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+   {/if}
+{include="footer"}

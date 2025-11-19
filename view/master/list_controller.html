@@ -1,0 +1,150 @@
+{include="header"}
+
+{if="$gsc->template_top"}
+{include="$gsc->template_top"}
+{else}
+<div class="container-fluid" style="margin-bottom: 10px;">
+    <div class="row">
+        <div class="col-sm-4">
+            <span class="btn-group">
+                <a class="btn btn-sm btn-default" href="{$gsc->url()}" title="Recargar la página">
+                    <i class="bi bi-bootstrap-reboot" aria-hidden="true"></i>
+                </a>
+                {if="$gsc->page->is_default()"}
+                <a class="btn btn-sm btn-default active" href="{$gsc->url()}&amp;default_page=FALSE" title="Marcada como página de inicio (pulsa de nuevo para desmarcar)">
+                    <i class="bi bi-bookmarks" aria-hidden="true"></i>
+                </a>
+                {else}
+                <a class="btn btn-sm btn-default" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio">
+                    <i class="bi bi-bookmarks-fill" aria-hidden="true"></i>
+                </a>
+                {/if}
+            </span>
+            <span class="btn-group">
+                {loop="$gsc->extensions"}
+                {if="$value->type=='button'"}
+                <a href="index.php?page={$value->from}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
+                {/if}
+                {/loop}
+            </span>
+        </div>
+        <div class="col-sm-8 text-end">
+            <span class="h2 text-capitalize">{$gsc->page->folder} / {$gsc->page->title}</span>
+        </div>
+    </div>
+</div>
+{/if}
+
+<ul class="nav nav-tabs">
+    {loop="$gsc->tabs"}
+    {if="$value.name == $gsc->active_tab"}
+    <li role="presentation" class="active">
+        <a href="{$gsc->url()}&tab={$value.name}">
+            <i class="fa {$value.icon} fa-fw" aria-hidden="true"></i>
+            <span class="d-none d-sm-block">{$value.title}</span>
+            <span class="badge">{$gsc->show_numero($value.count, 0)}</span>
+        </a>
+    </li>
+    {else}
+    <li role="presentation">
+        <a href="{$gsc->url()}&tab={$value.name}">
+            <i class="fa {$value.icon} fa-fw" aria-hidden="true"></i>
+            <span class="d-none d-sm-block hidden-sm">{$value.title}</span>
+            <span class="badge">{$gsc->show_numero($value.count, 0)}</span>
+        </a>
+    </li>
+    {/if}
+    {/loop}
+</ul>
+
+<form name="f_custom_search" action="{$gsc->url()}&tab={$gsc->active_tab}" method="post" class="form">
+    <input type="hidden" name="offset" value="{$gsc->offset}"/>
+    <div class="container-fluid" style="margin-top: 15px; margin-bottom: 10px;">
+        <div class="row">
+            {if="count($gsc->get_current_tab('buttons')) > 0"}
+            <div class="col-sm-2">
+                <div class="btn-group">
+                    {loop="$gsc->get_current_tab('buttons')"}
+                    <!--{$icon=''}{if="$value.icon"}{$icon='<i class="fa ' . $value.icon . '" aria-hidden="true"></i>&nbsp; '}{/if}-->
+                    <a href="{$value.link}" target="{$value.target}" id="{$value.id}" class="btn btn-sm {$value.class}">{$icon}{$value.label}</a>
+                    {/loop}
+                </div>
+            </div>
+            {/if}
+            <div class="col-sm-2">
+                <div class="input-group">
+                    <input class="form-control" type="text" name="query" value="{$gsc->query}" autocomplete="off" autofocus="" placeholder="Buscar"/>
+                    <span class="input-group-btn hidden-sm">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+            {loop="$gsc->get_current_tab('filters')"}
+            <div class="col-sm-2">
+                {$value->show()}
+            </div>
+            {/loop}
+            <div class="col-sm-2">
+                <div class="input-group">
+                    <div class="input-group-addon">
+                        <i class="fa fa-sort-amount-asc" aria-hidden="true"></i>
+                    </div>
+                    <select name="sort" class="form-control" onchange="this.form.submit();">
+                        {loop="$gsc->get_current_tab('sort_options')"}
+                        {if="$key==$gsc->sort_option"}
+                        <option value="{$key}" selected="">{$value}</option>
+                        {else}
+                        <option value="{$key}">{$value}</option>
+                        {/if}
+                        {/loop}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                {loop="$gsc->decoration->get_columns($gsc->active_tab)"}
+                <th class="{$value.class}">{$value.title}</th>
+                {/loop}
+            </tr>
+        </thead>
+        {loop="$gsc->get_current_tab('cursor')"}
+        <tr class="{$gsc->decoration->row_class($gsc->active_tab, $value1)}">
+            {loop="$gsc->decoration->get_columns($gsc->active_tab)"}
+            {$gsc->decoration->show($key2, $value2, $value1)}
+            {/loop}
+        </tr>
+        {else}
+        <tr class="warning">
+            <td colspan="20">Sin resultados</td>
+        </tr>
+        {/loop}
+    </table>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <ul class="pagination">
+                {loop="$gsc->get_pagination()"}
+                <li{if="$value.active"} class="active"{/if}>
+                    <a href="#" onclick="document.f_custom_search.offset.value = '{$value.offset}';document.f_custom_search.submit();">{$value.num}</a>
+                </li>
+                {/loop}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{if="$gsc->template_bottom"}
+{include="$gsc->template_bottom"}
+{/if}
+
+{include="footer"}

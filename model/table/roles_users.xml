@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : roles_users.xml
+    Author     : Carlos Garcia Gomez
+    Description:
+        Estructura de la tabla roles_users.
+-->
+<tabla>
+    <columna>
+        <nombre>codrol</nombre>
+        <tipo>character varying(20)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nick</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>roles_users_pkey</nombre>
+        <consulta>PRIMARY KEY (codrol, nick)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>roles_users_roles</nombre>
+        <consulta>FOREIGN KEY (codrol) REFERENCES roles (codrol) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>roles_users_user</nombre>
+        <consulta>FOREIGN KEY (nick) REFERENCES users (nick) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

@@ -1,0 +1,300 @@
+{include="header"}
+   <script type="text/javascript">
+      $(document).ready(function() {
+         
+      });
+
+      function actualizar_plan(idempresa)
+      {
+         $.ajax({
+            url: '{$gsc->url()}',
+            type: "POST",
+            data: {idempresa: idempresa},
+            success: function(data){
+               let datos = JSON.parse(data);
+               if (datos.error == 'T') {
+                  alert(datos.msj);
+               } else {
+                  $("#nom_empresa").html(datos.empresa.razonsocial);
+                  $("#idempresa_plan").val(datos.empresa.idempresa);
+                  $("#fec_inicio_plan").val(datos.empresa.fec_inicio_plan);
+                  $("#fec_caducidad_plan").val(datos.empresa.fec_caducidad_plan);
+                  $("#numusers").val(datos.empresa.numusers);
+                  $("#numdocs").val(datos.empresa.numdocs);
+                  if (datos.empresa.plan_basico) {
+                     $("#plan_basico").attr('checked', true);
+                  } else {
+                     $("#plan_basico").attr('checked', false);
+                  }
+                  console.log(datos.empresa.plan_basico);
+                  $("#modal_actualizar_plan").modal('show');
+               }
+            },
+            error: function(){
+                alert("Error al intentar buscar el articulo!");
+            }
+         });
+      }
+
+      function buscar_historial(idempresa, nombre)
+      {
+         $("#det_historial").empty();
+         $.ajax({
+            url: '{$gsc->url()}',
+            type: "POST",
+            data: {historial_p: idempresa},
+            success: function(data){
+               let datos = JSON.parse(data);
+               if (datos.error == 'T') {
+                  alert(datos.msj);
+               } else {
+                  $("#nom_empresa_hist").html(nombre);
+                  $(datos.historial).each(function(key, value) {
+                     let docs = value.numdocs;
+                     if (value.numdocs == -1) {
+                        docs = 'Ilimitado';
+                     }
+                     let basico = 'No';
+                     if (value.plan_basico) {
+                        basico = 'Si';
+                     }
+                     $("#det_historial").append("<tr>\n\
+                        <td style='text-align: left;'>"+value.nick_creacion+"</td>\n\
+                        <td style='text-align: right;'>"+value.fec_creacion+"</td>\n\
+                        <td style='text-align: left;'>"+value.fec_inicio_plan+"</td>\n\
+                        <td style='text-align: left;'>"+value.fec_caducidad_plan+"</td>\n\
+                        <td style='text-align: right;'>"+value.numusers+"</td>\n\
+                        <td style='text-align: right;'>"+docs+"</td>\n\
+                        <td style='text-align: center;'>"+basico+"</td>\n\
+                     </tr>");
+                  });
+                  $("#modal_historial_plan").modal('show');
+               }
+            },
+            error: function(){
+                alert("Error al intentar buscar el articulo!");
+            }
+         });
+      }
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-bank2" aria-hidden="true"></i>
+               Empresas <span class="badge bg-secondary">{$gsc->cantidad}</span>
+            </h2>
+         </div>
+      </div>
+      <div class="row"><hr></div>
+      <div class="row">
+         <form name="f_buscador" action="{$gsc->page->url()}" method="post" class="form" role="form">
+            <div class="row">
+               <div class="col-sm-6">
+                  <div class="form-group">
+                     <label for="query" class="col-form-label">Buscador:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="query">
+                           <i class="bi bi-search"></i>
+                        </span>
+                        <input class="form-control form-control-sm" type="text" name="query" value="{$gsc->query}" id="query" autocomplete="off" placeholder="Buscador" onchange="this.form.submit()" autofocus=""/>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="desde" class="col-form-label">Fecha Desde:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="desde">
+                           <i class="bi bi-calendar-date-fill"></i>
+                        </span>
+                        <input class="form-control form-control-sm" type="date" name="desde" id="desde" value="{$gsc->desde}" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="hasta" class="col-form-label">Fecha Hasta:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="hasta">
+                           <i class="bi bi-calendar-date-fill"></i>
+                        </span>
+                        <input class="form-control form-control" type="date" name="hasta" id="hasta" value="{$gsc->hasta}" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="row"><br></div>
+            <div class="row">
+               <div class="col-sm-2">
+                  <div class="form-check form-switch">
+                     <input class="form-check-input" type="checkbox" id="vencimiento" name="vencimiento" onchange="this.form.submit()" {if="$gsc->vencimiento"}checked{/if}>
+                     <label class="form-check-label" for="vencimiento">Vencimientos</label>
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th style="text-align: center;">RUC</th>
+                     <th style="text-align: center;">Razon Social</th>
+                     <th style="text-align: center;">Fecha Inicio</th>
+                     <th style="text-align: center;">Fecha Caducidad</th>
+                     <th style="text-align: center;">Num. Usuarios</th>
+                     <th style="text-align: center;">Num. Documentos</th>
+                     <th style="text-align: center;">Acciones</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {loop="$gsc->resultados"}
+                     <tr {if="!$value->plan_activo()"}class="table-danger"{/if}>
+                        <td>{$value->ruc}</td>
+                        <td>{$value->razonsocial}</td>
+                        <td style="text-align: right;">{if="$value->fec_inicio_plan"}{function="date('d-m-Y', strtotime($value->fec_inicio_plan))"}{/if}</td>
+                        <td style="text-align: right;">{if="$value->fec_caducidad_plan"}{function="date('d-m-Y', strtotime($value->fec_caducidad_plan))"}{/if}</td>
+                        <td style="text-align: right;">{$value->count_users()} / {$value->numusers}</td>
+                        <td style="text-align: right;">
+                           {if="$value->numdocs == -1"}
+                              {$value->count_docs()} / &#x221e;
+                           {else}
+                              {$value->count_docs()} / {$value->numdocs}
+                           {/if}
+                        </td>
+                        <td style="text-align: right;">
+                           <div class="btn-group">
+                              <button class="btn btn-sm btn-primary" type="button" onclick="actualizar_plan('{$value->idempresa}')" title="Actualizar plan">
+                                 <span class="bi bi-pen"></span>
+                              </button>
+                              <button class="btn btn-sm btn-warning" type="button" onclick="buscar_historial('{$value->idempresa}', '{$value->razonsocial}')" title="Ver Historial de la Empresa.">
+                                 <span class="bi bi-clock-history"></span>
+                              </button>
+                           </div>
+                        </td>
+                     </tr>
+                  {else}
+                     <tr class="table-warning">
+                        <td colspan="7">Sin Resultados.!</td>
+                     </tr>
+                  {/loop}
+               </tbody>
+            </table>
+         </div>
+      </div>
+      {if="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+         <div class="row"><br></div>
+         <div class="row">
+            <div class="col-sm-12 ">
+               <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+                     {loop="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+                        <li class="page-item {if="$value['actual']"}active{/if}">
+                           <a class="page-link" href="{$value['url']}">{$value['num']}</a>
+                        </li>
+                     {/loop}
+                  </ul>
+               </nav>
+            </div>
+         </div>
+      {/if}
+   </div>
+   <div class="modal" id="modal_actualizar_plan">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+         <div class="modal-content">
+            <form name="f_nuevo_impuesto" class="form" role="form" action="{$gsc->url()}" method="post">
+               <input type="hidden" name="idempresa_plan" id="idempresa_plan">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-pen" aria-hidden="true"></i>&nbsp; Actualizar Plan&nbsp;&nbsp;</h5><span class="badge bg-secondary" id="nom_empresa"></span>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="row">
+                     <div class="col-sm-6">
+                        <label for="fec_inicio_plan" class="col-form-label">Fecha Inicio:</label>
+                        <input type="date" class="form-control form-control-sm" id="fec_inicio_plan" name="fec_inicio_plan" required>
+                     </div>
+                     <div class="col-sm-6">
+                        <label for="fec_caducidad_plan" class="col-form-label">Fecha Caducidad:</label>
+                        <input type="date" class="form-control form-control-sm" id="fec_caducidad_plan" name="fec_caducidad_plan" required>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-6">
+                        <label for="numusers" class="col-form-label">Cant. Usuarios:</label>
+                        <input type="number" class="form-control form-control-sm" id="numusers" name="numusers" minlength="1" placeholder="Cant. Usuarios" required>
+                        <div class="form-check form-switch">
+                           <input class="form-check-input" type="checkbox" id="plan_basico" name="plan_basico">
+                           <label class="form-check-label" for="plan_basico">Plan Básico?</label>
+                        </div>
+                     </div>
+                     <div class="col-sm-6">
+                        <label for="numdocs" class="col-form-label">Cant. Documentos:</label>
+                        <input type="number" class="form-control form-control-sm" id="numdocs" name="numdocs" placeholder="Cant. Documentos" required>
+                        <p>Ubicar (-1) para los planes ilimitados</p>
+                     </div>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+                  <button class="btn btn-sm btn-primary" type="submit">
+                     <span class="bi bi-save2"></span>&nbsp; Guardar
+                  </button>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+   <div class="modal" id="modal_historial_plan">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title"><i class="bi bi-pen" aria-hidden="true"></i>&nbsp; Historial Plan&nbsp;&nbsp;</h5><span class="badge bg-secondary" id="nom_empresa_hist"></span>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+               <table class="table table-hover">
+                  <thead>
+                     <tr>
+                        <th>Usuario</th>
+                        <th>Fecha Creacion</th>
+                        <th>Fecha Inicio</th>
+                        <th>Fecha Caducidad</th>
+                        <th>Cant. Usuarios</th>
+                        <th>Cant. Documentos</th>
+                        <th>Plan Básico?</th>
+                     </tr>
+                  </thead>
+                  <tbody id="det_historial"></tbody>
+               </table>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                  <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+               </button>
+            </div>
+         </div>
+      </div>
+   </div>
+{include="footer"}

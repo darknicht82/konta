@@ -1,0 +1,559 @@
+{include="header"}
+<script type="text/javascript">
+    let mosmenu = "{$gsc->mosmenu}";
+    let url = "{$gsc->url()}";
+    $(document).ready(function() {
+        $("#essubgrupo").click(function(event) {
+            if ($("#essubgrupo").is(':checked')) {
+                $("#div_gr_padre").show('slow');
+                $("#idpadregr").val('');
+                $("#idpadregr").attr('required', true);
+            } else {
+                $("#div_gr_padre").hide('slow');
+                $("#idpadregr").val('');
+                $("#idpadregr").attr('required', false);
+            }
+        });
+        $("#b_nuevo_grupo").click(function(event) {
+            event.preventDefault();
+            $("#essubgrupo").prop('checked', false);
+            $("#idgrupo").val('0');
+            $("#nombre_grupo").val('');
+            $("#div_gr_padre").hide('slow');
+            $("#idpadregr").val('');
+            $("#idpadregr").attr('required', false);
+            $("#modal_grupo").modal('show');
+            document.f_nuevo_grupo.nombre.focus();
+        });
+        $("#essubmarca").click(function(event) {
+            if ($("#essubmarca").is(':checked')) {
+                $("#div_mar_padre").show('slow');
+                $("#idpadremar").val('');
+                $("#idpadremar").attr('required', true);
+            } else {
+                $("#div_mar_padre").hide('slow');
+                $("#idpadremar").val('');
+                $("#idpadremar").attr('required', false);
+            }
+        });
+        $("#b_nueva_marca").click(function(event) {
+            event.preventDefault();
+            $("#essubmarca").prop('checked', false);
+            $("#idmarca").val('0');
+            $("#nombre_marca").val('');
+            $("#div_mar_padre").hide('slow');
+            $("#idpadremar").val('');
+            $("#idpadremar").attr('required', false);
+            $("#modal_marca").modal('show');
+            document.f_nueva_marca.nombre.focus();
+        });
+    });
+
+    function editar_grupo(idgrupo, nombre, idpadre) {
+        let tienepadre = false;
+        if (idpadre != '') {
+            tienepadre = true;
+        }
+        $("#idgrupo").val(idgrupo);
+        $("#nombre_grupo").val(nombre);
+        if (tienepadre) {
+            $("#essubgrupo").prop('checked', true);
+            $("#div_gr_padre").show();
+            $("#idpadregr").attr('required', true);
+            $("#idpadregr").val(idpadre);
+        } else {
+            $("#essubgrupo").prop('checked', false);
+            $("#div_gr_padre").hide();
+            $("#idpadregr").attr('required', false);
+            $("#idpadregr").val('');
+        }
+        $("#modal_grupo").modal('show');
+        document.f_nuevo_grupo.nombre.focus();
+    }
+
+    function eliminar_grupo(idgrupo, nombre)
+    {
+        bootbox.confirm({
+            message: '¿Realmente desea eliminar el Grupo '+nombre+'?',
+            title: '<b>Atención</b>',
+            callback: function(result) {
+                if (result) {
+                    window.location.href = 'index.php?page=configuracion_articulos&del_grupo='+idgrupo;
+                }
+            }
+        });   
+    }
+
+    function tratar_imagen_grupo(idgrupo, nombre, imagen) {
+        $("#nomgr").html(nombre);
+        $("#imagengr").val(idgrupo);
+        if (imagen) {
+            $("#btn_elim_imagen_grupo").show();
+            $("#selec_img_grupo").hide();
+            $("#btn_guardar_imagen_grupo").hide();
+            $("#mostrar_img_grupo").show();
+            var imagen1 = document.getElementById('imagenGrupoModal');
+            imagen1.src = imagen;
+        } else {
+            $("#mostrar_img_grupo").hide();
+            $("#btn_elim_imagen_grupo").hide();
+            $("#selec_img_grupo").show();
+            $("#btn_guardar_imagen_grupo").show();
+        }
+        $("#modal_imagen_grupo").modal('show');
+    }
+
+    function eliminar_imagen_grupo() {
+        let idgrupo = $("#imagengr").val();
+        let nombre = $("#nomgr").html();
+        if ( confirm('¿Está seguro que desea eliminar la Imagen del Grupo '+nombre+'?') ) {
+            window.location.href = url + "&delete_imagen_gr="+idgrupo;
+        }
+    }
+
+    function editar_marca(idmarca, nombre, idpadre) {
+        let tienepadre = false;
+        if (idpadre != '') {
+            tienepadre = true;
+        }
+        $("#idmarca").val(idmarca);
+        $("#nombre_marca").val(nombre);
+        if (tienepadre) {
+            $("#essubmarca").prop('checked', true);
+            $("#div_mar_padre").show();
+            $("#idpadremar").attr('required', true);
+            $("#idpadremar").val(idpadre);
+        } else {
+            $("#essubmarca").prop('checked', false);
+            $("#div_mar_padre").hide();
+            $("#idpadremar").attr('required', false);
+            $("#idpadremar").val('');
+        }
+        $("#modal_marca").modal('show');
+        document.f_nueva_marca.nombre.focus();         
+    }
+
+    function eliminar_marca(idmarca, nombre)
+    {
+        bootbox.confirm({
+            message: '¿Realmente desea eliminar la Marca '+nombre+'?',
+            title: '<b>Atención</b>',
+            callback: function(result) {
+                if (result) {
+                    window.location.href = 'index.php?page=configuracion_articulos&del_marca='+idmarca;
+                }
+            }
+        });   
+    }
+
+    function tratar_imagen_marca(idmarca, nombre, imagen) {
+        $("#nommar").html(nombre);
+        $("#imagenmar").val(idmarca);
+        if (imagen) {
+            $("#btn_elim_imagen_marca").show();
+            $("#selec_img_marca").hide();
+            $("#btn_guardar_imagen_marca").hide();
+            $("#mostrar_img_marca").show();
+            var imagen1 = document.getElementById('imagenMarcaModal');
+            imagen1.src = imagen;
+        } else {
+            $("#mostrar_img_marca").hide();
+            $("#btn_elim_imagen_marca").hide();
+            $("#selec_img_marca").show();
+            $("#btn_guardar_imagen_marca").show();
+        }
+        $("#modal_imagen_marca").modal('show');
+    }
+
+    function eliminar_imagen_marca() {
+        let idmarca = $("#imagenmar").val();
+        let nombre = $("#nommar").html();
+        if ( confirm('¿Está seguro que desea eliminar la Imagen de la Marca '+nombre+'?') ) {
+            window.location.href = url + "&delete_imagen_mar="+idmarca;
+        }
+    }
+
+    if (mosmenu == 1) {
+        function actualizar_menu(idgrupo) {
+            let valor = 0;
+            if ($("#menu_" + idgrupo).is(':checked')) {
+                valor = 1;
+            }
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {
+                    idmenu: idgrupo,
+                    valorp: valor
+                },
+                beforeSend: function() {
+                    $("#esm_" + idgrupo).addClass('bg-warning');
+                    $("#esm_" + idgrupo).html('Guardando....');
+                },
+                success: function(data) {
+                    let datos = JSON.parse(data);
+                    if (datos.error == 'T') {
+                        $("#esm_" + idgrupo).removeClass('bg-warning');
+                        $("#esm_" + idgrupo).html('');
+                        alert(datos.msj);
+                    } else {
+                        $("#esm_" + idgrupo).removeClass('bg-warning');
+                        $("#esm_" + idgrupo).addClass('bg-success');
+                        $("#esm_" + idgrupo).html('Guardado');
+                    }
+                },
+                error: function() {
+                    alert("Error al intentar guardar la Parametrización.");
+                }
+            });
+        }
+    }
+</script>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="btn-group">
+                <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                    <span class="bi bi-bootstrap-reboot">
+                    </span>
+                </a>
+                {if="$gsc->page->is_default()"}
+                <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&default_page=FALSE" title="Desmarcar como página de inicio.">
+                    <i aria-hidden="true" class="bi bi-house-fill">
+                    </i>
+                </a>
+                {else}
+                <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&default_page=TRUE" title="Marcar como página de inicio.">
+                    <i aria-hidden="true" class="bi bi-house">
+                    </i>
+                </a>
+                {/if}
+            </div>
+        </div>
+        <div class="col-sm-6" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+                <i aria-hidden="true" class="bi bi-collection-fill">
+                </i>
+                Configuración de Artículos
+            </h2>
+        </div>
+    </div>
+    <div class="row">
+        <hr/>
+    </div>
+    <div class="row">
+        <br/>
+    </div>
+    <div class="row">
+        <div class="col-sm-5">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h2 style="margin-top: 0px;">
+                        <i aria-hidden="true" class="bi bi-collection-fill">
+                        </i>
+                        Grupos
+                    </h2>
+                </div>
+                <div class="col-sm-6" style="text-align: right;">
+                    <div class="btn-group">
+                        <a class="btn btn-sm btn-info" href="#" id="b_nuevo_grupo">
+                            <span class="bi bi-boxes">
+                            </span>
+                            <span class="d-none d-sm-block">
+                                Nuevo
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="row"><br/></div>
+            <div class="row"><hr/></div>
+            <div class="row">
+               <div class="table-responsive">
+                  <table class="table table-hover">
+                     <thead>
+                        <th>Nombre</th>
+                        {if="$gsc->mosmenu == 1"}
+                            <th>Mostrar en Menú?</th>
+                        {/if}
+                        <th></th>
+                     </thead>
+                     <tbody>
+                        {loop="$gsc->resultados_grupos"}
+                            <tr>
+                                <td>{$value->nivel}{$value->nombre}</td>
+                                {if="$gsc->mosmenu == 1"}
+                                    <td class="text-center">
+                                        {if="!$value->idpadre"}
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="menu_{$value->idgrupo}" {if="$value->menu"}checked{/if} title="Aparece en Menú?" onchange="actualizar_menu('{$value->idgrupo}')" value="{$value->idgrupo}">
+                                                <span class="badge" id="esm_{$value->idgrupo}"></span>
+                                            </div>
+                                        {/if}
+                                    </td>
+                                {/if}
+                                <td class="text-end">
+                                    <div class="btn-group">
+                                        {if="$gsc->allow_modify"}
+                                            <a class="btn btn-sm btn-success" href="#" onclick="tratar_imagen_grupo('{$value->idgrupo}', this.getAttribute('data-texto'), '{$value->imagen}')" data-texto="{$value->nombre}" title="Imagen del Grupo {$value->nombre}">
+                                                <span class="bi bi-card-image"></span>
+                                            </a>
+                                            <a class="btn btn-sm btn-info" href="#" onclick="editar_grupo('{$value->idgrupo}', this.getAttribute('data-texto'), '{$value->idpadre}')" data-texto="{$value->nombre}" title="Editar Grupo {$value->nombre}">
+                                                <span class="bi bi-pencil"></span>
+                                            </a>
+                                        {/if}
+                                        {if="$gsc->allow_delete"}
+                                            <a class="btn btn-sm btn-danger" href="#" onclick="eliminar_grupo('{$value->idgrupo}', this.getAttribute('data-texto'))" data-texto="{$value->nombre}" title="Eliminar Grupo {$value->nombre}">
+                                                <span class="bi bi-trash3"></span>
+                                            </a>
+                                        {/if}
+                                    </div>
+                                </td>
+                            </tr>
+                        {/if}
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+        </div>
+        <div class="col-sm-2">
+        </div>
+        <div class="col-sm-5">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h2 style="margin-top: 0px;">
+                        <i aria-hidden="true" class="bi bi-folder2-open">
+                        </i>
+                        Marcas
+                    </h2>
+                </div>
+                <div class="col-sm-6" style="text-align: right;">
+                    <div class="btn-group">
+                        <a class="btn btn-sm btn-info" href="#" id="b_nueva_marca">
+                            <span class="bi bi-reddit">
+                            </span>
+                            <span class="d-none d-sm-block">
+                                Nueva
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="row"><br/></div>
+            <div class="row"><hr/></div>
+            <div class="row">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <th>Nombre</th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                            {loop="$gsc->resultados_marcas"}
+                            <tr>
+                                <td>{$value->nivel}{$value->nombre}</td>
+                                <td class="text-end">
+                                    <div class="btn-group">
+                                        {if="$gsc->allow_modify"}
+                                            <a class="btn btn-sm btn-success" href="#" onclick="tratar_imagen_marca('{$value->idmarca}', this.getAttribute('data-texto'), '{$value->imagen}')" data-texto="{$value->nombre}" title="Imagen de la Marca {$value->nombre}">
+                                                <span class="bi bi-card-image"></span>
+                                            </a>
+                                            <a class="btn btn-sm btn-info" href="#" onclick="editar_marca('{$value->idmarca}', this.getAttribute('data-texto'), '{$value->idpadre}')" data-texto="{$value->nombre}" title="Editar Marca {$value->nombre}">
+                                                <span class="bi bi-pencil"></span>
+                                            </a>
+                                        {/if}
+                                        {if="$gsc->allow_delete"}
+                                            <a class="btn btn-sm btn-danger" href="#" onclick="eliminar_marca('{$value->idmarca}', this.getAttribute('data-texto'))" data-texto="{$value->nombre}" title="Eliminar Marca {$value->nombre}">
+                                                <span class="bi bi-trash3"></span>
+                                            </a>
+                                        {/if}
+                                    </div>
+                                </td>
+                            </tr>
+                            {/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modal_grupo">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="{$gsc->url()}" class="form" method="post" name="f_nuevo_grupo" role="form">
+                <input id="idgrupo" name="idgrupo" type="hidden" value="0">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i aria-hidden="true" class="bi bi-boxes"></i> Crear Grupo
+                    </h5>
+                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label class="col-form-label" for="nombre_grupo">Nombre Grupo:</label>
+                            <input class="form-control form-control-sm" id="nombre_grupo" maxlength="250" minlength="1" name="nombre" placeholder="Nombre Grupo" required="" type="text">
+                            <div class="form-check form-switch" style="margin-top: 0.5rem;">
+                                <input class="form-check-input" type="checkbox" id="essubgrupo" name="essubgrupo">
+                                <label class="form-check-label" for="essubgrupo">Es Subgrupo</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="div_gr_padre" style="display: none;">
+                        <div class="col-sm-12">
+                            <label class="col-form-label" for="idpadregr">Seleccione el Padre:</label>
+                            <select class="form-select form-select-sm" name="idpadre" id="idpadregr">
+                                <option value="" selected>Seleccione</option>
+                                {loop="$gsc->resultados_grupos"}
+                                    <option value="{$value->idgrupo}">{$value->nivel}{$value->nombre}</option>
+                                {/loop}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group">
+                        {if="$gsc->allow_modify"}
+                            <button class="btn btn-sm btn-primary" type="submit">
+                                <span class="bi bi-save2"></span> Guardar
+                            </button>
+                        {/if}
+                        <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal" type="button">
+                            <span class="bi bi-x-circle-fill"></span> Cerrar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modal_marca">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="{$gsc->url()}" class="form" method="post" name="f_nueva_marca" role="form">
+                <input id="idmarca" name="idmarca" type="hidden" value="0">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i aria-hidden="true" class="bi bi-reddit"></i> Crear Marca
+                    </h5>
+                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label class="col-form-label" for="nombre_marca">Nombre Marca:</label>
+                            <input class="form-control form-control-sm" id="nombre_marca" maxlength="250" minlength="1" name="nombre" placeholder="Nombre Marca" required="" type="text">
+                            <div class="form-check form-switch" style="margin-top: 0.5rem;">
+                                <input class="form-check-input" type="checkbox" id="essubmarca" name="essubmarca">
+                                <label class="form-check-label" for="essubmarca">Es Submarca</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="div_mar_padre" style="display: none;">
+                        <div class="col-sm-12">
+                            <label class="col-form-label" for="idpadremar">Seleccione el Padre:</label>
+                            <select class="form-select form-select-sm" name="idpadre" id="idpadremar">
+                                <option value="" selected>Seleccione</option>
+                                {loop="$gsc->resultados_marcas"}
+                                    <option value="{$value->idmarca}">{$value->nivel}{$value->nombre}</option>
+                                {/loop}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group">
+                        {if="$gsc->allow_modify"}
+                            <button class="btn btn-sm btn-primary" type="submit">
+                                <span class="bi bi-save2"></span> Guardar
+                            </button>
+                        {/if}
+                        <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal" type="button">
+                            <span class="bi bi-x-circle-fill"></span> Cerrar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modal_imagen_grupo">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="{$gsc->url()}" class="form" method="post" name="f_nueva_imagen_grupo" role="form" enctype="multipart/form-data">
+                <input type="hidden" name="imagengr" id="imagengr">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i aria-hidden="true" class="bi bi-reddit"></i> Imagen Grupo <span class="badge bg-secondary" id="nomgr"></span>
+                    </h5>
+                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="display: none;" id="selec_img_grupo">
+                        <div class="col-sm-12">
+                            <label for="imagen_grupo" class="col-form-label">Seleccionar imagen:</label>
+                            <input class="form-control" type="file" name="imagen_grupo" id="imagen_grupo" accept=".jpg, .png" required>
+                        </div>
+                    </div>
+                    <div class="row" style="display: none;" id="mostrar_img_grupo">
+                        <img class="modal-content" id="imagenGrupoModal">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group">
+                        <button style="display: none;" class="btn btn-sm btn-danger" type="button" onclick="eliminar_imagen_grupo()" id="btn_elim_imagen_grupo">
+                            <span class="bi bi-trash"></span>&nbsp; Eliminar Imagen
+                        </button>
+                        <button style="display: none;" class="btn btn-sm btn-success" type="submit" id="btn_guardar_imagen_grupo">
+                            <span class="bi bi-save"></span>&nbsp; Guardar Imagen
+                        </button>
+                        <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal" type="button">
+                            <span class="bi bi-x-circle-fill"></span> Cerrar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modal_imagen_marca">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="{$gsc->url()}" class="form" method="post" name="f_nueva_imagen_marca" role="form" enctype="multipart/form-data">
+                <input type="hidden" name="imagenmar" id="imagenmar">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i aria-hidden="true" class="bi bi-reddit"></i> Imagen Marca <span class="badge bg-secondary" id="nommar"></span>
+                    </h5>
+                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="display: none;" id="selec_img_marca">
+                        <div class="col-sm-12">
+                            <label for="imagen_marca" class="col-form-label">Seleccionar imagen:</label>
+                            <input class="form-control" type="file" name="imagen_marca" id="imagen_marca" accept=".jpg, .png" required>
+                        </div>
+                    </div>
+                    <div class="row" style="display: none;" id="mostrar_img_marca">
+                        <img class="modal-content" id="imagenMarcaModal">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group">
+                        <button style="display: none;" class="btn btn-sm btn-danger" type="button" onclick="eliminar_imagen_marca()" id="btn_elim_imagen_marca">
+                            <span class="bi bi-trash"></span>&nbsp; Eliminar Imagen
+                        </button>
+                        <button style="display: none;" class="btn btn-sm btn-success" type="submit" id="btn_guardar_imagen_marca">
+                            <span class="bi bi-save"></span>&nbsp; Guardar Imagen
+                        </button>
+                        <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal" type="button">
+                            <span class="bi bi-x-circle-fill"></span> Cerrar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{include="footer"}

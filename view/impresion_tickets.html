@@ -1,0 +1,182 @@
+<style type="text/css">
+   @page{
+      margin-top: 10;
+      margin-bottom: 0;
+      margin-right: 10;
+      margin-left: 10; 
+   }
+   * {
+      font-size: {$gsc->sizeticket}px;
+      font-family: 'Times New Roman';
+   }
+
+   th,table {
+      border-top: 1px dashed;
+      border-bottom: 1px dashed;
+      border-collapse: collapse;
+   }
+
+   td.val_detalle {
+      text-align: right;
+   }
+
+   td.val_cierre {
+      text-align: right;
+   }
+   p {
+      word-break: break-all;
+   }
+
+   .linea_iguales {
+      border-top: 1px dashed;
+      border-bottom: 1px dashed;
+      border-collapse: collapse;
+   }
+
+   .linea_inferior {
+      border-bottom: 1px dashed;
+      border-collapse: collapse;
+   }
+
+   td.producto,th.producto {
+      width: 150px;
+      max-width: 150px;
+   }
+
+   td.cantidad,th.cantidad {
+      width: 50px;
+      max-width: 50px;
+      word-break: break-all;
+   }
+
+   td.precio,th.precio {
+      width: 50px;
+      max-width: 50px;
+      word-break: break-all;
+   }
+
+   td.total,th.total {
+      width: 50px;
+      max-width: 50px;
+      word-break: break-all;
+   }
+   .ticket {
+      width: 250px;
+      max-width: 250px;
+   }
+   .centrado {
+      text-align: center;
+      align-content: center;
+   }
+   .justificado {
+      text-align: justify;
+      align-content: justify;
+   }
+
+   @media print {
+      .oculto-impresion,.oculto-impresion * {
+         display: none !important;
+      }
+   }
+</style>
+<script type="text/javascript">
+	var numtickets = 1;
+   	window.onload = imprimir;
+   	window.onafterprint = (event) => {
+         window.close();
+   	};
+   	
+   	function imprimir()
+   	{
+         window.print();
+     	   setTimeout(function () { window.close(); }, 1000);
+   	}
+</script>
+{if="isset($_GET['facturacli'])"}
+   <div id="form_duplicar" class="ticket">
+   	<p class="centrado" style="font-size:{$gsc->sizetit}px">{$gsc->titulo}</p>
+   	<p class="centrado">
+   		{$gsc->datos_empresa}
+   	</p>
+   	<p class="linea_inferior"></p>
+      <p>
+         {$gsc->datos_ticket}
+      </p>
+      <p class="linea_inferior"></p>
+   	<p>
+   		{$gsc->datos_cliente}
+   	</p>
+   	<table>
+   		<thead>
+   			<tr>
+                  <th style="text-align: center; width: 55px; max-width: 55px; word-break: break-all;">Cant.</th>
+                  <th style="text-align: center; width: 70px; max-width: 70px; word-break: break-all">P.Unit</th>
+                  <th style="text-align: center; width: 55px; max-width: 55px; word-break: break-all">Dto.</th>
+                  <th style="text-align: center; width: 70px; max-width: 70px; word-break: break-all">Total</th>
+               </tr>
+   		</thead>
+   		<tbody>
+   			{loop="$gsc->detalle_fac"}
+   				<tr>
+   					<td>{$value->codprincipal}</td>
+   					<td colspan="3">{$value->descripcion}</td>
+   				</tr>
+   				<tr>
+   					<td style="text-align: right; width: 55px; max-width: 55px; word-break: break-all;">{$value->cantidad}</td>
+   	               	<td style="text-align: right; width: 70px; max-width: 70px; word-break: break-all">{$value->pvpunitario}</td>
+   	               	<td style="text-align: right; width: 55px; max-width: 55px; word-break: break-all">{$value->dto}</td>
+   	               	<td style="text-align: right; width: 70px; max-width: 70px; word-break: break-all">{$value->get_total()}</td>
+   	            </tr>
+   			{/loop}
+   		</tbody>
+   	</table>
+   	<p style="text-align: right;">
+         {$gsc->totales}
+      	</p>
+     	<p class="linea_inferior"></p>
+     	<p class="centrado">
+         {$gsc->agradecimiento}
+      </p>
+   </div>
+{elseif="isset($_GET['movimiento'])"}
+   <div id="form_duplicar" class="ticket">
+      <p class="centrado" style="font-size:{$gsc->sizetit}px">{$gsc->titulo}</p>
+      <p class="centrado">
+         {$gsc->datos_empresa}
+      </p>
+      <p class="linea_inferior"></p>
+      <p>
+         {$gsc->datos_ticket}
+      </p>
+      <p class="linea_inferior"></p>
+      <p class="centrado">
+         {$gsc->agradecimiento}
+      </p>
+   </div>
+{elseif="isset($_GET['cierre'])"}
+   <div id="form_duplicar" class="ticket">
+      <p class="centrado" style="font-size:{$gsc->sizetit}px">{$gsc->titulo}</p>
+      <p class="centrado">
+         {$gsc->datos_empresa}
+      </p>
+      <p class="linea_inferior"></p>
+      <p>
+         {$gsc->datos_ticket}
+      </p>
+      <table>
+         <thead>
+            <tr>
+                  <th style="text-align: left; width: 150px; max-width: 150px; word-break: break-all;">Detalle.</th>
+                  <th style="text-align: right; width: 100px; max-width: 100px; word-break: break-all">Valor</th>
+               </tr>
+         </thead>
+         <tbody>
+            {$gsc->datos_cierre}
+         </tbody>
+      </table>
+      <p class="linea_inferior"></p>
+      <p class="centrado">
+         {$gsc->agradecimiento}
+      </p>
+   </div>
+{/if}

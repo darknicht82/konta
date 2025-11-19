@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : configuraciones.xml
+    Author     : Jonathan Guamba
+    Description:
+        Estructura de la tabla configuraciones.
+-->
+<tabla>
+    <columna>
+        <nombre>idconfiguracion</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('parametrizacion_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>mail_user</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>mail_host</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>mail_enc</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>mail_port</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>mail_password</nombre>
+        <tipo>text</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_creacion</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_creacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_modificacion</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_modificacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>configuraciones_pkey</nombre>
+        <consulta>PRIMARY KEY (idconfiguracion)</consulta>
+    </restriccion>
+</tabla>

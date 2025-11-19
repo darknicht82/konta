@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : asientos.xml
+    Author     : Jonathan Guamba
+    Description:
+        Estructura de la tabla asientos.
+-->
+<tabla>
+    <columna>
+        <nombre>idasiento</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('asiento_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>idempresa</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idejercicio</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>tipo</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>numero</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fecha</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>concepto</nombre>
+        <tipo>text</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nombre</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>valor</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>editable</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>false</defecto>
+    </columna>
+    <columna>
+        <nombre>idformapago</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>num_doc</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idfacturaprov</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idpago</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idanticipoprov</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>iddevolucionprov</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idtranspago</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idfacturacli</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idcobro</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idanticipocli</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>iddevolucioncli</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idtranscobro</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idretencion</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idmovimiento</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idregularizacion</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_creacion</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_creacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_modificacion</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_modificacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>asientos_pkey</nombre>
+        <consulta>PRIMARY KEY (idasiento)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_empresa_asientos</nombre>
+        <consulta>FOREIGN KEY (idempresa) REFERENCES empresa (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_ejercicios_asientos</nombre>
+        <consulta>FOREIGN KEY (idejercicio) REFERENCES ejercicios (idejercicio) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_formaspago_asientos</nombre>
+        <consulta>FOREIGN KEY (idformapago) REFERENCES formaspago (idformapago) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_facturasprov_asientos</nombre>
+        <consulta>FOREIGN KEY (idfacturaprov) REFERENCES facturasprov (idfacturaprov) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_cab_pagos_asientos</nombre>
+        <consulta>FOREIGN KEY (idpago) REFERENCES cab_pagos (idpago) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_anticiposprov_asientos</nombre>
+        <consulta>FOREIGN KEY (idanticipoprov) REFERENCES anticiposprov (idanticipoprov) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_cab_devolucion_proveedor_asientos</nombre>
+        <consulta>FOREIGN KEY (iddevolucionprov) REFERENCES cab_devolucion_proveedor (iddevolucionprov) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_trans_pagos_asientos</nombre>
+        <consulta>FOREIGN KEY (idtranspago) REFERENCES trans_pagos (idtranspago) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_facturascli_asientos</nombre>
+        <consulta>FOREIGN KEY (idfacturacli) REFERENCES facturascli (idfacturacli) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_cab_cobros_asientos</nombre>
+        <consulta>FOREIGN KEY (idcobro) REFERENCES cab_cobros (idcobro) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_anticiposcli_asientos</nombre>
+        <consulta>FOREIGN KEY (idanticipocli) REFERENCES anticiposcli (idanticipocli) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_cab_devolucion_cliente_asientos</nombre>
+        <consulta>FOREIGN KEY (iddevolucioncli) REFERENCES cab_devolucion_cliente (iddevolucioncli) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_trans_cobros_asientos</nombre>
+        <consulta>FOREIGN KEY (idtranscobro) REFERENCES trans_cobros (idtranscobro) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_retencionescli_asientos</nombre>
+        <consulta>FOREIGN KEY (idretencion) REFERENCES retencionescli (idretencion) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_movimientos_asientos</nombre>
+        <consulta>FOREIGN KEY (idmovimiento) REFERENCES movimientos (idmovimiento) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_regularizaciones_asientos</nombre>
+        <consulta>FOREIGN KEY (idregularizacion) REFERENCES regularizaciones (idregularizacion) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

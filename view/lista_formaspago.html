@@ -1,0 +1,502 @@
+{include="header"}
+   <script type="text/javascript">
+      let url = "{$gsc->url()}";
+      let activo_cont = 0;
+      {if="complemento_exists('contabilidad')"}
+         activo_cont = 1;
+      {/if}
+      let user_admin = 0;
+      {if="$gsc->user->admin"}
+         user_admin = 1;
+      {/if}
+
+      $(document).ready(function() {
+         $("#b_nuevo_formapago").click(function(event) {
+            event.preventDefault();
+            $("#modal_nuevo_formapago").modal('show');
+            document.f_nuevo_formapago.nombre.focus();
+         });
+         if (user_admin == 1) {
+            $("#b_formapago_sri").click(function(event) {
+               event.preventDefault();
+               lista_fp_sri();
+               $("#modal_formapago_sri").modal('show');
+            });
+         }
+         if (activo_cont == 1) {
+            $("#idsubcformapago").empty().trigger('change').select2({
+               dropdownParent: $('#modal_config_contabilidad'),
+               placeholder: 'Seleccione Subcuenta',
+               minimumInputLength: 3,
+               theme: 'bootstrap-5',
+               allowClear: true
+            });
+            $("#f_config_formapago").submit(function (event) {
+               $("#btn_save_conf").attr('disabled', true);
+               event.preventDefault();
+               $.ajax({
+                  async: false,
+                  url: url,
+                  type: "POST",
+                  data: $(this).serialize(),
+                  success: function(data){
+                     let datos = JSON.parse(data);
+                     if (datos.error == 'T') {
+                        alert(datos.msj);
+                     } else {
+                        alert(datos.msj);
+                        $("#modal_config_contabilidad").modal('hide');
+                     }
+                  },
+                  error: function(){
+                      alert("Error al intentar guardar el Cliente!");
+                  }
+               });
+               $("#btn_save_conf").attr('disabled', false);
+            });
+         }
+      });
+      if (user_admin == 1) {
+         function lista_fp_sri() {
+            $.ajax({
+               url: url+"&actdetsri",
+               type: "POST",
+               success: function(data) {
+                  $("#det_sri").empty();
+                  let datos = JSON.parse(data);
+                  if (datos.error == 'T') {
+                  } else {
+                     $(datos.lineas).each(function(key, value) {
+                        $("#det_sri").append('<tr>\n\
+                           <td>'+value.nombre+'</td>\n\
+                           <td>'+value.codigo+'</td>\n\
+                        </tr>');
+                     });
+                  }
+               }
+            });
+         }
+      }
+      function delete_formapago(idformapago, nombre){
+         event.preventDefault();
+         bootbox.confirm({
+            message: '¿Realmente desea eliminar la Forma de Pago '+nombre+'?',
+            title: '<b>Atención</b>',
+            callback: function(result) {
+               if (result) {
+                  window.location.href = '{$gsc->url()}&delete='+idformapago;
+               }
+            }
+         });
+      }
+      if (activo_cont == 1) {
+         function config_cuentas(idformapago, nombre) {
+            $("#idsubcformapago").empty().trigger('change').select2({
+               dropdownParent: $('#modal_config_contabilidad'),
+               placeholder: 'Seleccione Subcuenta',
+               minimumInputLength: 3,
+               theme: 'bootstrap-5',
+               allowClear: true
+            });
+            $("#idsubcformapago").prop('disabled', true);
+            $("#btn_save_conf").prop('disabled', true);
+            $("#idejercicio").val('');
+            $("#nomfp").html(nombre);
+            $("#idformapago_config").val(idformapago);
+            $("#modal_config_contabilidad").modal('show');
+         }
+
+         function buscar_config() {
+            let idejercicio = $("#idejercicio").val();
+            let idformapago_config = $("#idformapago_config").val();
+            if (idejercicio != '') {
+               $("#idsubcformapago").empty().trigger('change').select2({
+                  dropdownParent: $('#modal_config_contabilidad'),
+                  placeholder: 'Seleccione Subcuenta',
+                  minimumInputLength: 3,
+                  theme: 'bootstrap-5',
+                  allowClear: true
+               });
+               $.ajax({
+                  async: false,
+                  url: url,
+                  type: "POST",
+                  data: {config: idformapago_config, idejercicio: idejercicio},
+                  success: function(data) {
+                     let datos = JSON.parse(data);
+                     if (datos.error == 'T') {
+                        alert(datos.msj);
+                     } else {
+                        if (datos.pagos) {
+                           $('#idsubcformapago').html('').select2({
+                              data: [{id: datos.pagos.id, text: datos.pagos.codigo +" - "+ datos.pagos.nombre}]
+                           });
+                        }
+                        $("#idsubcformapago").select2({
+                           language: {
+                              noResults: function() {
+                                 return "No hay resultado"; 
+                              },
+                              searching: function() {
+                                 return "Buscando...";
+                              },
+                              inputTooShort: function () {
+                                 return "Ingrese al menos 3 caracteres para realizar la busqueda";
+                              },
+                           },
+                           ajax: {
+                              url: url,
+                              dataType: 'json',
+                              delay: 250,
+                              data: function (params) {
+                                 return {
+                                    buscar_subcuenta: params.term,
+                                    ejer: idejercicio
+                                 };
+                              },
+                              processResults: function (data, params) {
+                                 return {
+                                    results: $.map(data, function(obj, index) {
+                                       return { id: obj.id, text: obj.codigo +" - "+ obj.nombre };
+                                    })
+                                 };
+                              },
+                              cache: true
+                           },
+                           dropdownParent: $('#modal_config_contabilidad'),
+                           placeholder: 'Seleccione Subcuenta',
+                           minimumInputLength: 3,
+                           theme: 'bootstrap-5',
+                           allowClear: true
+                        });
+                        $("#btn_save_conf").prop('disabled', false);
+                     }
+                  },
+                  error: function(){
+                     alert("Error al buscar las Configuraciones Contables!");
+                  }
+               });
+               $("#idsubcformapago").prop('disabled', false);
+
+            } else {
+               $("#idsubcformapago").empty().trigger('change').select2({
+                  dropdownParent: $('#modal_config_contabilidad'),
+                  placeholder: 'Seleccione Subcuenta',
+                  minimumInputLength: 3,
+                  theme: 'bootstrap-5',
+                  allowClear: true
+               });
+               $("#idsubcformapago").prop('disabled', true);
+               $("#btn_save_conf").prop('disabled', true);
+            }
+         }
+      }
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+               <a class="btn btn-sm btn-success" href="#" id="b_nuevo_formapago">
+                  <span class="bi bi-plus-square"></span>
+                  <span class="d-none d-sm-block">&nbsp; Nueva</span>
+               </a>
+               {if="$gsc->user->admin"}
+                  <a class="btn btn-sm btn-info" href="#" id="b_formapago_sri">
+                     <span class="bi bi-list-stars"></span>
+                     <span class="d-none d-sm-block">&nbsp; FP SRI</span>
+                  </a>
+               {/if}
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-cash-coin" aria-hidden="true"></i>
+               Formas de Pago
+            </h2>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row"><hr></div>
+      <div class="row">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th>Nombre Forma de Pago</th>
+                     <th>Codigo SRI</th>
+                     {if="$gsc->user->admin"}
+                        <th>Crédito</th>
+                        <th>Nota de Crédito</th>
+                        <th>Retención</th>
+                     {/if}
+                     <th>Compra</th>
+                     <th>Venta</th>
+                     <th>Efectivo</th>
+                     <th>Nro. Doc.</th>
+                     <th>Acciones</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {loop="$gsc->resultados"}
+                     {$x=1}
+                     {if="!$gsc->user->admin"}
+                        {if="$value->escredito || $value->esnc || $value->esreten"}
+                           {$x=0}
+                        {/if}
+                     {/if}
+                     {if="$x==1"}
+                        <form name="f_formaspago" action="{$gsc->page->url()}" method="post" class="form" role="form">
+                           <input type="hidden" name="idformapago" value="{$value->idformapago}">
+                           <tr>
+                              <td><input class="form-control form-control-sm" type="text" name="nombre" value="{$value->nombre}"></td>
+                              <td><input class="form-control form-control-sm" type="text" name="codigosri" value="{$value->codigosri}"></td>
+                              {if="$gsc->user->admin"}
+                                 <td>
+                                    <div class="form-check form-switch">
+                                       <input class="form-check-input" type="checkbox" id="escredito" name="escredito" {if="$value->escredito"}checked{/if}>
+                                    </div>
+                                 </td>
+                                 <td>
+                                    <div class="form-check form-switch">
+                                       <input class="form-check-input" type="checkbox" id="esnc" name="esnc" {if="$value->esnc"}checked{/if}>
+                                    </div>
+                                 </td>
+                                 <td>
+                                    <div class="form-check form-switch">
+                                       <input class="form-check-input" type="checkbox" id="esreten" name="esreten" {if="$value->esreten"}checked{/if}>
+                                    </div>
+                                 </td>
+                              {/if}
+                              <td>
+                                 <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="escompra" name="escompra" {if="$value->escompra"}checked{/if}>
+                                 </div>
+                              </td>
+                              <td>
+                                 <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="esventa" name="esventa" {if="$value->esventa"}checked{/if}>
+                                 </div>
+                              </td>
+                              <td>
+                                 <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="esefec" name="esefec" {if="$value->esefec"}checked{/if}>
+                                 </div>
+                              </td>
+                              <td>
+                                 <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="num_doc" name="num_doc" {if="$value->num_doc"}checked{/if}>
+                                 </div>
+                              </td>
+
+                              <td>
+                                 <div class="btn-group">
+                                    {if="$gsc->allow_modify"}
+                                       <button class="btn btn-sm btn-primary" type="submit">
+                                          <span class="bi bi-save2"></span>
+                                       </button>
+                                    {/if}
+                                    {if="$gsc->allow_delete"}
+                                       <button class="btn btn-sm btn-danger" type="button" onclick="delete_formapago('{$value->idformapago}', '{$value->nombre}')" style="">
+                                          <span class="bi bi-trash3"></span>
+                                       </button>
+                                    {/if}
+                                    {if="complemento_exists('contabilidad')"}
+                                       <a class="btn btn-sm btn-info" onclick="config_cuentas('{$value->idformapago}', '{$value->nombre}')" href="#" title="Configuracion Contable">
+                                          <span class="bi bi-gear-fill"></span>
+                                       </a>
+                                    {/if}
+                                 </div>
+                              </td>
+                           </tr>
+                        </form>
+                     {/if}
+                  {else}
+                     <tr class="table-warning">
+                        <td {if="$gsc->user->admin"}colspan="10"{else}colspan="7"{/if}>Sin Resultados.!</td>
+                     </tr>
+                  {/loop}
+               </tbody>
+            </table>
+         </div>
+      </div>
+   </div>
+   {if="complemento_exists('contabilidad')"}
+      <div class="modal" id="modal_config_contabilidad">
+         <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+               <form name="f_config_formapago" id="f_config_formapago" class="form" action="{$gsc->url()}" method="post">
+                  <input type="hidden" name="idformapago_config" id="idformapago_config">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-gear-fill" aria-hidden="true"></i>&nbsp; Configuracion Contable <span class="badge bg-secondary" id="nomfp"></span></h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="form-group">
+                           <label for="idejercicio" class="col-form-label">Ejercicio:</label>
+                           <select id="idejercicio" name="idejercicio" class="form-select" onchange="buscar_config()" required>
+                              <option value="" selected>Seleccione</option>
+                              {loop="$gsc->ejercicios->all_by_idempresa($gsc->idempresa)"}
+                                 <option value="{$value->idejercicio}">{$value->nombre}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                     </div>
+                     <div class="row"><br></div>
+                     <div class="row">
+                        <div class="table-responsive">
+                           <table class="table table-hover">
+                              <thead>
+                                 <tr>
+                                    <th class="text-center" width="30%">Nombre</th>
+                                    <th class="text-center">Cuenta</th>
+                                 </tr>
+                              </thead>
+                              <tbody>
+                                 <tr>
+                                    <td class="text-end">Cuenta Forma de Pago</td>
+                                    <td>
+                                       <select id="idsubcformapago" name="idsubcformapago" class="form-select form-select-sm" required disabled style="width: 100%"></select>
+                                    </td>
+                                 </tr>
+                              </tbody>
+                           </table>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                     <button class="btn btn-sm btn-primary" type="submit" id="btn_save_conf" disabled>
+                        <span class="bi bi-save2"></span>&nbsp; Guardar
+                     </button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   {/if}
+   <div class="modal" id="modal_nuevo_formapago">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+         <div class="modal-content">
+            <form name="f_nuevo_formapago" class="form" role="form" action="{$gsc->url()}" method="post">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-cash-coin" aria-hidden="true"></i>&nbsp; Crear Forma de Pago</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="row">
+                     <div class="col-sm-8">
+                        <label for="nombre" class="col-form-label">Nombre:</label>
+                        <input type="text" class="form-control form-control-sm" id="nombre" name="nombre" placeholder="Nombre" maxlength="50" required>
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="codigosri" class="col-form-label">Código SRI:</label>
+                        <input type="text" class="form-control form-control-sm" id="codigosri" name="codigosri" placeholder="Código" minlength="1" maxlength="10">
+                     </div>
+                  </div>
+                  <div class="row"><br></div>
+                  <div class="row">
+                     {if="$gsc->user->admin"}
+                        <div class="col-sm-4">
+                           <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="escredito" name="escredito">
+                              <label class="form-check-label" for="escredito">Es crédito</label>
+                           </div>
+                        </div>
+                        <div class="col-sm-4">
+                           <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="esnc" name="esnc">
+                              <label class="form-check-label" for="esnc">Es Nota de Credito</label>
+                           </div>
+                        </div>
+                        <div class="col-sm-4">
+                           <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="esreten" name="esreten">
+                              <label class="form-check-label" for="esreten">Es Retencion</label>
+                           </div>
+                        </div>
+                     {/if}
+                     <div class="col-sm-3">
+                        <div class="form-check form-switch">
+                           <input class="form-check-input" type="checkbox" id="escompra" name="escompra" checked>
+                           <label class="form-check-label" for="escompra">Mostrar en compras</label>
+                        </div>
+                     </div>
+                     <div class="col-sm-3">
+                        <div class="form-check form-switch">
+                           <input class="form-check-input" type="checkbox" id="esventa" name="esventa" checked>
+                           <label class="form-check-label" for="esventa">Mostrar en ventas</label>
+                        </div>
+                     </div>
+                     <div class="col-sm-2">
+                        <div class="form-check form-switch">
+                           <input class="form-check-input" type="checkbox" id="esefec" name="esefec">
+                           <label class="form-check-label" for="esefec">Efectivo?</label>
+                        </div>
+                     </div>
+                     <div class="col-sm-4">
+                        <div class="form-check form-switch">
+                           <input class="form-check-input" type="checkbox" id="num_doc" name="num_doc">
+                           <label class="form-check-label" for="num_doc">Pedir Nro. Transacción?</label>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+                  <button class="btn btn-sm btn-primary" type="submit">
+                     <span class="bi bi-save2"></span>&nbsp; Guardar
+                  </button>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+   {if="$gsc->user->admin"}
+      <div class="modal" id="modal_formapago_sri">
+         <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-building" aria-hidden="true"></i>&nbsp;Formas de Pago SRI</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="table-responsive">
+                     <table class="table table-hover">
+                        <thead>
+                           <tr>
+                              <th>Nombre Forma de Pago</th>
+                              <th>Codigo SRI</th>
+                           </tr>
+                        </thead>
+                        <tbody id="det_sri">
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+               </div>
+            </div>
+         </div>
+      </div>
+   {/if}
+{include="footer"}

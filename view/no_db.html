@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es" class="dark">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>GSC_Systems</title>
+        <meta name="description" content="GSC_Systems"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        {if="file_exists('images/favicon.ico')"}
+        <link rel="shortcut icon" href="{#JG_PATH#}images/favicon.ico" />
+        {else}
+        <link rel="shortcut icon" href="{#JG_PATH#}view/img/favicon.ico" />
+        {/if}
+        <!--Cargo CSS-->
+        <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/simplebar.css"/>
+        <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/perfect-scrollbar.css"/>
+        <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/metisMenu.min.css"/>
+        <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/bootstrap.min.css"/>
+        <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/bootstrap-extended.css"/>
+        <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/style.css"/>
+        <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/icons.css"/>
+        <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/pace.min.css"/>
+        <!--Temas-->
+        <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/dark-theme.css"/>
+        <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/light-theme.css"/>
+        <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/semi-dark.css"/>
+        <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/header-colors.css"/>
+    
+        <!--Cargas de Internet-->
+        <!--link href="https://fonts.googleapis.com/css/lib2?family=Roboto:wght@400;500&display=swap" rel="stylesheet"-->
+        <link rel="stylesheet" href="{#JG_PATH#}view/css/lib/bootstrap-icons.css"/>
+    
+        <!--Cargo JS-->
+        <script src="{#JG_PATH#}view/js/lib/bootstrap.bundle.min.js"></script>
+        <script src="{#JG_PATH#}view/js/lib/jquery.min.js"></script>
+        <script src="{#JG_PATH#}view/js/lib/pace.min.js"></script>
+        <script src="{#JG_PATH#}view/js/lib/simplebar.min.js"></script>
+        <script src="{#JG_PATH#}view/js/lib/metisMenu.min.js"></script>
+        <script src="{#JG_PATH#}view/js/lib/perfect-scrollbar.js"></script>
+    </head>
+    <body class="pace-done">
+        <div class="pace pace-inactive">
+            <div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
+                <div class="pace-progress-inner"></div>
+            </div>
+            <div class="pace-activity"></div>
+        </div>
+        <div class="wrapper">
+            <header class="top-header">
+                {if="$gsc->get_errors()"}
+                   <div class="alert border-0 border-danger border-start border-4 bg-light-danger alert-dismissible fade show py-2">
+                      <div class="d-flex align-items-center">
+                         <div class="fs-3 text-danger"><i class="bi bi-check-circle-fill"></i>
+                         </div>
+                         <div class="ms-3">
+                            <div class="text-danger">
+                               <ul>{loop="$gsc->get_errors()"}<li>{$value}</li>{/loop}</ul>
+                            </div>
+                         </div>
+                      </div>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                   </div>
+                {/if}
+                {if="$gsc->get_messages()"}
+                   <div class="alert border-0 border-success border-start border-4 bg-light-success alert-dismissible fade show py-2">
+                      <div class="d-flex align-items-center">
+                         <div class="fs-3 text-success"><i class="bi bi-check-circle-fill"></i>
+                         </div>
+                         <div class="ms-3">
+                            <div class="text-success">
+                               <ul>{loop="$gsc->get_messages()"}<li>{$value}</li>{/loop}</ul>
+                            </div>
+                         </div>
+                      </div>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                   </div>
+                {/if}
+                {if="$gsc->get_advices()"}
+                   <div class="alert border-0 border-info border-start border-4 bg-light-info alert-dismissible fade show py-2">
+                      <div class="d-flex align-items-center">
+                         <div class="fs-3 text-info"><i class="bi bi-check-circle-fill"></i>
+                         </div>
+                         <div class="ms-3">
+                            <div class="text-info">
+                               <ul>{loop="$gsc->get_advices()"}<li>{$value}</li>{/loop}</ul>
+                            </div>
+                         </div>
+                      </div>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                   </div>
+                {/if}
+            </header>
+            <main class="authentication-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="page-header">
+                                <h1>
+                                    <span class="bi bi-exclamation-triangle-fill"></span> Error
+                                </h1>
+                            </div>
+                            <p class="help-block">
+                                Ha sido imposible conectar a la base de datos.!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h3>
+                                <i class="fa fa-desktop" aria-hidden="true"></i>
+                                Instalado en tu PC...
+                            </h3>
+                            <ul>
+                                <li>
+                                    Se ha desconectado {#JG_DB_TYPE#}. Para solucionarlo debes reiniciar {#JG_DB_TYPE#}.
+                                </li>
+                                <li>
+                                    Has cambiado la contraseña de la base de datos. Para solucionarlo debes volver a poner
+                                    la contraseña original de la base de datos, o bien poner la nueva contraseña en el archivo
+                                    de configuración.
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-6">
+                            <h3>
+                                <i class="fa fa-globe" aria-hidden="true"></i>
+                                Instalado en un hosting...
+                            </h3>
+                            <ul>
+                                <li>
+                                    Se ha bloqueado {#JG_DB_TYPE#}. Contacta con tu proveedor para que lo reinicie.
+                                </li>
+                                <li>
+                                    Has excedido la cuota del hosting. Muchos hostings tienen límites de uso en la base
+                                    de datos, y si los excedes te bloquean.
+                                </li>
+                                <li>Se ha cambiado la contraseña o la configuración de la base de datos.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : lineasregularizaciones.xml
+    Author     : Jonathan Guamba
+    Description:
+        Estructura de la tabla lineasregularizaciones.
+-->
+<tabla>
+    <columna>
+        <nombre>idlinearegularizacion</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('lineasregularizaciones_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>idregularizacion</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idarticulo</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>codprincipal</nombre>
+        <tipo>character varying(100)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>descripcion</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>cantidad</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>nueva_cantidad</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>costo</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>costototal</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>fec_creacion</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_creacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_modificacion</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_modificacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>lineasregularizaciones_pkey</nombre>
+        <consulta>PRIMARY KEY (idlinearegularizacion)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_regularizaciones_lineasregularizaciones</nombre>
+        <consulta>FOREIGN KEY (idregularizacion) REFERENCES regularizaciones (idregularizacion) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_articulos_lineasregularizaciones</nombre>
+        <consulta>FOREIGN KEY (idarticulo) REFERENCES articulos (idarticulo) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

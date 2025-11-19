@@ -1,0 +1,712 @@
+{include="header"}
+{if="$gsc->articulo"}
+   <script type="text/javascript">
+      let impuestos = {function="json_encode(listar_impuestos())"};
+      let idarticulo = {$gsc->articulo->idarticulo};
+      let url = "{$gsc->articulo->url()}";
+      let activo_cont = 0;
+      {if="complemento_exists('contabilidad')"}
+         activo_cont = 1;
+      {/if}
+      let activo_nt = 0;
+      {if="complemento_exists('notasdeventa')"}
+         activo_nt = 1;
+      {/if}
+      let compuesto = 0;
+      {if="complemento_exists('articulos_compuestos')"}
+         compuesto = 1;
+      {/if}
+   </script>
+   <script src="{#JG_PATH#}view/js/inventario/ver_articulo.js"></script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-sm-6">
+                  <div class="btn-group">
+                     <a class="btn btn-sm btn-secondary" href="index.php?page=lista_articulos">
+                        <span class="bi bi-arrow-left"></span>
+                        <span class="d-none d-sm-block">&nbsp; Artículos</span>
+                     </a>
+                     <a class="btn btn-sm btn-dark" href="{$gsc->articulo->url()}" title="recargar la página">
+                        <span class="bi bi-bootstrap-reboot"></span>
+                     </a>
+                     <a class="btn btn-sm btn btn-success" href="index.php?page=lista_articulos#nuevo" title="Nuevo Artículo">
+                        <span class="bi bi-plus"></span>
+                     </a>
+                  </div>
+               </div>
+               <div class="col-sm-6" style="text-align: right;">
+                  <div class="btn-group">
+                     {if="$gsc->allow_delete"}
+                        <a href="#" id="b_eliminar_articulo" class="btn btn-sm btn-danger">
+                           <span class="bi bi-trash3"></span>
+                           <span class="d-none d-sm-block">&nbsp;Eliminar</span>
+                        </a>
+                     {/if}
+                  </div>
+               </div>
+            </div>
+            <hr>
+            <div class="row">
+               <div class="col-sm-12">
+                  <div class="page-header">
+                     <h1>
+                        <i class="bi bi-person-circle" aria-hidden="true"></i>
+                        Artículo <small class="fs-6">{$gsc->articulo->nombre}</small>
+                     </h1>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+               <a class="nav-link active" data-bs-toggle="tab" href="#datos" role="tab" aria-selected="true">
+                  <div class="d-flex align-items-center"> 
+                     <div class="tab-icon"><i class="bi bi-cart"></i></div>
+                     <div class="tab-title">&nbsp;Datos Artículo</div>
+                  </div>
+               </a>
+            </li>
+            <li class="nav-item" role="presentation">
+               <a class="nav-link" data-bs-toggle="tab" href="#imagen" role="tab" aria-selected="true">
+                  <div class="d-flex align-items-center"> 
+                     <div class="tab-icon"><i class="bi bi-image"></i></div>
+                     <div class="tab-title">&nbsp;Imagen</div>
+                  </div>
+               </a>
+            </li>
+            {if="!$gsc->articulo->compuesto"}
+               <li class="nav-item" role="presentation">
+                  <a class="nav-link" data-bs-toggle="tab" href="#stocks" role="tab" aria-selected="true">
+                     <div class="d-flex align-items-center"> 
+                        <div class="tab-icon"><i class="bi bi-basket-fill"></i></div>
+                        <div class="tab-title">&nbsp;Stocks</div>
+                     </div>
+                  </a>
+               </li>
+            {/if}
+            {if="complemento_exists('articulos_compuestos') && $gsc->articulo->compuesto"}
+               <li class="nav-item" role="presentation">
+                  <a class="nav-link" data-bs-toggle="tab" href="#insumos" role="tab" aria-selected="true">
+                     <div class="d-flex align-items-center"> 
+                        <div class="tab-icon"><i class="bi bi-list-nested"></i></div>
+                        <div class="tab-title">&nbsp;Insumos</div>
+                     </div>
+                  </a>
+               </li>
+            {/if}
+            {if="complemento_exists('contabilidad')"}
+               <li class="nav-item" role="presentation">
+                  <a class="nav-link" data-bs-toggle="tab" href="#contabilidad" role="tab" aria-selected="true">
+                     <div class="d-flex align-items-center"> 
+                        <div class="tab-icon"><i class="bi bi-gear-fill"></i></div>
+                        <div class="tab-title">&nbsp;Contabilidad</div>
+                     </div>
+                  </a>
+               </li>
+            {/if}
+            {if="$gsc->paso_um"}
+               <li class="nav-item" role="presentation">
+                  <a class="nav-link" data-bs-toggle="tab" href="#unmed" role="tab" aria-selected="true">
+                     <div class="d-flex align-items-center"> 
+                        <div class="tab-icon"><i class="bi bi-speedometer2"></i></div>
+                        <div class="tab-title">&nbsp;Unidades de Medida</div>
+                     </div>
+                  </a>
+               </li>
+            {/if}
+         </ul>
+         <div class="tab-content py-3">
+            <div class="tab-pane fade active show" id="datos" role="tabpanel">
+               <form class="form" role="form" id="f_articulo" action="{$gsc->articulo->url()}" method="post">
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <label for="codprincipal" class="col-form-label">Código Principal:</label>
+                        <input type="text" class="form-control" id="codprincipal" name="codprincipal" placeholder="Código Principal" value="{$gsc->articulo->codprincipal}" minlength="1" maxlength="100" required>
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="codauxiliar" class="col-form-label">Código Auxiliar:</label>
+                        <input type="text" class="form-control" id="codauxiliar" name="codauxiliar" placeholder="Código Auxiliar" value="{$gsc->articulo->codauxiliar}" minlength="1" maxlength="100">
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="codbarras" class="col-form-label">Código de Barras</label>
+                        <input type="text" class="form-control" id="codbarras" name="codbarras" placeholder="Código de Barras" value="{$gsc->articulo->codbarras}" minlength="1" maxlength="100">
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-6">
+                        <label for="nombre" class="col-form-label">Nombre:</label>
+                        <textarea class="form-control" id="nombre" name="nombre" placeholder="Nombre" minlength="1" maxlength="250" required rows="3">{$gsc->articulo->nombre}</textarea>
+                     </div>
+                     <div class="col-sm-6">
+                        <label for="detalle" class="col-form-label">Detalle:</label>
+                        <textarea class="form-control" id="detalle" name="detalle" placeholder="Detalle" minlength="1" maxlength="250" rows="3">{$gsc->articulo->detalle}</textarea>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-6">
+                        <div class="form-group">
+                           <label for="idgrupo" class="col-form-label">Grupo:</label>
+                           <div class="input-group">
+                              <span class="input-group-text">
+                                 <i class="bi bi-boxes"></i>
+                              </span>
+                              <select class="form-control" name="idgrupo" id="idgrupo">
+                                 <option value="">Seleccione Grupo</option>
+                                 {loop="$gsc->grupos->mostrarGrupos($gsc->user->idempresa)"}
+                                    <option value="{$value->idgrupo}" {if="$gsc->articulo->idgrupo == $value->idgrupo"}selected{/if}>{$value->nivel}{$value->nombre}</option>
+                                 {/loop}
+                              </select>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-sm-6">
+                        <div class="form-group">
+                           <label for="idmarca" class="col-form-label">Marca:</label>
+                           <div class="input-group">
+                              <span class="input-group-text">
+                                 <i class="bi bi-reddit"></i>
+                              </span>
+                              <select class="form-control" name="idmarca" id="idmarca">
+                                 <option value="">Seleccione Marca</option>
+                                 {loop="$gsc->marcas->mostrarMarcas($gsc->user->idempresa)"}
+                                    <option value="{$value->idmarca}" {if="$gsc->articulo->idmarca == $value->idmarca"}selected{/if}>{$value->nivel}{$value->nombre}</option>
+                                 {/loop}
+                              </select>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <label for="stock_art" class="col-form-label">Stock:</label>
+                        <input type="text" class="form-control" id="stock_art" placeholder="Stock" value="{$gsc->articulo->getstock()}" readonly>
+                     </div>
+                     {if="$gsc->paso_um"}
+                        <div class="col-sm-4">
+                           <label for="idunidad" class="col-form-label">Unidad Medida:</label>
+                           <select class="form-select" name="idunidad" id="idunidad" required>
+                              <option value="">Seleccione</option>
+                              {loop="$gsc->unidades->all_by_idempresa($gsc->empresa->idempresa)"}
+                                 <option value="{$value->idunidad}" {if="$gsc->articulo->idunidad == $value->idunidad"} selected{/if}>{$value->nombre}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                     {/if}
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           <label for="controlar_stock" class="col-form-label">Controlar Stock:</label>
+                           <select class="form-control" name="controlar_stock" id="controlar_stock" required>
+                              <option value="0" {if="$gsc->articulo->controlar_stock == 0"} selected{/if}>No</option>
+                              <option value="1" {if="$gsc->articulo->controlar_stock == 1"}selected{/if}>Si</option>
+                           </select>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row"><br></div>
+                  <div class="row"><hr></div>
+                  {if="complemento_exists('facturador') && $gsc->empresa->plan_basico"}
+                  {else}
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <label for="costopromedio" class="col-form-label">
+                              Costo Promedio: {if="$gsc->getTipoCosto() == 'costopromedio'"}<span class="badge bg-primary"> En Uso </span>{/if}
+                           </label>
+                           <div class="input-group">
+                              <input type="text" class="form-control text-end" id="costopromedio" placeholder="Costo Promedio" value="{$gsc->articulo->getCostoPromedio()}" readonly>
+                              <span class="input-group-text" id="costopromedio">
+                                 <i class="bi bi-currency-dollar"></i>
+                              </span>
+                           </div>
+                        </div>
+                        <div class="col-sm-4">
+                           <label for="ultimocosto" class="col-form-label">
+                              Ultimo Costo: {if="$gsc->getTipoCosto() == 'ultimocosto'"}<span class="badge bg-primary"> En Uso </span>{/if}
+                           </label>
+                           <div class="input-group">
+                              <input type="text" class="form-control text-end" id="ultimocosto" placeholder="Ultimo Costo" value="{$gsc->articulo->getUltimoCosto()}" readonly>
+                              <span class="input-group-text" id="ultimocosto">
+                                 <i class="bi bi-currency-dollar"></i>
+                              </span>
+                           </div>
+                        </div>
+                     </div>
+                  {/if}
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <label for="precio_art" class="col-form-label">Precio:</label>
+                        <div class="input-group">
+                           <input type="text" class="form-control text-end" id="precio_art" name="precio" placeholder="Precio" value="{$gsc->articulo->precio}" readonly>
+                           <span class="input-group-text" id="precio_art">
+                              <i class="bi bi-currency-dollar"></i>
+                           </span>
+                        </div>
+                     </div>
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           <label for="impuesto" class="col-form-label">Impuesto:</label>
+                           <div class="input-group">
+                              <span class="input-group-text">
+                                 <i class="bi bi-percent"></i>
+                              </span>
+                              <select class="form-control" name="idimpuesto" id="impuesto" required onchange="calcular_precio()">
+                                 <option value="">Seleccione Impuesto</option>
+                                 {loop="function=listar_impuestos()"}
+                                    <option value="{$value->idimpuesto}" {if="$gsc->articulo->idimpuesto == $value->idimpuesto"}selected{/if}>{$value->nombre}</option>
+                                 {/loop}
+                              </select>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="pvpiva" class="col-form-label">PVP + IVA</label>
+                        <input type="text" class="form-control solo_precios text-end" id="pvpiva" placeholder="PVP + IVA" value="{$gsc->articulo->get_precio_iva()}" minlength="1" required onchange="calcular_precio()">
+                     </div>
+                  </div>
+                  <div class="row"><br></div>
+                  <div class="row">
+                     <div class="col-sm-2">
+                        <div class="form-check form-switch">
+                           <input class="form-check-input" type="checkbox" id="sevende" name="sevende" {if="$gsc->articulo->sevende"}checked{/if} title="Art. para Vender?">
+                           <label class="form-check-label" for="sevende">Art. para Vender?</label>
+                        </div>
+                     </div>
+                     <div class="col-sm-2">
+                        <div class="form-check form-switch">
+                           <input class="form-check-input" type="checkbox" id="secompra" name="secompra" {if="$gsc->articulo->secompra"}checked{/if} title="Art. para Comprar?">
+                           <label class="form-check-label" for="secompra">Art. para Comprar?</label>
+                        </div>
+                     </div>
+                     <div class="col-sm-2">
+                        <div class="form-check form-switch">
+                           <input class="form-check-input" type="checkbox" id="bloqueado" name="bloqueado" {if="$gsc->articulo->bloqueado"}checked{/if} title="Art. Bloqueado?">
+                           <label class="form-check-label" for="bloqueado">Art. Bloqueado?</label>
+                        </div>
+                     </div>
+                     {if="complemento_exists('articulos_compuestos')"}
+                        <div class="col-sm-2">
+                           <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="compuesto" name="compuesto" {if="$gsc->articulo->compuesto"}checked{/if} title="Art. Compuesto?">
+                              <label class="form-check-label" for="compuesto">Art. Compuesto?</label>
+                           </div>
+                        </div>
+                     {/if}
+                     {if="complemento_exists('cuadre_producto')"}
+                        <div class="col-sm-2">
+                           <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="gencuadre" name="gencuadre" {if="$gsc->articulo->gencuadre"}checked{/if} title="Mostrar en Cuadre?">
+                              <label class="form-check-label" for="gencuadre">Mostrar en Cuadre?</label>
+                           </div>
+                        </div>
+                     {/if}
+                  </div>
+                  <div class="row"><br></div>
+                  <div class="row">
+                     <div class="col-sm-12" style="text-align: right;">
+                        <div class="btn-group">
+                           {if="$gsc->allow_modify"}
+                              <button class="btn btn-sm btn-primary" type="submit">
+                                 <span class="bi bi-save"></span>
+                                 <span class="d-none d-sm-block">&nbsp;Guardar</span>
+                              </button>
+                           {/if}
+                        </div>
+                     </div>
+                  </div>
+               </form>
+            </div>
+            <div class="tab-pane fade" id="imagen" role="tabpanel">
+               <div class="container-fluid">
+                  <div class="row" style="text-align: center;">
+                     <div class="col-sm-6">
+                        <form name="f_imagen" action="{$gsc->articulo->url()}" method="post" class="form" enctype="multipart/form-data">
+                           <input type="hidden" name="imagen">
+                           <div class="row">
+                              <label for="imagen_art" class="col-form-label">Seleccionar imagen:</label>
+                              <input class="form-control" type="file" name="imagen_art" id="imagen_art" accept=".jpg, .png" required>
+                           </div>
+                           <div class="row"><br></div>
+                           <div class="row">
+                              <div class="col-sm-12" style="text-align: right;">
+                                 {if="$gsc->articulo->imagen"}
+                                    <button class="btn btn-sm btn-danger" type="button" onclick="eliminar_imagen()">
+                                       <span class="bi bi-trash"></span>&nbsp; Eliminar Imagen
+                                    </button>
+                                 {else}
+                                    <button class="btn btn-sm btn-success" type="submit">
+                                       <span class="bi bi-save"></span>&nbsp; Guardar Imagen
+                                    </button>
+                                 {/if}
+                              </div>
+                           </div>
+                        </form>
+                     </div>
+                     {if="$gsc->articulo->imagen"}
+                        <div class="col-sm-6">
+                           <br>
+                           <div class="card" id="img_imagen">
+                              <div class="card-body">
+                                 <img src="{$gsc->articulo->imagen}" alt="imagentipo" height="500">
+                              </div>
+                           </div>
+                        </div>
+                     {/if}
+                  </div>
+               </div>
+            </div>
+            {if="!$gsc->articulo->compuesto"}
+               <div class="tab-pane fade" id="stocks" role="tabpanel">
+                  <div class="row">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th>Establecimiento</th>
+                                 <th>Ubicacion</th>
+                                 <th>Stock Actual</th>
+                                 <th></th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              {loop="$gsc->stocks->all_by_idarticulo($gsc->articulo->idarticulo)"}
+                                 <form name="f_stock" action="{$gsc->articulo->url()}" method="post" class="form" role="form">
+                                    <input type="hidden" name="idstock" value="{$value->idstock}">
+                                    <tr>
+                                       <td><input class="form-control form-control-sm" type="text" value="{$value->get_establecimiento()}" readonly></td>
+                                       <td><input class="form-control form-control-sm" type="text" name="ubicacion" value="{$value->ubicacion}"></td>
+                                       <td><input class="form-control form-control-sm" type="text" value="{$value->stock}" readonly></td>
+                                       <td>
+                                          <div class="btn-group">
+                                             {if="$gsc->allow_modify"}
+                                                <button class="btn btn-sm btn-primary" type="submit" title="Guardar Cambios">
+                                                   <span class="bi bi-save2"></span>
+                                                </button>
+                                             {/if}
+                                             <button class="btn btn-sm btn-success" type="button" title="Revisar Kardex" onclick="buscar_kardex('{$value->idestablecimiento}')">
+                                                <span class="bi bi-list-columns-reverse"></span>
+                                             </button>
+                                             <button class="btn btn-sm btn-warning" type="button" title="Recalcular Stock del Establecimiento" onclick="recalcular_stock('{$value->idestablecimiento}')">
+                                                <span class="bi bi-reply-all-fill"></span>
+                                             </button>
+                                          </div>
+                                       </td>
+                                    </tr>
+                                 </form>
+                              {else}
+                                 <tr class="table-warning">
+                                    <td colspan="4">Sin Resultados.!</td>
+                                 </tr>
+                              {/loop}
+                           </tbody>
+                        </table>
+                     </div>
+                  </div>
+                  <div class="row"><br></div>
+                  <div class="row"><hr></div>
+                  <div class="row">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th width="20%">Fecha - Hora</th>
+                                 <th width="44%">Documento</th>
+                                 <th width="12%" style="text-align: right;">Ingresos</th>
+                                 <th width="12%" style="text-align: right;">Egresos</th>
+                                 <th width="12%" style="text-align: right;">Saldo</th>
+                              </tr>
+                           </thead>
+                           <tbody id="kardex">
+                           </tbody>
+                           <tfoot id="saldo_kardex">
+                           </tfoot>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            {/if}
+            {if="complemento_exists('articulos_compuestos') && $gsc->articulo->compuesto"}
+               <div class="tab-pane fade" id="insumos" role="tabpanel">
+                  <div class="row">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th class="text-center">Codigo</th>
+                                 <th class="text-center">Descripcion</th>
+                                 <th class="text-center">Cantidad</th>
+                                 <th class="text-center">Costo Unitario</th>
+                                 <th class="text-center">Costo Total</th>
+                                 <th></th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              {loop="$gsc->insumos->all_by_idarticulocomp($gsc->articulo->idarticulo, $gsc->empresa->idempresa)"}
+                                 <!--{$cunit = show_numero2($value->get_articulo()->getCostoArt())}-->
+                                 <!--{$tot = show_numero2($value->get_articulo()->getCostoArt() * $value->cantidad)}-->
+                                 <form name="f_insumos" action="{$gsc->articulo->url()}" method="post" class="form" role="form">
+                                    <input type="hidden" name="idinsumo" value="{$value->idinsumo}">
+                                    <tr>
+                                       <td><a href="{$value->get_articulo()->url()}" target="_blank">{$value->get_articulo()->codprincipal}</a></td>
+                                       <td>{$value->get_articulo()->nombre}</td>
+                                       <td>
+                                          <input class="form-control form-control-sm text-end" type="text" name="cantidad" id="cantidad_ins_{$value->idinsumo}" value="{$value->cantidad}" onblur="calcular_costo_compuesto('{$value->idinsumo}')">
+                                       </td>
+                                       <td>
+                                          <input class="form-control form-control-sm text-end" type="text" id="costuni_ins_{$value->idinsumo}" value="{$cunit}" readonly>
+                                       </td>
+                                       <td>
+                                          <input class="form-control form-control-sm solo_precios text-end" type="text" id="tot_ins_{$value->idinsumo}" value="{$tot}" readonly>
+                                       </td>
+                                       <td>
+                                          <div class="btn-group">
+                                             {if="$gsc->allow_modify"}
+                                                <button class="btn btn-sm btn-primary" type="submit" title="Guardar Cambios">
+                                                   <span class="bi bi-save2"></span>
+                                                </button>
+                                             {/if}
+                                             {if="$gsc->allow_delete"}
+                                                <button class="btn btn-sm btn-danger" type="button" onclick="delete_insumo('{$value->idinsumo}', '{$value->get_articulo()->nombre}')">
+                                                   <span class="bi bi-trash3"></span>
+                                                </button>
+                                             {/if}
+                                          </div>
+                                       </td>
+                                    </tr>
+                                 </form>
+                              {else}
+                                 <tr class="table-warning">
+                                    <td colspan="6">Sin Resultados.!</td>
+                                 </tr>
+                              {/loop}
+                           </tbody>
+                           <tfoot>
+                              <form name="f_insumos" action="{$gsc->articulo->url()}" method="post" class="form" role="form">
+                                 <input type="hidden" name="new_ins">
+                                 <tr>
+                                    <td colspan="2">
+                                       <select class="form-select form-select-sm" name="idarticulo_ins" id="idarticulo_ins" required style="width: 100%">
+                                          <option value="">Seleccione</option>
+                                       </select>
+                                    </td>
+                                    <td>
+                                       <input class="form-control form-control-sm text-end solo_precios" type="text" name="cantidad_ins" id="cantidad_ins" onblur="calcular_costo_compuesto()" value="1" required>
+                                    </td>
+                                    <td>
+                                       <input class="form-control form-control-sm text-end" type="text" id="costuni_ins" value="0.00" readonly>
+                                    </td>
+                                    <td>
+                                       <input class="form-control form-control-sm text-end solo_precios" type="text" id="tot_ins" value="0.00" readonly>
+                                    </td>
+                                    <td>
+                                       <div class="btn-group">
+                                          <button class="btn btn-sm btn-primary" type="submit" title="Guardar Cambios">
+                                             <span class="bi bi-save2"></span>
+                                          </button>
+                                       </div>
+                                    </td>
+                                 </tr>
+                              </form>
+                           </tfoot>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            {/if}
+            {if="complemento_exists('contabilidad')"}
+               <div class="tab-pane fade" id="contabilidad" role="tabpanel">
+                  <form name="f_config_articulo" id="f_config_articulo" class="form" action="{$gsc->articulo->url()}" method="post">
+                     <input type="hidden" name="idarticulo_config" id="idarticulo_config">
+                     <div class="row">
+                        <div class="row">
+                           <div class="form-group">
+                              <label for="idejercicio" class="col-form-label">Ejercicio:</label>
+                              <select id="idejercicio" name="idejercicio" class="form-select" onchange="buscar_config()" required>
+                                 <option value="" selected>Seleccione</option>
+                                 {loop="$gsc->ejercicios->all_by_idempresa($gsc->idempresa)"}
+                                    <option value="{$value->idejercicio}">{$value->nombre}</option>
+                                 {/loop}
+                              </select>
+                           </div>
+                        </div>
+                        <div class="row"><br></div>
+                        <div class="row">
+                           <div class="table-responsive">
+                              <table class="table table-hover">
+                                 <thead>
+                                    <tr>
+                                       <th class="text-center" width="30%">Nombre</th>
+                                       <th class="text-center">Cuenta</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    <tr>
+                                       <td class="text-end">Cuenta de Compras</td>
+                                       <td>
+                                          <select id="idsubccompras" name="idsubccompras" class="form-select" disabled style="width: 100%"></select>
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td class="text-end">Cuenta de Ventas</td>
+                                       <td>
+                                          <select id="idsubcventas" name="idsubcventas" class="form-select" disabled style="width: 100%"></select>
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td class="text-end">Cuenta de Costos de Venta</td>
+                                       <td>
+                                          <select id="idsubccostos" name="idsubccostos" class="form-select" disabled style="width: 100%"></select>
+                                       </td>
+                                    </tr>
+                                    {if="complemento_exists('notasdeventa')"}
+                                       <tr>
+                                          <td class="text-end">Cuenta de Ventas (Notas de Venta)</td>
+                                          <td>
+                                             <select id="idsubcntventas" name="idsubcntventas" class="form-select" disabled style="width: 100%"></select>
+                                          </td>
+                                       </tr>
+                                       <tr>
+                                          <td class="text-end">Cuenta de Costos de Venta (Notas de Venta)</td>
+                                          <td>
+                                             <select id="idsubcntcostos" name="idsubcntcostos" class="form-select" disabled style="width: 100%"></select>
+                                          </td>
+                                       </tr>
+                                    {/if}
+                                 </tbody>
+                              </table>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="row"><br></div>
+                     <div class="row">
+                        <div class="col-sm-12" style="text-align: right;">
+                           <div class="btn-group">
+                              {if="$gsc->allow_modify"}
+                                 <button class="btn btn-sm btn-primary" type="submit" id="btn_save_conf" disabled>
+                                    <span class="bi bi-save"></span>
+                                    <span class="d-none d-sm-block">&nbsp;Guardar</span>
+                                 </button>
+                              {/if}
+                           </div>
+                        </div>
+                     </div>
+                  </form>
+               </div>
+            {/if}
+            {if="$gsc->paso_um"}
+               <div class="tab-pane fade" id="unmed" role="tabpanel">
+                  <div class="row">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th class="text-center">Unidad de Medida</th>
+                                 <th class="text-center">Cantidad</th>
+                                 <th class="text-center">Precio</th>
+                                 <th class="text-center">IVA</th>
+                                 <th class="text-center">Precio + IVA</th>
+                                 <th></th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              {loop="$gsc->art_unidades->all_by_idarticulo($gsc->articulo->idarticulo, $gsc->empresa->idempresa)"}
+                                 <!--{$tot = show_numero2($value->precio * $value->cantidad * (1+($gsc->articulo->get_porcentaje_impuesto()/100)))}-->
+                                 <form name="f_stock" action="{$gsc->articulo->url()}" method="post" class="form" role="form">
+                                    <input type="hidden" name="idartunidad" value="{$value->idartunidad}">
+                                    <tr>
+                                       <td>
+                                          <select class="form-select form-select-sm" name="idunidad" required>
+                                             {loop="$gsc->unidades->all_by_idempresa($gsc->empresa->idempresa)"}
+                                                {if="$value2->idunidad == $value1->idunidad"}
+                                                   <option value="{$value->idunidad}" selected>{$value->nombre}</option>
+                                                {/if}
+                                             {/loop}
+                                          </select>
+                                       </td>
+                                       <td>
+                                          <input class="form-control form-control-sm solo_precios text-end" type="text" name="cantidad" id="cantidad_{$value->idartunidad}" onblur="calcular_total_presentacion('{$value->idartunidad}')" value="{$value->cantidad}">
+                                       </td>
+                                       <td>
+                                          <input class="form-control form-control-sm text-end" type="text" name="precio" id="precio_{$value->idartunidad}" value="{$value->precio}" readonly>
+                                       </td>
+                                       <td>
+                                          <input class="form-control form-control-sm text-end" type="text" id="poriva_{$value->idartunidad}" value="{$gsc->articulo->get_porcentaje_impuesto()}" readonly>
+                                       </td>
+                                       <td>
+                                          <input class="form-control form-control-sm solo_precios text-end" type="text" id="tot_{$value->idartunidad}" value="{$tot}" onblur="calcular_precio_presentacion('{$value->idartunidad}')">
+                                       </td>
+                                       <td>
+                                          <div class="btn-group">
+                                             {if="$gsc->allow_modify"}
+                                                <button class="btn btn-sm btn-primary" type="submit" title="Guardar Cambios">
+                                                   <span class="bi bi-save2"></span>
+                                                </button>
+                                             {/if}
+                                             {if="$gsc->allow_delete"}
+                                                <button class="btn btn-sm btn-danger" type="button" onclick="delete_presentacion('{$value->idartunidad}', '{$value->get_um()}')">
+                                                   <span class="bi bi-trash3"></span>
+                                                </button>
+                                             {/if}
+                                          </div>
+                                       </td>
+                                    </tr>
+                                 </form>
+                              {else}
+                                 <tr class="table-warning">
+                                    <td colspan="6">Sin Resultados.!</td>
+                                 </tr>
+                              {/loop}
+                           </tbody>
+                           <tfoot>
+                              <form name="f_stock" action="{$gsc->articulo->url()}" method="post" class="form" role="form">
+                                 <input type="hidden" name="new_pres">
+                                 <tr>
+                                    <td>
+                                       <select class="form-select form-select-sm" name="idunidad" required>
+                                          <option value="">Seleccione</option>
+                                          {loop="$gsc->unidades->all_by_idempresa($gsc->empresa->idempresa)"}
+                                             <option value="{$value->idunidad}">{$value->nombre}</option>
+                                          {/loop}
+                                       </select>
+                                    </td>
+                                    <td>
+                                       <input class="form-control form-control-sm text-end solo_precios" type="text" name="cantidad" id="cantidad" onblur="calcular_total_presentacion()" value="1">
+                                    </td>
+                                    <td>
+                                       <input class="form-control form-control-sm text-end" type="text" name="precio" id="precio" value="{$gsc->articulo->precio}" readonly>
+                                    </td>
+                                    <td>
+                                       <input class="form-control form-control-sm text-end" type="text" id="poriva" value="{$gsc->articulo->get_porcentaje_impuesto()}" readonly>
+                                    </td>
+                                    <td>
+                                       <input class="form-control form-control-sm text-end solo_precios" type="text" id="tot" value="{$gsc->articulo->get_precio_iva()}" onblur="calcular_precio_presentacion()">
+                                    </td>
+                                    <td>
+                                       <div class="btn-group">
+                                          <button class="btn btn-sm btn-primary" type="submit" title="Guardar Cambios">
+                                             <span class="bi bi-save2"></span>
+                                          </button>
+                                       </div>
+                                    </td>
+                                 </tr>
+                              </form>
+                           </tfoot>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            {/if}
+         </div>
+      </div>
+   </div>
+{else}
+   <div class="thumbnail">
+      <center>
+         <img src="{#JG_PATH#}view/img/fuuu_face.png" alt="fuuuuu"/>
+      </center>
+   </div>
+{/if}
+{include="footer"}

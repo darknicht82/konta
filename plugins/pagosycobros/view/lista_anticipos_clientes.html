@@ -1,0 +1,398 @@
+{include="header"}
+   <script type="text/javascript">
+      let url = "{$gsc->url()}";
+      let allow_modify = 0;
+      {if="$gsc->allow_modify"}
+         allow_modify = 1;
+      {/if}
+      let impresion = "{$gsc->impresion}";
+   </script>
+   <script src="{#JG_PATH#}plugins/pagosycobros/view/js/lista_anticipos_clientes.js?v=2"></script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+               {if="$gsc->allow_modify_cli"}
+               <a class="btn btn-sm btn-warning" href="#" id="b_nuevo_cliente">
+                  <span class="bi bi-person-plus-fill"></span>
+                  <span class="d-none d-sm-block">&nbsp; Nuevo Cliente</span>
+               </a>
+               {/if}
+               {if="$gsc->allow_modify"}
+                  <a class="btn btn-sm btn-success" href="#" id="b_nuevo_anticipo">
+                     <span class="bi bi-bag-plus-fill"></span>
+                     <span class="d-none d-sm-block">&nbsp; Nuevo</span>
+                  </a>
+               {/if}
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-cash" aria-hidden="true"></i>
+               Anticipos de Clientes <span class="badge bg-secondary">{$gsc->cantidad}</span>
+            </h2>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row"><hr></div>
+      <div class="row"><br></div>
+      <div class="row">
+         <form name="f_buscador" action="{$gsc->page->url()}" method="post" class="form" role="form">
+            <div class="row">
+               <div class="col-sm-2">
+                  <div class="form-group">
+                     <label for="query" class="col-form-label">Buscador:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="query">
+                           <i class="bi bi-search"></i>
+                        </span>
+                        <input class="form-control form-control-sm" type="text" name="query" value="{$gsc->query}" id="query" autocomplete="off" placeholder="Buscador" onchange="this.form.submit()" autofocus=""/>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-4">
+                  <label for="b_cliente" class="col-form-label">Cliente:</label>
+                  <select id="b_cliente" name="idcliente2" class="form-select" onchange="this.form.submit()">
+                     {if="$gsc->nom_cliente != ''"}
+                        <option value="{$gsc->idcliente}">{$gsc->nom_cliente}</option>
+                     {/if}
+                  </select>
+               </div>
+               <div class="col-sm-2">
+                  <label for="idformapago" class="col-form-label">Forma de Pago:</label>
+                  <select id="idformapago" name="idformapago" class="form-select" onchange="this.form.submit()">
+                     <option value="">Seleccione</option>
+                     {loop="$gsc->formaspago->allCobros($gsc->idempresa)"}
+                        <option value="{$value->idformapago}" {if="$value->idformapago == $gsc->idformapago"}selected{/if}>{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </div>
+               <div class="col-sm-2">
+                  <div class="form-group">
+                     <label for="desde" class="col-form-label">Fecha Desde:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="desde">
+                           <i class="bi bi-calendar-date-fill"></i>
+                        </span>
+                        <input class="form-control form-control-sm" type="date" name="desde" id="desde" value="{$gsc->desde}" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-2">
+                  <div class="form-group">
+                     <label for="hasta" class="col-form-label">Fecha Hasta:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="hasta">
+                           <i class="bi bi-calendar-date-fill"></i>
+                        </span>
+                        <input class="form-control form-control" type="date" name="hasta" id="hasta" value="{$gsc->hasta}" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="row"><br></div>
+            <div class="row">
+               <div class="col-sm-2">
+                  <div class="form-check form-switch">
+                     <input class="form-check-input" type="checkbox" id="anulados" name="anulados" onchange="this.form.submit()" {if="$gsc->anulados"}checked{/if}>
+                     <label class="form-check-label" for="anulados">Anulados</label>
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th class="text-center">Nro. Anticipo</th>
+                     <th class="text-center">Razón Social</th>
+                     <th class="text-center">Forma de Pago</th>
+                     <th class="text-center">Valor</th>
+                     <th class="text-center">Saldo</th>
+                     <th class="text-center">Fecha Emision</th>
+                     <th class="text-center">Fecha Transacción</th>
+                     <th class="text-center">Estado</th>
+                     <th class="text-center">Acciones</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {loop="$gsc->resultados"}
+                     <tr {if="$value->anulado"}class="table-warning"{/if}>
+                        <td class="text-left">{$value->numero}</td>
+                        <td>{if="$value->getCliente()"}{$value->getCliente()->razonsocial}{else} - {/if}</td>
+                        <td>{$value->get_fp()}</td>
+                        <td class="text-end">{function="show_numero($value->valor)"} $</td>
+                        <td class="text-end">{function="show_numero($value->getSaldo())"} $</td>
+                        <td class="text-end">{$value->fec_emision}</td>
+                        <td class="text-end">{$value->fecha_trans}</td>
+                        <td class="text-end">
+                           {if="$value->anulado"}Anulado{else}Vigente{/if}
+                        </td>
+                        <td>
+                           <div class="btn-group">
+                              <a href="#" id="b_historial_ant" title="Ver Historial" onclick="mostrar_historial('{$value->idanticipocli}')" class="btn btn-sm btn-info">
+                                 <span class="bi bi-card-checklist"></span>
+                              </a>
+                              {if="$gsc->impresion"}
+                                 <a class="btn btn-sm btn-success" target="_blank" href="index.php?page=impresion_ventas&imprimir_anticipo={$value->idanticipocli}" title='Imprimir Anticipo'>
+                                    <span class='bi bi-printer-fill'></span>
+                                 </a>
+                              {/if}
+                              {if="$gsc->allow_delete"}
+                                 <a href="#" id="b_eliminar_anticipo" onclick="eliminar_anticipo('{$value->idanticipocli}', '{$value->numero}')" class="btn btn-sm btn-danger">
+                                    <span class="bi bi-trash3"></span>
+                                 </a>
+                              {/if}
+                           </div>
+                        </td>
+                     </tr>
+                  {else}
+                     <tr class="table-warning">
+                        <td colspan="9">Sin Resultados.!</td>
+                     </tr>
+                  {/loop}
+               </tbody>
+            </table>
+         </div>
+      </div>
+      <div class="modal" id="modal_historial">
+         <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-card-list"></i>&nbsp; Historial del Anticipo</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="table-responsive">
+                     <table class="table table-hover">
+                        <thead>
+                           <tr>
+                              <th style="text-align: center;">Tipo</th>
+                              <th style="text-align: center;">Fecha</th>
+                              <th style="text-align: center;">Forma de Pago</th>
+                              <th style="text-align: center;">Valor</th>
+                              <th style="text-align: center;"></th>
+                           </tr>
+                        </thead>
+                        <tbody id="det_anticipo"></tbody>
+                        <tfoot id="sal_anticipo"></tfoot>
+                     </table>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+               </div>
+            </div>
+         </div>
+      </div>
+      {if="$gsc->allow_modify_cli"}
+         <div class="modal" id="modal_nuevo_cliente">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+               <div class="modal-content">
+                  <form name="f_nuevo_cliente" id="f_nuevo_cliente" class="form" role="form" action="{$gsc->url()}" method="post">
+                     <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-person-plus-fill" aria-hidden="true"></i>&nbsp; Crear Cliente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                     </div>
+                     <div class="modal-body">
+                        <div class="row">
+                           <div class="col-sm-5">
+                              <label for="tipoid" class="col-form-label">Tipo de Identificación:</label>
+                              <select class="form-control form-control-sm" name="tipoid" id="tipoid" onchange="cambio_ident();">
+                                 {loop="function=tiposIdentificacion()"}
+                                    <option value="{$key}" {if="'R' == $key"}selected{/if}>{$value}</option>
+                                 {/if}
+                              </select>
+                           </div>
+                           <div class="col-sm-7">
+                              <div class="form-group">
+                                 <label for="identificacion" class="col-form-label">Nro. Identificación:</label>
+                                 <div class="input-group">
+                                    <input type="text" class="form-control form-control-sm ident" id="identificacion" name="identificacion" placeholder="Nro. Identificación" minlength="13" maxlength="13" required>
+                                    <button class="btn btn-outline-primary" type="button" id="btn_buscarcli" onclick="buscar_cliente()"><i class="bi bi-search"></i></button>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="row">
+                           <div class="col-sm-6">
+                              <label for="razonsocial" class="col-form-label">Razon Social:</label>
+                              <input type="text" class="form-control form-control-sm mayusculas" id="razonsocial" name="razonsocial" placeholder="Razon Social" minlength="1" maxlength="250" required>
+                           </div>
+                           <div class="col-sm-6">
+                              <label for="nombrecomercial" class="col-form-label">Nombre Comercial</label>
+                              <input type="text" class="form-control form-control-sm mayusculas" id="nombrecomercial" name="nombrecomercial" placeholder="Nombre Comercial" minlength="1" maxlength="250">
+                           </div>
+                        </div>
+                        <div class="row">
+                           <div class="col-sm-4">
+                              <label for="telefono" class="col-form-label">Teléfono:</label>
+                              <input type="text" class="form-control form-control-sm solo_numeros" id="telefono" name="telefono" placeholder="Teléfono" minlength="1" maxlength="50" required>
+                           </div>
+                           <div class="col-sm-4">
+                              <label for="celular" class="col-form-label">Celular</label>
+                              <input type="text" class="form-control form-control-sm solo_numeros" id="celular" name="celular" placeholder="Celular" minlength="1" maxlength="50">
+                           </div>
+                           <div class="col-sm-4">
+                              <label for="email" class="col-form-label">Email</label>
+                              <input type="email" class="form-control form-control-sm solo_correos minusculas" id="email" name="email" placeholder="Email" minlength="1" maxlength="150" required>
+                           </div>
+                        </div>
+                        <div class="row">
+                           <div class="col-sm-12">
+                              <label for="direccion" class="col-form-label">Dirección:</label>
+                              <input type="text" class="form-control form-control-sm mayusculas" id="direccion" name="direccion" placeholder="Dirección" minlength="1" maxlength="250" required>
+                           </div>
+                        </div>
+                        <div class="row">
+                           <div class="col-sm-4">
+                              <div class="form-group">
+                                 <label for="regimen" class="col-form-label">Regimén:</label>
+                                 <select class="form-control form-control-sm" name="regimen" id="regimen">
+                                    <option value="">Seleccione Regimen</option>
+                                    {loop="function=regimen()"}
+                                       <option value="{$key}" {if="'GE' == $key"}selected{/if}>{$value}</option>
+                                    {/if}
+                                 </select>
+                              </div>
+                           </div>
+                           <div class="col-sm-8">
+                              <label for="otros" class="col-form-label"></label>
+                              <div class="checkbox">
+                                 <label>
+                                    <input type="checkbox" id="obligado" name="obligado" value="TRUE"/>
+                                    Obligado a llevar Contabilidad
+                                 </label>
+                                 <br>
+                                 <label>
+                                    <input type="checkbox" id="agretencion" name="agretencion" value="TRUE"/>
+                                    Agente de Retención
+                                 </label>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                           <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                        </button>
+                        <button class="btn btn-sm btn-primary" id="btn_guardar_cli" type="submit">
+                           <span class="bi bi-save2"></span>&nbsp; Guardar
+                        </button>
+                     </div>
+                  </form>
+               </div>
+            </div>
+         </div>
+      {/if}
+      {if="$gsc->allow_modify"}
+         <div class="modal" id="modal_nuevo_anticipo">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+               <div class="modal-content">
+                  <form name="f_nuevo_anticipo" id="f_nuevo_anticipo" class="form" role="form" action="{$gsc->url()}" method="post">
+                     <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-person-plus-fill" aria-hidden="true"></i>&nbsp; Nuevo Anticipo de Cliente</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                     </div>
+                     <div class="modal-body">
+                        <div class="row">
+                           <div class="col-sm-12">
+                              <label for="idcliente" class="col-form-label">Cliente:</label>
+                              <select id="idcliente" name="idcliente" class="form-select" required>
+                              </select>
+                           </div>
+                        </div>
+                        <div class="row">
+                           <div class="col-sm-6">
+                              <div class="form-group">
+                                 <label for="fec_emision" class="col-form-label">Fecha de Emisión:</label>
+                                 <input class="form-control form-control-sm" type="date" id="fec_emision" name="fec_emision" required value="{$gsc->today()}">
+                              </div>
+                           </div>
+                           <div class="col-sm-6">
+                              <div class="form-group">
+                                 <label for="valor" class="col-form-label">Valor:</label>
+                                 <input class="form-control form-control-sm solo_precios text-end" type="text" id="valor" required name="valor" value="">
+                              </div>
+                           </div>
+                        </div>
+                        <div class="row">
+                           <div class="col-sm-4">
+                              <div class="form-group">
+                                 <label for="fpselec" class="col-form-label">Forma de Pago:</label>
+                                 <select class="form-select form-select-sm" id="fpselec" name="fpselec" onchange="buscar_fp()" required>
+                                    <option value="" selected>Seleccione</option>
+                                    {loop="$gsc->formaspago->allCobros($gsc->idempresa)"}
+                                       <option value="{$value->idformapago}">{$value->nombre}</option>
+                                    {/loop}
+                                 </select>
+                              </div>
+                           </div>
+                           <div class="col-sm-4">
+                              <div class="form-group">
+                                 <label for="fec_trans" class="col-form-label">Fecha de Transacción:</label>
+                                 <input class="form-control form-control-sm" type="date" id="fec_trans" name="fec_trans" required value="{$gsc->today()}">
+                              </div>
+                           </div>
+                           <div class="col-sm-4">
+                              <div class="form-group">
+                                 <label for="num_doc" class="col-form-label">Número de Documento:</label>
+                                 <input class="form-control form-control-sm solo_numeros text-end" disabled type="text" id="num_doc" required name="num_doc" value="">
+                              </div>
+                           </div>
+                           <div class="col-sm-12">
+                              <div class="form-group">
+                                 <label for="observaciones" class="col-form-label">Observaciones:</label>
+                                 <textarea class="form-control form-control-sm" id="observaciones" name="observaciones" placeholder="Observaciones" maxlength="300"></textarea>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                           <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                        </button>
+                        <button class="btn btn-sm btn-primary" id="btn_guardar_ant" type="submit">
+                           <span class="bi bi-save2"></span>&nbsp; Guardar
+                        </button>
+                     </div>
+                  </form>
+               </div>
+            </div>
+         </div>
+      {/if}
+      {if="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+         <div class="row"><br></div>
+         <div class="row">
+            <div class="col-sm-12 ">
+               <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+                     {loop="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+                        <li class="page-item {if="$value['actual']"}active{/if}">
+                           <a class="page-link" href="{$value['url']}">{$value['num']}</a>
+                        </li>
+                     {/loop}
+                  </ul>
+               </nav>
+            </div>
+         </div>
+      {/if}
+   </div>
+{include="footer"}

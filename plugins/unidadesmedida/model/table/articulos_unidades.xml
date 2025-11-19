@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : articulos_unidades.xml
+    Author     : Jonathan Guamba
+    Description:
+        Estructura de la tabla articulos_unidades.
+-->
+<tabla>
+    <columna>
+        <nombre>idartunidad</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('artunidad_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>idempresa</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idunidad</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idarticulo</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>cantidad</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0.000000</defecto>
+    </columna>
+    <columna>
+        <nombre>precio</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+        <defecto>0.000000</defecto>
+    </columna>
+    <columna>
+        <nombre>fec_creacion</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_creacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_modificacion</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_modificacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>articulos_unidades_pkey</nombre>
+        <consulta>PRIMARY KEY (idartunidad)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_empresa_articulos_unidades</nombre>
+        <consulta>FOREIGN KEY (idempresa) REFERENCES empresa (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_unidades_medida_articulos_unidades</nombre>
+        <consulta>FOREIGN KEY (idunidad) REFERENCES unidades_medida (idunidad) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_articulos_articulos_unidades</nombre>
+        <consulta>FOREIGN KEY (idarticulo) REFERENCES articulos (idarticulo) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

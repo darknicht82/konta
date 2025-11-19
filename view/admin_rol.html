@@ -1,0 +1,225 @@
+{include="header"}
+
+{if="$gsc->rol"}
+<script type="text/javascript">
+   function check_allow_delete(counter)
+   {
+      if( $("#enabled_"+counter).is(':checked') )
+      {
+         $("#allow_delete_"+counter).prop('checked', true);
+         $("#allow_modify_"+counter).prop('checked', true);
+         $("#allow_download_"+counter).prop('checked', true);
+      }
+      else
+      {
+         $("#allow_delete_"+counter).prop('checked', false);
+         $("#allow_modify_"+counter).prop('checked', false);
+         $("#allow_download_"+counter).prop('checked', false);
+      }
+   }
+   $(document).ready(function() {
+      $("#b_eliminar_rol").click(function(event) {
+         event.preventDefault();
+         bootbox.confirm({
+            message: '¿Realmente desea eliminar el rol {$gsc->rol->codrol}?',
+            title: '<b>Atención</b>',
+            callback: function(result) {
+               if (result) {
+                  window.location.href = "index.php?page=lista_usuarios&delete_rol="+encodeURIComponent("{$gsc->rol->codrol}")+"#roles";
+               }
+            }                
+         });
+      });
+
+      $('#marcar_todo_ver').click(function() {
+         var checked = $(this).prop('checked');
+         $("#f_rol_pages input[name='activo[]']").prop('checked', checked);
+      });
+      $('#marcar_todo_modificar').click(function() {
+         var checked = $(this).prop('checked');
+         $("#f_rol_pages input[name='allow_modify[]']").prop('checked', checked);
+      });
+      $('#marcar_todo_eliminar').click(function() {
+         var checked = $(this).prop('checked');
+         $("#f_rol_pages input[name='allow_delete[]']").prop('checked', checked);
+      });
+      $('#marcar_todo_descargar').click(function() {
+         var checked = $(this).prop('checked');
+         $("#f_rol_pages input[name='allow_download[]']").prop('checked', checked);
+      });
+   });
+</script>
+
+<form action="{$gsc->rol->url()}" method="post" class="form" id="f_rol_pages">
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-default" href="index.php?page=lista_usuarios#roles">
+                  <span class="bi bi-arrow-left"></span>
+                  <span class="d-none d-sm-block">&nbsp; Roles</span>
+               </a>
+               <a class="btn btn-sm btn-default" href="{$gsc->rol->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+            </div>
+            <div class="btn-group">
+               {loop="$gsc->extensions"}
+                  {if="$value->type=='button'"}
+                  <a href="index.php?page={$value->from}&codrol={$gsc->rol->codrol}{$value->params}" class="btn btn-sm btn-default">{$value->text}</a>
+                  {/if}
+               {/loop}
+            </div>
+            <a class="btn btn-sm btn-success" href="index.php?page=lista_usuarios#nuevorol" title="Nuevo rol">
+               <span class="bi bi-plus"></span>
+            </a>
+         </div>
+         <div class="col-sm-6 text-end">
+            <div class="btn-group">
+               {if="$gsc->allow_delete"}
+               <a href="#" id="b_eliminar_rol" class="btn btn-sm btn-danger">
+                  <span class="glyphicon glyphicon-trash"></span>
+                  <span class="d-none d-sm-block hidden-sm">&nbsp;Eliminar</span>
+               </a>
+               {/if}
+               <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled=true;this.form.submit();">
+                  <span class="bi bi-save"></span>
+                  <span class="d-none d-sm-block">&nbsp;Guardar</span>
+               </button>
+            </div>
+         </div>
+      </div>
+      <div class="row">
+         <div class="col-sm-12">
+            <div class="page-header">
+               <h1>
+                  <i class="fa fa-address-card-o" aria-hidden="true"></i>
+                  Rol <small>{$gsc->rol->codrol}</small>
+               </h1>
+               <a href="{$gsc->rol->url()}&aplicar=TRUE" class="label label-success">
+                  <i class="fa fa-check" aria-hidden="true"></i> Aplicar
+               </a>
+               &nbsp; pulsa aplicar para regenerar los permisos de los usuarios.
+            </div>
+            <div class="form-group">
+               <input type="text" name="descripcion" value="{$gsc->rol->descripcion}" class="form-control" autocomplete="off"/>
+            </div>
+         </div>
+      </div>
+   </div>
+   <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active">
+         <a href="#autorizar" aria-controls="usuarios" role="tab" data-toggle="tab">
+            <i class="fa fa-check-square" aria-hidden="true"></i>
+            <span class="d-none d-sm-block">&nbsp;Autorizar</span>
+         </a>
+      </li>
+      <li role="presentation">
+         <a href="#usuarios" aria-controls="usuarios" role="tab" data-toggle="tab">
+            <i class="bi bi-person-circles" aria-hidden="true"></i>
+            <span class="d-none d-sm-block">&nbsp;Usuarios</span>
+         </a>
+      </li>
+   </ul>
+   <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="autorizar">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th class="text-left">Página</th>
+                     <th class="text-left">Menú</th>
+                     <th class="text-center">Ver</th>
+                     <th class="text-center">Modificar</th>
+                     <th class="text-center">Eliminar</th>
+                     <th class="text-center">Descargar</th>
+                  </tr>
+               </thead>
+               <tr class="warning">
+                  <td colspan="2"></td>
+                  <td class="text-center" title="Marcar/desmarcar todos">
+                     <input id="marcar_todo_ver" type="checkbox" name="p_ver" value=""/>
+                  </td>
+                  <td class="text-center" title="Marcar/desmarcar todos">
+                     <input id="marcar_todo_modificar" type="checkbox" name="p_modificar" value=""/>
+                  </td>
+                  <td class="text-center" title="Marcar/desmarcar todos">
+                     <input id="marcar_todo_eliminar" type="checkbox" name="p_eliminar" value=""/>
+                  </td>
+                  <td class="text-center" title="Marcar/desmarcar todos">
+                     <input id="marcar_todo_descargar" type="checkbox" name="p_descargar" value=""/>
+                  </td>
+               </tr>
+               {loop="$gsc->all_pages()"}
+                  {if="$value->name != 'admin_home' && $value->name != 'admin_info' && $value->name != 'admin_orden_menu' && $value->name != 'admin_rol' && $value->name != 'lista_usuarios' && $value->name != 'lista_impuestos'"}
+                     <tr>
+                        <td>{$value->name}</td>
+                        <td>
+                           {if="$value->important"}
+                           <span class="glyphicon glyphicon-star"></span> » {$value->title}
+                           {elseif="$value->show_on_menu"}
+                           <span class="text-capitalize">{$value->folder}</span> » {$value->title}
+                           {else}
+                           -
+                           {/if}
+                        </td>
+                        <td class="text-center" title="El usuario tiene permisos para Ver.">
+                           <input type="checkbox" id="activo_{$counter}" name="activo[]" value="{$value->name}" onclick="check_allow_delete('{$counter}')"/>
+                        </td>
+                        <td class="text-center" title="El usuario tiene permisos para Modificar">
+                           <input type="checkbox" id="allow_modify_{$counter}" name="allow_modify[]" value="{$value->name}"/>
+                        </td>
+                        <td class="text-center" title="El usuario tiene permisos para Eliminar.">
+                           <input type="checkbox" id="allow_delete_{$counter}" name="allow_delete[]" value="{$value->name}"/>
+                        </td>
+                        <td class="text-center" title="El usuario tiene permisos para Descargar.">
+                           <input type="checkbox" id="allow_download_{$counter}" name="allow_download[]" value="{$value->name}"/>
+                        </td>
+                     </tr>
+                  {/if}
+               {/loop}
+            </table>
+         </div>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="usuarios">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th width="40"></th>
+                     <th class="text-left">Nick</th>
+                     <th class="text-left">Email</th>
+                     <th class="text-end">Último login</th>
+                  </tr>
+               </thead>
+               {loop="$gsc->all_users()"}
+                  <tr{if="$value->included"} class="success"{/if}>
+                     <td class="text-center">
+                        {if="$value->admin"}
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                        {else}
+                        <input type="checkbox" id="enabled_{$counter}" name="iuser[]" value="{$value->nick}" {if="$value->included"} checked=""{/if}/>
+                        {/if}
+                     </td>
+                     <td>
+                        <a href="{$value->url()}">{$value->nick}</a>
+                        {if="$value->admin"}
+                        &nbsp; <span class="label label-warning">administrador</span>
+                        {/if}
+                     </td>
+                     <td>{$value->email}</td>
+                     <td class="text-end">{$value->show_last_login()}</td>
+                  </tr>
+               {/loop}
+            </table>
+         </div>
+      </div>
+   </div>
+</form>
+{else}
+<div class="thumbnail">
+   <img src="{#JG_PATH#}view/img/fuuu_face.png" alt="fuuuuu"/>
+</div>
+{/if}
+
+{include="footer"}

@@ -1,0 +1,269 @@
+{include="header"}
+   <script type="text/javascript">
+      let url = "{$gsc->url()}";
+   </script>
+   <script src="{#JG_PATH#}view/js/ventas/crear_guia.js?v=2"></script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-secondary" href="index.php?page=lista_guias_remision">
+                  <span class="bi bi-arrow-left"></span>
+                  <span class="d-none d-sm-block">&nbsp; Guias de Remision</span>
+               </a>
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+               <a class="btn btn-sm btn-success" href="#" id="b_nuevo_cliente">
+                  <span class="bi bi-person-plus-fill"></span>
+                  <span class="d-none d-sm-block">&nbsp; Nuevo Cliente</span>
+               </a>
+            </div>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row"><hr></div>
+      <div class="row"><br></div>
+      <div class="row">
+         <form name="f_nueva_guia" id="f_nueva_guia" action="{$gsc->page->url()}" method="post" class="form" role="form">
+            <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+               <div class="card-header">
+                  <h4>
+                     <i class="bi bi-cart-dash-fill" aria-hidden="true"></i>
+                     Nueva Guia
+                  </h4>
+               </div>
+               <div class="card-body">
+                  <div class="row">
+                     <div class="col-sm-6">
+                        <label for="idcliente" class="col-form-label">Cliente:</label>
+                        <select id="idcliente" name="idcliente" class="form-select" required>
+                        </select>
+                     </div>
+                     <div class="col-sm-2">
+                        <label for="fec_emision" class="col-form-label">Fecha Inicio Transporte:</label>
+                        <input type="date" class="form-control" name="fec_emision" value="{$gsc->today()}" placeholder="Fecha de Emisión." required>
+                     </div>
+                     <div class="col-sm-2">
+                        <label for="hora_emision" class="col-form-label">Hora Inicio Transporte:</label>
+                        <input type="time" class="form-control" readonly value="{$gsc->hour()}" placeholder="Hora de Emisión." required>
+                     </div>
+                     <div class="col-sm-2">
+                        <label for="fec_finalizacion" class="col-form-label">Fecha Fin Transporte:</label>
+                        <input type="date" class="form-control" name="fec_finalizacion" value="{$gsc->today()}" placeholder="Fecha Fin Transporte." required>
+                     </div>
+                  </div>
+                  {if="!$gsc->empresa->activafacelec"}
+                     <div class="row">
+                        <div class="col-sm-2">
+                           <label for="establecimiento" class="col-form-label">Nro. Establecimiento:</label>
+                           <input type="text" class="form-control" name="establecimiento" placeholder="Nro. Est." required maxlength="3">
+                        </div>
+                        <div class="col-sm-2">
+                           <label for="ptoemision" class="col-form-label">Pto. Emisión:</label>
+                           <input type="text" class="form-control" name="ptoemision" placeholder="Pto. Emi." required maxlength="3">
+                        </div>
+                        <div class="col-sm-3">
+                           <label for="nrodocumento" class="col-form-label">Nro. Documento:</label>
+                           <input type="text" class="form-control" name="nrodocumento" placeholder="Nro. Doc." required maxlength="9">
+                        </div>
+                        <div class="col-sm-5">
+                           <label for="nro_autorizacion" class="col-form-label">Nro. Autorizacion:</label>
+                           <input type="text" class="form-control" name="nro_autorizacion" placeholder="Nro. Autorización." required maxlength="49" minlength="10">
+                        </div>
+                     </div>
+                  {/if}
+                  <div class="row">
+                     <div class="col-sm-3">
+                        <label for="idestablecimiento" class="col-form-label">Establecimiento:</label>
+                        <select id="idestablecimiento" name="idestablecimiento" class="form-select" required>
+                              <option value="" selected>Seleccione</option>
+                           {loop="$gsc->establecimiento->get_by_idempresa($gsc->empresa->idempresa)"}
+                              <option value="{$value->idestablecimiento}">{$value->nombre}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                     <div class="col-sm-3">
+                        <label for="motivo" class="col-form-label">Motivo Transporte:</label>
+                        <input type="text" class="form-control" name="motivo" value="" placeholder="Motivo Transporte." maxlength="250" required onfocus="this.select();" autocomplete="off">
+                     </div>
+                     <div class="col-sm-2">
+                        <label for="codestablecimiento" class="col-form-label">Establecimiento Destino:</label>
+                        <input type="text" class="form-control" name="codestablecimiento" value="" placeholder="Establecimiento Destino." maxlength="3" onfocus="this.select();" autocomplete="off">
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="ruta" class="col-form-label">Ruta Transporte:</label>
+                        <input type="text" class="form-control" name="ruta" value="" placeholder="Ruta Transporte" maxlength="250" onfocus="this.select();" autocomplete="off">
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-3">
+                        <label for="trasnp" class="col-form-label">Transporte:</label>
+                        <select id="trasnp" class="form-select">
+                        </select>
+                     </div>
+                     <div class="col-sm-2">
+                        <label for="tipoid_trans" class="col-form-label">Tipo de Identificación Trans:</label>
+                        <select class="form-control" name="tipoid_trans" id="tipoid_trans" required>
+                           {loop="function=tiposIdentificacion()"}
+                              {if="$key != 'F'"}
+                              <option value="{$key}" {if="'R' == $key"}selected{/if}>{$value}</option>
+                              {/if}
+                           {/if}
+                        </select>
+                     </div>
+                     <div class="col-sm-2">
+                        <label for="identificacion_trans" class="col-form-label">Identificacion Transportista:</label>
+                        <input type="text" class="form-control" id="identificacion_trans" name="identificacion_trans" value="" placeholder="Identificacion Transportista" maxlength="13" onfocus="this.select();" autocomplete="off" required>
+                     </div>
+                     <div class="col-sm-3">
+                        <label for="razonsocial_trans" class="col-form-label">Nombre Transportista:</label>
+                        <input type="text" class="form-control" id="razonsocial_trans" name="razonsocial_trans" value="" placeholder="Nombre Transportista" required maxlength="250" onfocus="this.select();" autocomplete="off">
+                     </div>
+                     <div class="col-sm-2">
+                        <label for="placa" class="col-form-label">Placa:</label>
+                        <input type="text" class="form-control" name="placa" id="placa" value="" placeholder="Placa" maxlength="10" required onfocus="this.select();" autocomplete="off">
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-5">
+                        <label for="dirpartida" class="col-form-label">Direccion Partida:</label>
+                        <input type="text" class="form-control" name="dirpartida" value="" placeholder="Direccion Partida" maxlength="250" required onfocus="this.select();" autocomplete="off">
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="idfactura_mod" class="col-form-label">Factura Afectada:</label>
+                        <select id="idfactura_mod" name="idfactura_mod" class="form-select"></select>
+                     </div>
+                     <div class="col-sm-3">
+                        <label for="tipo_guia" class="col-form-label">Tipo Guía:</label>
+                        <select id="tipo_guia" name="tipo_guia" class="form-select" required title="Facturada: Impresiòn sin Valores - Al Cobro: Impresiòn con Valores">
+                           <option value="1" selected>Facturada</option>
+                           <option value="2">Al Cobro</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <label for="observaciones" class="col-form-label">Observaciones:</label>
+                        <textarea cols="5" name="observaciones" id="observaciones" class="form-control" maxlength="300"></textarea>
+                     </div>
+                  </div>
+               </div>
+               <div class="card-footer" style="text-align: right;">
+                  <button class="btn btn-primary" type="submit" id="btn_save_guia">
+                     <span class="bi bi-save"></span>
+                     <span class="d-none d-sm-block">&nbsp;Guardar</span>
+                  </button>
+               </div>
+            </div>
+         </form>
+      </div>
+   </div>
+   <div class="modal" id="modal_nuevo_cliente">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+         <div class="modal-content">
+            <form name="f_nuevo_cliente" id="f_nuevo_cliente" class="form" role="form" action="{$gsc->url()}" method="post">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-person-plus-fill" aria-hidden="true"></i>&nbsp; Crear Cliente</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="row">
+                     <div class="col-sm-5">
+                        <label for="tipoid" class="col-form-label">Tipo de Identificación:</label>
+                        <select class="form-control form-control-sm" name="tipoid" id="tipoid" onchange="cambio_ident();">
+                           {loop="function=tiposIdentificacion()"}
+                              <option value="{$key}" {if="'R' == $key"}selected{/if}>{$value}</option>
+                           {/if}
+                        </select>
+                     </div>
+                     <div class="col-sm-7">
+                        <div class="form-group">
+                           <label for="identificacion" class="col-form-label">Nro. Identificación:</label>
+                           <div class="input-group">
+                              <input type="text" class="form-control form-control-sm ident" id="identificacion" name="identificacion" placeholder="Nro. Identificación" minlength="13" maxlength="13" required>
+                              <button class="btn btn-outline-primary" type="button" id="btn_buscarprov" onclick="buscar_cliente()"><i class="bi bi-search"></i></button>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-6">
+                        <label for="razonsocial" class="col-form-label">Razon Social:</label>
+                        <input type="text" class="form-control form-control-sm mayusculas" id="razonsocial" name="razonsocial" placeholder="Razon Social" minlength="1" maxlength="250" required>
+                     </div>
+                     <div class="col-sm-6">
+                        <label for="nombrecomercial" class="col-form-label">Nombre Comercial</label>
+                        <input type="text" class="form-control form-control-sm mayusculas" id="nombrecomercial" name="nombrecomercial" placeholder="Nombre Comercial" minlength="1" maxlength="250">
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <label for="telefono" class="col-form-label">Teléfono:</label>
+                        <input type="text" class="form-control form-control-sm solo_numeros" id="telefono" name="telefono" placeholder="Teléfono" minlength="1" maxlength="50" required>
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="celular" class="col-form-label">Celular</label>
+                        <input type="text" class="form-control form-control-sm solo_numeros" id="celular" name="celular" placeholder="Celular" minlength="1" maxlength="50">
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="email" class="col-form-label">Email</label>
+                        <input type="email" class="form-control form-control-sm solo_correos minusculas" id="email" name="email" placeholder="Email" minlength="1" maxlength="150" required>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <label for="direccion" class="col-form-label">Dirección:</label>
+                        <input type="text" class="form-control form-control-sm mayusculas" id="direccion" name="direccion" placeholder="Dirección" minlength="1" maxlength="250" required>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           <label for="regimen" class="col-form-label">Regimén:</label>
+                           <select class="form-control form-control-sm" name="regimen" id="regimen">
+                              <option value="">Seleccione Regimen</option>
+                              {loop="function=regimen()"}
+                                 <option value="{$key}" {if="'GE' == $key"}selected{/if}>{$value}</option>
+                              {/if}
+                           </select>
+                        </div>
+                     </div>
+                     <div class="col-sm-8">
+                        <label for="otros" class="col-form-label"></label>
+                        <div class="checkbox">
+                           <label>
+                              <input type="checkbox" id="obligado" name="obligado" value="TRUE"/>
+                              Obligado a llevar Contabilidad
+                           </label>
+                           <br>
+                           <label>
+                              <input type="checkbox" id="agretencion" name="agretencion" value="TRUE"/>
+                              Agente de Retención
+                           </label>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+                  <button class="btn btn-sm btn-primary" type="submit">
+                     <span class="bi bi-save2"></span>&nbsp; Guardar
+                  </button>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+{include="footer"}

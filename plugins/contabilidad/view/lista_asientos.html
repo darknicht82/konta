@@ -1,0 +1,182 @@
+{include="header"}
+   <script type="text/javascript">
+      $(document).ready(function() {
+      });
+      function delete_asiento(idasiento, numero){
+         event.preventDefault();
+         bootbox.confirm({
+            message: '¿Realmente desea eliminar el Asiento '+numero+'?',
+            title: '<b>Atención</b>',
+            callback: function(result) {
+               if (result) {
+                  window.location.href = '{$gsc->url()}&delete='+idasiento;
+               }
+            }
+         });
+      }
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+               {if="$gsc->allow_modify"}
+                  <a class="btn btn-sm btn-success" href="#" id="b_nuevo_ejercicio">
+                     <span class="bi bi-calendar-plus"></span>
+                     <span class="d-none d-sm-block">&nbsp; Nuevo</span>
+                  </a>
+               {/if}
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-list-columns-reverse" aria-hidden="true"></i>
+               Asientos Contables <span class="badge bg-secondary">{$gsc->cantidad}</span>
+            </h2>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row"><hr></div>
+      <div class="row">
+         <form name="f_buscador" action="{$gsc->page->url()}" method="post" class="form" role="form">
+            <div class="row">
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="query" class="col-form-label">Buscador:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="query">
+                           <i class="bi bi-search"></i>
+                        </span>
+                        <input class="form-control form-control-sm" type="text" name="query" value="{$gsc->query}" id="query" autocomplete="off" placeholder="Buscador" onchange="this.form.submit()" autofocus=""/>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <label for="tipo" class="col-form-label">Tipo:</label>
+                  <select id="tipo" name="tipo" class="form-select" onchange="this.form.submit()">
+                     <option value="" selected>Seleccione</option>
+                     {loop="$gsc->asientos->getTipos($gsc->idempresa)"}
+                        <option value="{$value.tipo}" {if="$value.tipo == $gsc->tipo"}selected{/if}>{$value.tipo}</option>
+                     {/loop}
+                  </select>
+               </div>
+               <div class="col-sm-2">
+                  <label for="idejercicio" class="col-form-label">Ejercicio:</label>
+                  <select id="idejercicio" name="idejercicio" class="form-select" onchange="this.form.submit()">
+                     <option value="" selected>Seleccione</option>
+                     {loop="$gsc->ejercicios->all_by_idempresa($gsc->idempresa)"}
+                        <option value="{$value->idejercicio}" {if="$value->idejercicio == $gsc->idejercicio"}selected{/if}>{$value->nombre}</option>
+                     {/loop}
+                  </select>
+               </div>
+               <div class="col-sm-2">
+                  <div class="form-group">
+                     <label for="desde" class="col-form-label">Fecha Desde:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="desde">
+                           <i class="bi bi-calendar-date-fill"></i>
+                        </span>
+                        <input class="form-control form-control-sm" type="date" name="desde" id="desde" value="{$gsc->desde}" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-2">
+                  <div class="form-group">
+                     <label for="hasta" class="col-form-label">Fecha Hasta:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="hasta">
+                           <i class="bi bi-calendar-date-fill"></i>
+                        </span>
+                        <input class="form-control form-control" type="date" name="hasta" id="hasta" value="{$gsc->hasta}" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th>Nro. Diario</th>
+                     <th>Ejercicio</th>
+                     <th>Fecha</th>
+                     <th>Tipo</th>
+                     <th>Concepto</th>
+                     <th>Valor</th>
+                     <th>Acciones</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {loop="$gsc->resultados"}
+                     <tr {if="!$value->contabilizado"}class="table-warning"{/if}>
+                        <td>{$value->numero}</td>
+                        <td>{$value->getEjercicio()}</td>
+                        <td>{$value->fecha}</td>
+                        <td>{$value->tipo}</td>
+                        <td>{$value->concepto}</td>
+                        <td>{$value->valor}</td>
+                        <td>
+                           <div class="btn-group">
+                              {if="$gsc->allow_delete"}
+                                 <button class="btn btn-sm btn-danger" type="button" onclick="delete_asiento('{$value->idasiento}', '{$value->numero}')" style="">
+                                    <span class="bi bi-trash3"></span>
+                                 </button>
+                              {/if}
+                           </div>
+                        </td>
+                     </tr>
+                  {else}
+                     <tr class="table-warning">
+                        <td colspan="7">Sin Resultados.!</td>
+                     </tr>
+                  {/loop}
+               </tbody>
+            </table>
+         </div>
+      </div>
+   </div>
+   {if="$gsc->allow_modify"}
+      <div class="modal" id="modal_nuevo_ejercicio">
+         <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+               <form name="f_nuevo_ejercicio" class="form" role="form" action="{$gsc->url()}" method="post">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-hdd-stack-fill" aria-hidden="true"></i>&nbsp; Crear Ejercicio</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <label for="new_numero" class="col-form-label">Nombre:</label>
+                           <input type="number" min="2020" max="2100" step="1" value="{function="date('Y')"}" id="new_numero" name="new_numero" class="form-control solo_numeros text-end"/>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                     <button class="btn btn-sm btn-primary" type="submit">
+                        <span class="bi bi-save2"></span>&nbsp; Crear
+                     </button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   {/if}
+{include="footer"}

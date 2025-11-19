@@ -1,0 +1,266 @@
+{include="header"}
+   <script type="text/javascript">
+      let url = "{$gsc->url()}";
+   </script>
+   <script src="{#JG_PATH#}plugins/contabilidad/view/js/config_contabilidad.js"></script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-gear-fill" aria-hidden="true"></i>
+               Configuraciones Contables
+            </h2>
+         </div>
+      </div>
+      <div class="row"><hr></div>
+      <div class="row">
+         <form name="f_buscador" action="{$gsc->page->url()}" method="post" class="form" role="form">
+            <div class="row">
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="idejercicio" class="col-form-label">Ejercicio:</label>
+                     <select id="idejercicio" name="idejercicio" class="form-select" onchange="this.form.submit()">
+                        <option value="" selected>Seleccione</option>
+                        {loop="$gsc->ejercicios->all_by_idempresa($gsc->idempresa)"}
+                           <option value="{$value->idejercicio}" {if="$value->idejercicio == $gsc->idejercicio"}selected{/if}>{$value->nombre}</option>
+                        {/loop}
+                     </select>
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th>Codigo</th>
+                     <th>Nombre</th>
+                     <th>Configuraciones Generales</th>
+                     <th>Configuración Balances</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {loop="$gsc->resultados"}
+                     <tr>
+                        <td>{$value->codigo}</td>
+                        <td>{$value->nombre}</td>
+                        <td>
+                           {if="$value->tipo == 'SC'"}
+                              {if="substr($value->codigo, 0, 1) == '1'"}
+                                 <div class="row">
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" id="esbanco_{$value->id}" {if="$value->esbanco"}checked{/if} title="Es un Banco?" onchange="actualizar_banco('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="ctaventa">Es un Banco?</label>
+                                          <span class="badge" id="esb_{$value->id}"></span>
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input" type="checkbox" id="escajach_{$value->id}" {if="$value->escajach"}checked{/if} title="Configurar la Cuenta de Caja Chica" onchange="actualizar_cajach('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="ctacliente">Cuenta de Caja Chica?</label>
+                                          <span class="badge" id="escj_{$value->id}"></span>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input cuentascli" type="checkbox" id="ctacliente_{$value->id}" {if="$value->ctacliente"}checked{/if} title="Configurar la Cuenta de Clientes por Defecto" onchange="actualizar_ctacliente('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="ctacliente">Cuenta de Clientes?</label>
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input cuentasantprov" type="checkbox" id="ctaantprov_{$value->id}" {if="$value->ctaantprov"}checked{/if} title="Configurar la Cuenta Anticipo de Proveedores por Defecto" onchange="actualizar_ctaantprov('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="ctaantprov">Cuenta Anticipo de Proveedores?</label>
+                                       </div>
+                                    </div>
+                                 </div>
+                              {elseif="substr($value->codigo, 0, 1) == '2'"}
+                                 <div class="row">
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input cuentasprov" type="checkbox" id="ctaproveedor_{$value->id}" {if="$value->ctaproveedor"}checked{/if} title="Configurar la Cuenta de Proveedores por Defecto" onchange="actualizar_ctaproveedor('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="ctaproveedor">Cuenta de Proveedores?</label>
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input cuentasantcli" type="checkbox" id="ctaantcli_{$value->id}" {if="$value->ctaantcli"}checked{/if} title="Configurar la Cuenta Anticipo de Clientes por Defecto" onchange="actualizar_ctaantcli('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="ctaantcli">Cuenta Anticipo de Clientes?</label>
+                                       </div>
+                                    </div>
+                                 </div>
+                              {elseif="substr($value->codigo, 0, 1) == '3'"}
+                                 <div class="row">
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input cuentasresult" type="checkbox" id="ctaresultado_{$value->id}" {if="$value->ctaresultado"}checked{/if} title="Configurar la Cuenta de Resultados del Ejercicio por Defecto" onchange="actualizar_ctaresultado('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="ctaresultado">Cuenta de Resultados del Ejercicio?</label>
+                                       </div>
+                                    </div>
+                                 </div>
+                              {elseif="substr($value->codigo, 0, 1) == '4'"}
+                                 <div class="row">
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input cuentasventas" type="checkbox" id="ctaventa_{$value->id}" {if="$value->ctaventa"}checked{/if} title="Configurar la Cuenta de Ventas por Defecto" onchange="actualizar_ctaventa('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="ctaventa">Cuenta de Ventas?</label>
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input cuentasdesc" type="checkbox" id="ctadtoventa_{$value->id}" {if="$value->ctadtoventa"}checked{/if} title="Configurar la Cuenta Descuento en Ventas por Defecto" onchange="actualizar_ctadtoventa('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="ctadtoventa">Cuenta Descuento en Ventas?</label>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input cuentasdevol" type="checkbox" id="ctadevolventa_{$value->id}" {if="$value->ctadevolventa"}checked{/if} title="Configurar la Cuenta Devolución en Ventas por Defecto" onchange="actualizar_ctadevolventa('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="ctadevolventa">Cuenta Devolución en Ventas?</label>
+                                       </div>
+                                    </div>
+                                    {if="complemento_exists('notasdeventa')"}
+                                       <div class="col-sm-6">
+                                          <div class="form-check form-switch">
+                                             <input class="form-check-input cuentasnotaventas" type="checkbox" id="ctanotaventa_{$value->id}" {if="$value->ctanotaventa"}checked{/if} title="Configurar la Cuenta de Ventas por Defecto" onchange="actualizar_ctanotaventa('{$value->id}')" value="{$value->id}">
+                                             <label class="form-check-label" for="ctanotaventa">Cuenta de Ventas (NV)?</label>
+                                          </div>
+                                       </div>
+                                    {/if}
+                                 </div>
+                              {/if}
+                              {if="substr($value->codigo, 0, 1) != '3' && substr($value->codigo, 0, 1) != '2' && substr($value->codigo, 0, 1) != '4'"}
+                                 <div class="row">
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input cuentascompras" type="checkbox" id="ctacompra_{$value->id}" {if="$value->ctacompra"}checked{/if} title="Configurar la Cuenta de Compras por Defecto" onchange="actualizar_ctacompra('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="ctacompra">Cuenta de Compras?</label>
+                                       </div>
+                                    </div>
+                                    {if="substr($value->codigo, 0, 1) == '5' || substr($value->codigo, 0, 1) == '6'"}
+                                       <div class="col-sm-6">
+                                          <div class="form-check form-switch">
+                                             <input class="form-check-input cuentascostos" type="checkbox" id="ctacostos_{$value->id}" {if="$value->ctacostos"}checked{/if} title="Configurar la Cuenta de Costos de Venta por Defecto" onchange="actualizar_ctacostos('{$value->id}')" value="{$value->id}">
+                                             <label class="form-check-label" for="ctacostos">Cuenta de Costos de Venta?</label>
+                                          </div>
+                                       </div>
+                                       {if="complemento_exists('notasdeventa')"}
+                                          <div class="col-sm-6">
+                                             <div class="form-check form-switch">
+                                                <input class="form-check-input cuentasnotacostos" type="checkbox" id="ctanotacostos_{$value->id}" {if="$value->ctanotacostos"}checked{/if} title="Configurar la Cuenta de Ventas por Defecto" onchange="actualizar_ctanotacostos('{$value->id}')" value="{$value->id}">
+                                                <label class="form-check-label" for="ctanotacostos">Cuenta de Costos de Venta (NV)?</label>
+                                             </div>
+                                          </div>
+                                       {/if}
+                                    {/if}
+                                 </div>
+                              {/if}
+                           {/if}
+                        </td>
+                        <td>
+                           {if="$value->tipo == 'G' || $value->tipo == 'SG'"}
+                              {if="substr($value->codigo, 0, 1) != '1' && substr($value->codigo, 0, 1) != '2' && substr($value->codigo, 0, 1) != '3'"}
+                                 <div class="row">
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input cuentasing" type="checkbox" id="ingresos_{$value->id}" {if="$value->ingresos"}checked{/if} title="Grupo de Ingresos?" onchange="actualizar_ingresos('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="ingresos">Ingresos?</label>
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input cuentasingnop" type="checkbox" id="ingresosnop_{$value->id}" {if="$value->ingresosnop"}checked{/if} title="Grupo de Ingresos No Operaciones?" onchange="actualizar_ingresosnop('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="ingresosnop">Ingresos No Operaciones?</label>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input cuentascostos" type="checkbox" id="costos_{$value->id}" {if="$value->costos"}checked{/if} title="Grupo de Costos?" onchange="actualizar_costos('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="costos">Costos?</label>
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input cuentasgastos" type="checkbox" id="gastos_{$value->id}" {if="$value->gastos"}checked{/if} title="Grupo de Gastos?" onchange="actualizar_gastos('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="gastos">Gastos?</label>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-sm-12">
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input cuentasegrnop" type="checkbox" id="egresosnop_{$value->id}" {if="$value->egresosnop"}checked{/if} title="Grupo de Egresos No Operacionales?" onchange="actualizar_egresosnop('{$value->id}')" value="{$value->id}">
+                                          <label class="form-check-label" for="egresosnop">Egresos No Operacionales?</label>
+                                       </div>
+                                    </div>
+                                 </div>
+                              {/if}
+                           {/if}
+                        </td>
+                     </tr>
+                  {else}
+                     <tr class="table-warning">
+                        <td colspan="4">Sin Resultados.!</td>
+                     </tr>
+                  {/loop}
+               </tbody>
+            </table>
+         </div>
+      </div>
+   </div>
+   {if="$gsc->allow_modify"}
+      <div class="modal" id="modal_nuevo_ejercicio">
+         <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+               <form name="f_nuevo_ejercicio" class="form" role="form" action="{$gsc->url()}" method="post">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-hdd-stack-fill" aria-hidden="true"></i>&nbsp; Crear Ejercicio</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <label for="new_numero" class="col-form-label">Nombre:</label>
+                           <input type="number" min="2020" max="2100" step="1" value="{function="date('Y')"}" id="new_numero" name="new_numero" class="form-control solo_numeros text-end"/>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                     <button class="btn btn-sm btn-primary" type="submit">
+                        <span class="bi bi-save2"></span>&nbsp; Crear
+                     </button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   {/if}
+{include="footer"}

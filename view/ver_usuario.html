@@ -1,0 +1,381 @@
+{include="header"}
+   {if="$gsc->suser"}
+      <script type="text/javascript">
+         $(document).ready(function() {
+            $("#b_eliminar_usuario").click(function(event) {
+               event.preventDefault();
+               bootbox.confirm({
+                  message: '¿Realmente desea eliminar el usuario?',
+                  title: '<b>Atención</b>',
+                  callback: function(result) {
+                     if (result) {
+                        window.location.href = 'index.php?page=lista_usuarios&delete={$gsc->suser->nick}';
+                     }
+                  }
+               });
+            });
+            $('#marcar_todo_ver').click(function() {
+               var checked = $(this).prop('checked');
+               $("#f_usuario input[name='activo[]']").prop('checked', checked);
+            });
+            $('#marcar_todo_modificar').click(function() {
+               var checked = $(this).prop('checked');
+               $("#f_usuario input[name='allow_modify[]']").prop('checked', checked);
+            });
+            $('#marcar_todo_eliminar').click(function() {
+               var checked = $(this).prop('checked');
+               $("#f_usuario input[name='allow_delete[]']").prop('checked', checked);
+            });
+            $('#marcar_todo_descargar').click(function() {
+               var checked = $(this).prop('checked');
+               $("#f_usuario input[name='allow_download[]']").prop('checked', checked);
+            });
+            {if="complemento_exists('juntadeagua') && ($gsc->user->admin || $gsc->user->supervisor)"}
+               $("#idcliente").select2({
+                  language: {
+                     noResults: function() {
+                        return "No hay resultado"; 
+                     },
+                     searching: function() {
+                        return "Buscando...";
+                     },
+                     inputTooShort: function () {
+                        return "Ingrese al menos 3 caracteres para realizar la busqueda";
+                     },
+                  },
+                  ajax: {
+                     url: "{$gsc->url()}",
+                     dataType: 'json',
+                     delay: 250,
+                     data: function (params) {
+                        return {
+                           buscar_cliente: params.term
+                        };
+                     },
+                     processResults: function (data, params) {
+                        return {
+                           results: $.map(data, function(obj, index) {
+                              return { id: obj.idcliente, text: obj.identificacion +" - "+ obj.razonsocial };
+                           })
+                        };
+                     },
+                     cache: true
+                  },
+                  placeholder: 'Buscar Cliente',
+                  minimumInputLength: 3,
+                  theme: 'bootstrap-5',
+                  allowClear: true
+               });
+            {/if}
+         });
+
+         function check_allow_delete(counter)
+         {
+            if( $("#activo_"+counter).is(':checked') )
+            {
+               $("#allow_delete_"+counter).prop('checked', true);
+               $("#allow_modify_"+counter).prop('checked', true);
+               $("#allow_download_"+counter).prop('checked', true);
+            }
+            else
+            {
+               $("#allow_delete_"+counter).prop('checked', false);
+               $("#allow_modify_"+counter).prop('checked', false);
+               $("#allow_download_"+counter).prop('checked', false);
+            }
+         }
+      </script>
+      <div class="container-fluid">
+         <form class="form" role="form" id="f_usuario" action="{$gsc->url()}" method="post">
+            <div class="row">
+               <input type="hidden" name="modupages" value="TRUE"/>
+               <div class="container-fluid">
+                  <div class="row">
+                     <div class="col-sm-6">
+                        <div class="btn-group">
+                           {if="$gsc->user->admin || $gsc->user->supervisor"}
+                              <a class="btn btn-sm btn-secondary" href="index.php?page=lista_usuarios">
+                                 <span class="bi bi-arrow-left"></span>
+                                 <span class="d-none d-sm-block">&nbsp; Usuarios</span>
+                              </a>
+                           {/if}
+                           <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                              <span class="bi bi-bootstrap-reboot"></span>
+                           </a>
+                           {if="$gsc->user->admin || $gsc->user->supervisor"}
+                              <a class="btn btn-sm btn btn-success" href="index.php?page=lista_usuarios#nuevo" title="Nuevo usuario">
+                                 <span class="bi bi-plus"></span>
+                              </a>
+                           {/if}
+                        </div>
+                     </div>
+                     <div class="col-sm-6" style="text-align: right;">
+                        <div class="btn-group">
+                           {if="$gsc->allow_delete"}
+                              <a href="#" id="b_eliminar_usuario" class="btn btn-sm btn-danger">
+                                 <span class="bi bi-trash3"></span>
+                                 <span class="d-none d-sm-block hidden-sm">&nbsp;Eliminar</span>
+                              </a>
+                           {/if}
+                           {if="$gsc->allow_delete"}
+                              {if="$gsc->suser->activo"}
+                              <a id="b_desactivar_usuario" class="btn btn-sm btn-warning" href="{$gsc->url()}&sactivo=FALSE">
+                                 <span class="bi bi-lock-fill"></span>
+                                 <span class="d-none d-sm-block">&nbsp;Desactivar</span>
+                              </a>
+                              {else}
+                              <a id="b_activar_usuario" class="btn btn-sm btn-secondary" href="{$gsc->url()}&sactivo=TRUE">
+                                 <i class="fa fa-check" aria-hidden="true"></i>
+                                 <span class="d-none d-sm-block">&nbsp;Activar</span>
+                              </a>
+                              {/if}
+                           {/if}
+                           <button class="btn btn-sm btn-primary" type="submit">
+                              <span class="bi bi-save"></span>
+                              <span class="d-none d-sm-block">&nbsp;Guardar</span>
+                           </button>
+                        </div>
+                     </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <div class="page-header">
+                           <h1>
+                              <i class="bi bi-person-circle" aria-hidden="true"></i>
+                              Usuario <small>{$gsc->suser->nick}</small>
+                           </h1>
+                           {if="!$gsc->suser->activo"}
+                              <p class="help-block">
+                                 <span class="label label-danger">
+                                    <span class="bi bi-lock-fill"></span> Desactivado
+                                 </span>
+                                 &nbsp;el usuario está desactivado, no podrá acceder al sistema.
+                                 Pulsa el <b>botón activar</b> si quieres activarlo de nuevo.
+                              </p>
+                           {/if}
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-2">
+                        <div class="form-group">
+                           Nick:
+                           <input class="form-control" type="text" name="snick" value="{$gsc->suser->nick}" disabled="disabled"/>
+                           {if="$gsc->user->admin"}
+                              <div class="checkbox">
+                                 <label>
+                                    <input type="checkbox" name="sadmin" value="TRUE"{if="$gsc->suser->admin"} checked=""{/if}/>
+                                    Administrador
+                                 </label>
+                                 <label>
+                                    <input type="checkbox" name="ssupervisor" value="TRUE"{if="$gsc->suser->supervisor"} checked=""{/if}/>
+                                    Supervisor
+                                 </label>
+                              </div>
+                           {/if}
+                        </div>
+                     </div>
+                     <div class="col-sm-2">
+                        <div class="form-group">
+                           Contraseña:
+                           <div class="input-group">
+                              <input class="form-control" type="password" id="pss1" name="spassword" maxlength="32" placeholder="Nueva Contraseña" aria-describedby="pass1"/>
+                              <button class="btn btn-outline-secondary btn-sm" onclick="ver_password('pass1', 'pss1', 'icon1')" type="button" id="pass1"><i id="icon1" class="bi bi-eye-slash-fill"></i></button>
+                           </div>
+                           <div class="input-group">
+                              <input class="form-control" type="password" id="pss2" name="spassword2" maxlength="32" placeholder="Repite la Contraseña" aria-describedby="pass2"/>
+                              <button class="btn btn-outline-secondary btn-sm" onclick="ver_password('pass2', 'pss2', 'icon2')" type="button" id="pass2"><i id="icon2" class="bi bi-eye-slash-fill"></i></button>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-sm-2">
+                        <div class="form-group">
+                           Nombres:
+                           <input class="form-control" type="text" name="nombres" value="{$gsc->suser->nombres}" maxlength="100" required placeholder="Nombres"/>
+                        </div>
+                     </div>
+                     <div class="col-sm-2">
+                        <div class="form-group">
+                           Apellidos:
+                           <input class="form-control" type="text" name="apellidos" value="{$gsc->suser->apellidos}" maxlength="100" required placeholder="Apellidos"/>
+                        </div>
+                     </div>
+                     <div class="col-sm-2">
+                        <div class="form-group">
+                           Página de inicio:
+                           <select name="udpage" class="form-control">
+                           {loop="$gsc->suser->get_menu()"}
+                              {if="$value->show_on_menu"}
+                                 {if="$value->name==$gsc->suser->ppage"}
+                                 <option value="{$value->name}" selected="">{$value->folder} - {$value->title}</option>
+                                 {else}
+                                 <option value="{$value->name}">{$value->folder} - {$value->title}</option>
+                                 {/if}
+                              {/if}
+                           {/loop}
+                           </select>
+                        </div>
+                     </div>
+                     <div class="col-sm-2">
+                        <div class="form-group">
+                           Estilo visual:
+                           <select name="css" class="form-control">
+                              {loop="$gsc->extensions"}
+                                 {if="$value->type=='css'"}
+                                    <option value="{$value->text}"{if="$value->text==$gsc->suser->thema"} selected=""{/if}>{$value->name}</option>
+                                 {/if}
+                              {else}
+                                 <option value="light-theme">Modo claro</option>
+                              {/loop}
+                           </select>
+                        </div>
+                     </div>
+                  </div>
+                  {if="complemento_exists('facturador') && $gsc->suser->admin"}
+                     <div class="row">
+                        <div class="col-sm-6">
+                           <label for="idempresa" class="col-form-label">Empresa:</label>
+                           <select id="idempresa" name="idempresa" class="form-select select2" required>
+                              <option value="" selected>Seleccione</option>
+                              {loop="$gsc->empresa_model->all()"}
+                                 <option value="{$value->idempresa}" {if="$value->idempresa == $gsc->suser->idempresa"}selected{/if}>{$value->ruc} - {$value->razonsocial}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                     </div>
+                  {elseif="complemento_exists('juntadeagua') && ($gsc->user->admin || $gsc->user->supervisor)"}
+                     <div class="row">
+                        <div class="col-sm-6">
+                           <label for="idcliente" class="col-form-label">Cliente:</label>
+                           <select id="idcliente" name="idcliente" class="form-select select2" required>
+                              {if="$cli = $gsc->suser->getCliente()"}
+                                 <option value="{$cli->idcliente}">{$cli->identificacion} - {$cli->razonsocial}</option>
+                              {/if}
+                           </select>
+                        </div>
+                     </div>
+                  {/if}
+               </div>
+            </div>         
+            {if="$gsc->user->admin || $gsc->user->supervisor"}
+               <div class="row"><br></div>
+               <div class="row">
+                  <ul class="nav nav-tabs" role="tablist">
+                     <li class="nav-item" role="presentation">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#permisos" role="tab" aria-selected="true">
+                           <div class="d-flex align-items-center"> 
+                              <div class="tab-icon"><i class="bi bi-globe2"></i></div>
+                              <div class="tab-title">&nbsp;Permisos</div>
+                           </div>
+                        </a>
+                     </li>
+                  </ul>
+                  <div class="tab-content py-3">
+                     <div class="tab-pane fade active show" id="permisos" role="tabpanel">
+                        <div class="table-responsive">
+                           <table class="table table-hover">
+                              <thead>
+                                 <tr>
+                                    <th class="text-left">Página</th>
+                                    <th class="text-left">Menú</th>
+                                    <th class="text-center">Ver</th>
+                                    <th class="text-center">Modificar</th>
+                                    <th class="text-center">Eliminar</th>
+                                    <th class="text-center">Descargar</th>
+                                 </tr>
+                              </thead>
+                              {if="$gsc->suser->admin || $gsc->suser->supervisor"}
+                              {else}
+                                 <tr class="warning">
+                                    <td colspan="2"></td>
+                                    <td class="text-center" title="Marcar/desmarcar todos">
+                                       <input id="marcar_todo_ver" type="checkbox" name="p_ver" value=""/>
+                                    </td>
+                                    <td class="text-center" title="Marcar/desmarcar todos">
+                                       <input id="marcar_todo_modificar" type="checkbox" name="p_modificar" value=""/>
+                                    </td>
+                                    <td class="text-center" title="Marcar/desmarcar todos">
+                                       <input id="marcar_todo_eliminar" type="checkbox" name="p_eliminar" value=""/>
+                                    </td>
+                                    <td class="text-center" title="Marcar/desmarcar todos">
+                                       <input id="marcar_todo_descargar" type="checkbox" name="p_descargar" value=""/>
+                                    </td>
+                                 </tr>
+                              {/if}
+                              {if="$gsc->suser->admin"}
+                              <tr class="success">
+                                 <td colspan="6">
+                                    <span class="bi bi-check-all"></span> &nbsp;
+                                    Los administradores tienen acceso a cualquier página.
+                                 </td>
+                              </tr>
+                              {elseif="$gsc->suser->supervisor"}
+                              <tr class="success">
+                                 <td colspan="6">
+                                    <span class="bi bi-check-all"></span> &nbsp;
+                                    Los supervisores tienen acceso a cualquier página.
+                                 </td>
+                              </tr>
+                              {elseif="$gsc->user->admin || $gsc->user->supervisor"}
+                                 {loop="$gsc->all_pages()"}
+                                    {if="$gsc->validar_pagina($value->name)"}
+                                       <tr>
+                                          <td>{$value->name}</td>
+                                          <td>
+                                             {if="$value->important"}
+                                                <span class="bi bi-star-fill"></span> » {$value->title}
+                                             {elseif="$value->show_on_menu"}
+                                                <span class="text-capitalize">{$value->folder}</span>{if="$value->subfolder"} » {$value->subfolder}{/if} » {$value->title}
+                                             {else}
+                                             -
+                                             {/if}
+                                          </td>
+                                          <td class="text-center" title="El usuario tiene permisos para Ver.">
+                                             {if="$value->activo"}
+                                             <input type="checkbox" id="activo_{$counter}" name="activo[]" value="{$value->name}" onclick="check_allow_delete('{$counter}')" checked=""/>
+                                             {else}
+                                             <input type="checkbox" id="activo_{$counter}" name="activo[]" value="{$value->name}" onclick="check_allow_delete('{$counter}')"/>
+                                             {/if}
+                                          </td>
+                                          <td class="text-center" title="El usuario tiene permisos para Modificar">
+                                             {if="$value->allow_modify"}
+                                             <input type="checkbox" id="allow_modify_{$counter}" name="allow_modify[]" value="{$value->name}" checked=""/>
+                                             {else}
+                                             <input type="checkbox" id="allow_modify_{$counter}" name="allow_modify[]" value="{$value->name}"/>
+                                             {/if}
+                                          </td>
+                                          <td class="text-center" title="El usuario tiene permisos para Eliminar.">
+                                             {if="$value->allow_delete"}
+                                             <input type="checkbox" id="allow_delete_{$counter}" name="allow_delete[]" value="{$value->name}" checked=""/>
+                                             {else}
+                                             <input type="checkbox" id="allow_delete_{$counter}" name="allow_delete[]" value="{$value->name}"/>
+                                             {/if}
+                                          </td>
+                                          <td class="text-center" title="El usuario tiene permisos para Descargar.">
+                                             {if="$value->allow_download"}
+                                             <input type="checkbox" id="allow_download_{$counter}" name="allow_download[]" value="{$value->name}" checked=""/>
+                                             {else}
+                                             <input type="checkbox" id="allow_download_{$counter}" name="allow_download[]" value="{$value->name}"/>
+                                             {/if}
+                                          </td>
+                                       </tr>
+                                    {/if}
+                                 {/loop}
+                              {/if}
+                           </table>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            {/if}
+         </form>
+      </div>
+   {else}
+      <div class="thumbnail">
+         <center>
+            <img src="{#JG_PATH#}view/img/fuuu_face.png" alt="fuuuuu"/>
+         </center>
+      </div>
+   {/if}
+{include="footer"}

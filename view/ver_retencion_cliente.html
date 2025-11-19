@@ -1,0 +1,207 @@
+{include="header"}
+{if="$gsc->retencion"}
+   <script type="text/javascript">
+      let retencion_url = "{$gsc->retencion->url()}";
+      let url = "{$gsc->url()}";
+      let allow_delete = "{$gsc->allow_delete}";
+      let idretencioncli = "{$gsc->retencion->idretencion}";
+      let idcliente = "{$gsc->retencion->idcliente}";
+   </script>
+   <script src="{#JG_PATH#}view/js/ventas/ver_retencion_cliente.js?v=1"></script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-sm-6">
+                  <div class="btn-group">
+                     <a class="btn btn-sm btn-secondary" href="index.php?page=lista_retenciones_cliente">
+                        <span class="bi bi-arrow-left"></span>
+                        <span class="d-none d-sm-block">&nbsp; Retenciones</span>
+                     </a>
+                     <a class="btn btn-sm btn-dark" href="{$gsc->retencion->url()}" title="recargar la página">
+                        <span class="bi bi-bootstrap-reboot"></span>
+                     </a>
+                     <a class="btn btn-sm btn btn-success" href="index.php?page=crear_venta" title="Nueva Retención">
+                        <span class="bi bi-plus"></span>
+                     </a>
+                  </div>
+               </div>
+               <div class="col-sm-6" style="text-align: right;">
+                  <div class="btn-group">
+                     {if="$gsc->allow_delete"}
+                        <a href="#" id="b_eliminar_retencion" class="btn btn-sm btn-danger">
+                           <span class="bi bi-trash3"></span>
+                           <span class="d-none d-sm-block">&nbsp;Eliminar</span>
+                        </a>
+                     {/if}
+                  </div>
+               </div>
+            </div>
+            <hr>
+            <div class="row">
+               <div class="col-sm-12">
+                  <div class="page-header">
+                     <h1>
+                        <i class="bi bi-person-circle" aria-hidden="true"></i>
+                        {$gsc->retencion->get_tipodoc()} <small class="fs-6">{$gsc->retencion->numero_documento} de {$gsc->retencion->get_cliente()->razonsocial} </small>
+                     </h1>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+               <a class="nav-link active" data-bs-toggle="tab" href="#datos" role="tab" aria-selected="true">
+                  <div class="d-flex align-items-center"> 
+                     <div class="tab-icon"><i class="bi bi-person-circle"></i></div>
+                     <div class="tab-title">&nbsp;Datos Retención</div>
+                  </div>
+               </a>
+            </li>
+         </ul>
+         <div class="tab-content py-3">
+            <div class="tab-pane fade active show" id="datos" role="tabpanel">
+               <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+                  <div class="card-body">
+                     <div class="table-responsive">
+                        <table class="table table-borderless">
+                           <tbody>
+                              <tr>
+                                 <th>Numero de {$gsc->retencion->get_tipodoc()}</th>
+                                 <th>Numero de Autorización</th>
+                                 <th>Fecha Emisión</th>
+                                 <th>Fecha Registro</th>
+                              </tr>
+                              <tr>
+                                 <td>{$gsc->retencion->numero_documento}</td>
+                                 <td>{$gsc->retencion->nro_autorizacion}</td>
+                                 <td>{$gsc->retencion->fec_emision}</td>
+                                 <td>{$gsc->retencion->fec_registro}</td>
+                              </tr>
+                              <tr>
+                                 <th colspan="2">Razón Social</th>
+                                 <th colspan="2">Identificación</th>
+                              </tr>
+                              <tr>
+                                 <td colspan="2">
+                                    <a href="{$gsc->retencion->get_cliente()->url()}" target="_blank">
+                                       {$gsc->retencion->get_cliente()->razonsocial}
+                                    </a>
+                                 </td>
+                                 <td colspan="2">{$gsc->retencion->get_cliente()->identificacion}</td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+               <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+                  <div class="card-body">
+                     {if="$gsc->allow_modify"}
+                        <form name="f_nueva_linea" id="f_nueva_linea" class="form" role="form" action="{$gsc->url()}" method="post">
+                           <input type="hidden" name="nueva_linea">
+                           <input type="hidden" name="idtiporetencion" id="idtiporetencion">
+                           <div class="row">
+                              <div class="col-sm-6">
+                                 <div class="form-group">
+                                    <label for="idfactura" class="col-form-label">Buscar Factura:</label>
+                                    <select id="idfactura" name="idfactura" class="form-select" required></select>
+                                    <div class="form-check form-switch" style="margin-top: 0.5rem;">
+                                       <input class="form-check-input" type="checkbox" id="nofactura" name="nofactura" onclick="mostrar_div_factura()">
+                                       <label class="form-check-label" for="nofactura">El Documento no se encuentra en el sistema?</label>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-sm-6">
+                                 <div class="form-group">
+                                    <label for="b_tiporetencion" class="col-form-label">Buscar Tipo Retención:</label>
+                                    <select id="b_tiporetencion" class="form-select"></select>
+                                 </div>
+                              </div>
+                           </div>
+                           <div id="fac_manual" class="row"></div>
+                           <div class="row">
+                              <div class="col-sm-3">
+                                 <label for="baseimponible" class="col-form-label">Base Imponible:</label>
+                                 <input type="text" class="form-control form-control-sm solo_precios" style="text-align: right;" id="baseimponible" onblur="calcular_total()" maxlength="3" name="baseimponible" placeholder="Base Imponible" value="0" required autocomplete="false">
+                              </div>
+                              <div class="col-sm-2">
+                                 <label for="especie" class="col-form-label">Impuesto:</label>
+                                 <input type="text" class="form-control form-control-sm solo_precios" id="especie" maxlength="3" name="especie" placeholder="Impuesto" required onkeydown="return false;" autocomplete="false">
+                              </div>
+                              <div class="col-sm-2">
+                                 <label for="codigo" class="col-form-label">Codigo:</label>
+                                 <input type="text" class="form-control form-control-sm solo_precios" id="codigo" maxlength="3" name="codigo" placeholder="Codigo" required onkeydown="return false;" autocomplete="false">
+                              </div>
+                              <div class="col-sm-2">
+                                 <label for="porcentaje" class="col-form-label">Porcentaje:</label>
+                                 <input type="text" class="form-control form-control-sm solo_precios" style="text-align: right;" id="porcentaje" maxlength="3" name="porcentaje" placeholder="Porcentaje" value="0" required readonly autocomplete="false">
+                              </div>
+                              <div class="col-sm-3">
+                                 <label for="total" class="col-form-label">Valor Retenido:</label>
+                                 <input type="text" class="form-control form-control-sm solo_precios" style="text-align: right;" id="total" maxlength="3" name="total" placeholder="Valor Retenido" value="0" required readonly autocomplete="false">
+                              </div>
+                           </div>
+                           <div class="row"><br></div>
+                           <div class="row">
+                              <div class="col-sm-12" style="text-align: right;">
+                                 <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-warning" type="button" onclick="limpiar_campos(true)">
+                                       <span class="bi bi-arrow-repeat"></span>
+                                       <span class="d-none d-sm-block">&nbsp;Limpiar</span>
+                                    </button>
+                                    <button class="btn btn-sm btn-success" id="btn_aniadir" type="submit">
+                                       <span class="bi bi-bag-plus"></span>
+                                       <span class="d-none d-sm-block">&nbsp;Añadir</span>
+                                    </button>
+                                 </div>
+                              </div>
+                           </div>
+                        </form>
+                     {/if}
+                  </div>
+               </div>
+               <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+                  <div class="card-body">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th width="16%" style="text-align: center;">Número Doc.</th>
+                                 <th width="12%" style="text-align: center;">Fecha Emision</th>
+                                 <th width="12%" style="text-align: center;">Base Imponible</th>
+                                 <th width="12%" style="text-align: center;">Impuesto</th>
+                                 <th width="12%" style="text-align: center;">Codigo</th>
+                                 <th width="12%" style="text-align: center;">Porcentaje</th>
+                                 <th width="12%" style="text-align: center;">Valor</th>
+                                 <th width="12%" style="text-align: center;"></th>
+                              </tr>
+                           </thead>
+                           <tbody id="detalle_ret">
+                           </tbody>
+                           <tfoot>
+                              <tr>
+                                 <th style="text-align: right;" colspan="6">Total Retenido:</th>
+                                 <th style="text-align: right;" id="totalret">0.00</th>
+                                 <th>$</th>
+                              </tr>
+                           </tfoot>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+{else}
+   <div class="thumbnail">
+      <center>
+         <img src="{#JG_PATH#}view/img/fuuu_face.png" alt="fuuuuu"/>
+      </center>
+   </div>
+{/if}
+{include="footer"}

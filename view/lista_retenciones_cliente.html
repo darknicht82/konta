@@ -1,0 +1,310 @@
+{include="header"}
+   <script type="text/javascript">
+      $(document).ready(function() {
+         $("#btn_nueva_ret").click(function(event) {
+            $("#modal_nueva_retencion").modal('show');
+         });
+         $("#b_cliente").select2({
+            language: {
+               noResults: function() {
+                  return "No hay resultado"; 
+               },
+               searching: function() {
+                  return "Buscando...";
+               },
+               inputTooShort: function () {
+                  return "Ingrese al menos 3 caracteres para realizar la busqueda";
+               },
+            },
+            ajax: {
+               url: "{$gsc->url()}",
+               dataType: 'json',
+               delay: 250,
+               data: function (params) {
+                  return {
+                     buscar_cliente: params.term
+                  };
+               },
+               processResults: function (data, params) {
+                  return {
+                     results: $.map(data, function(obj, index) {
+                        return { id: obj.idcliente, text: obj.identificacion +" - "+ obj.razonsocial };
+                     })
+                  };
+               },
+               cache: true
+            },
+            placeholder: 'Buscar Cliente',
+            minimumInputLength: 3,
+            theme: 'bootstrap-5',
+            allowClear: true
+         });
+         $("#idcliente_ret").select2({
+            language: {
+               noResults: function() {
+                  return "No hay resultado"; 
+               },
+               searching: function() {
+                  return "Buscando...";
+               },
+               inputTooShort: function () {
+                  return "Ingrese al menos 3 caracteres para realizar la busqueda";
+               },
+            },
+            ajax: {
+               url: "{$gsc->url()}",
+               dataType: 'json',
+               delay: 250,
+               data: function (params) {
+                  return {
+                     buscar_cliente: params.term
+                  };
+               },
+               processResults: function (data, params) {
+                  return {
+                     results: $.map(data, function(obj, index) {
+                        return { id: obj.idcliente, text: obj.identificacion +" - "+ obj.razonsocial };
+                     })
+                  };
+               },
+               cache: true
+            },
+            dropdownParent: $('#modal_nueva_retencion'),
+            placeholder: 'Buscar Cliente',
+            minimumInputLength: 3,
+            theme: 'bootstrap-5',
+            allowClear: true
+         });
+      });
+      $(document).on('select2:open', () => {
+         document.querySelector('.select2-search__field').focus();
+      });
+
+      function btn_nueva_retencion(btn)
+      {
+         let nro_aut = $("#nro_autorizacion").val();
+         if (nro_aut.length == 10) {
+            if ($("#idcliente_ret").val() == null) {
+               alert("Debe seleccionar el Cliente.");
+               return;
+            }
+            if ($("#estab").val() == '') {
+               alert("Debe Ingresar el Establecimiento de la Retención.");
+               return;
+            }
+            if ($("#ptoemision").val() == '') {
+               alert("Debe Ingresar el Punto de Emisión de la Retención.");
+               return;
+            }
+            if ($("#secuencial").val() == '') {
+               alert("Debe Ingresar el Secuencial de la Retención.");
+               return;
+            }
+            if ($("#fec_emision").val() == '') {
+               alert("Debe Ingresar la Fecha de Emisión de la Retención.");
+               return;
+            }
+            if ($("#fec_registro").val() == '') {
+               alert("Debe Ingresar la Fecha de Registo de la Retención.");
+               return;
+            }
+         } else if (nro_aut.length == 49) {
+
+         } else {
+            alert("Número de Autorización no Válido.");
+            return;
+         }
+         
+         btn.form.submit();
+      }
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+               <a class="btn btn-sm btn-success" href="#" id="btn_nueva_ret">
+                  <span class="bi bi-person-plus-fill"></span>
+                  <span class="d-none d-sm-block">&nbsp; Nueva</span>
+               </a>
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-clipboard2-minus" aria-hidden="true"></i>
+               Retenciones de Cliente <span class="badge bg-secondary">{$gsc->cantidad}</span>
+            </h2>
+         </div>
+      </div>
+      <div class="row"><hr></div>
+      <div class="row">
+         <form name="f_buscador" action="{$gsc->page->url()}" method="post" class="form" role="form">
+            <div class="row">
+               <div class="col-sm-4">
+                  <div class="form-group">
+                     <label for="query" class="col-form-label">Buscador:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="query">
+                           <i class="bi bi-search"></i>
+                        </span>
+                        <input class="form-control form-control-sm" type="text" name="query" value="{$gsc->query}" id="query" autocomplete="off" placeholder="Buscador" onchange="this.form.submit()" autofocus=""/>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-4">
+                  <label for="b_cliente" class="col-form-label">Cliente:</label>
+                  <select id="b_cliente" name="idcliente" class="form-select" onchange="this.form.submit()">
+                     {if="$gsc->nom_cliente != ''"}
+                        <option value="{$gsc->idcliente}">{$gsc->nom_cliente}</option>
+                     {/if}
+                  </select>
+               </div>
+               <div class="col-sm-2">
+                  <div class="form-group">
+                     <label for="desde" class="col-form-label">Fecha Desde:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="desde">
+                           <i class="bi bi-calendar-date-fill"></i>
+                        </span>
+                        <input class="form-control form-control-sm" type="date" name="desde" id="desde" value="{$gsc->desde}" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-2">
+                  <div class="form-group">
+                     <label for="hasta" class="col-form-label">Fecha Hasta:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="hasta">
+                           <i class="bi bi-calendar-date-fill"></i>
+                        </span>
+                        <input class="form-control form-control" type="date" name="hasta" id="hasta" value="{$gsc->hasta}" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+            </div>
+
+         </form>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th>Fecha Emisión</th>
+                     <th>Nro. Retención</th>
+                     <th>Nro. Autorización</th>
+                     <th>Razón Social</th>
+                     <th style="text-align: center;">Valor Retenido</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {loop="$gsc->resultados"}
+                     <tr>
+                        <td>{$value->fec_emision}</td>
+                        <td><a href="{$value->url()}" target="_blank">{$value->numero_documento}</a></td>
+                        <td>{$value->nro_autorizacion}</td>
+                        <td>{$value->get_cliente()->razonsocial}</td>
+                        <td style="text-align: right;">{function="show_numero($value->total)"} $</td>
+                     </tr>
+                  {else}
+                     <tr class="table-warning">
+                        <td colspan="5">Sin Resultados.!</td>
+                     </tr>
+                  {/loop}
+               </tbody>
+            </table>
+         </div>
+      </div>
+      {if="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+         <div class="row"><br></div>
+         <div class="row">
+            <div class="col-sm-12 ">
+               <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+                     {loop="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+                        <li class="page-item {if="$value['actual']"}active{/if}">
+                           <a class="page-link" href="{$value['url']}">{$value['num']}</a>
+                        </li>
+                     {/loop}
+                  </ul>
+               </nav>
+            </div>
+         </div>
+      {/if}
+   </div>
+   <div class="modal" id="modal_nueva_retencion">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+         <form name="f_nueva_retencion" id="f_nueva_retencion" class="form" role="form" action="{$gsc->url()}" method="post">
+            <input type="hidden" name="nueva_retencion">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-plus-circle" aria-hidden="true"></i>&nbsp; Nueva Retención</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <div class="form-group">
+                           <label for="nro_autorizacion" class="col-form-label">Numero de Autorización:</label>
+                           <input type="text" class="form-control form-control-sm solo_numeros" id="nro_autorizacion" name="nro_autorizacion" placeholder="Numero de Autorizacion" autofocus="true" minlength="10" maxlength="49" autocomplete="false" required>
+                           <p>Si la retención es electrónica, puede llenar solo este campo.</p>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row"><hr></div>
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <label for="idcliente_ret" class="col-form-label">Cliente:</label>
+                        <select id="idcliente_ret" name="idcliente_ret" class="form-select form-select-sm" style="width: 100%"></select>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-3">
+                        <label for="estab" class="col-form-label">Establecimiento:</label>
+                        <input type="text" class="form-control form-control-sm solo_numeros" id="estab" maxlength="3" name="estab" placeholder="Establecimiento" autocomplete="false">
+                     </div>
+                     <div class="col-sm-3">
+                        <label for="ptoemision" class="col-form-label">Punto de Emisión:</label>
+                        <input type="text" class="form-control form-control-sm solo_numeros" id="ptoemision" maxlength="3" name="ptoemision" placeholder="Punto de Emisión" autocomplete="false">
+                     </div>
+                     <div class="col-sm-6">
+                        <label for="secuencial" class="col-form-label">Secuencial:</label>
+                        <input type="text" class="form-control form-control-sm solo_numeros" id="secuencial" maxlength="9" name="secuencial" placeholder="Secuencial" autocomplete="false">
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-6">
+                        <label for="fec_emision" class="col-form-label">Fecha de Emisión:</label>
+                        <input type="date" class="form-control form-control-sm" id="fec_emision" value="{$gsc->today()}" name="fec_emision" placeholder="Fecha de Emisión" autocomplete="false">
+                     </div>
+                     <div class="col-sm-6">
+                        <label for="fec_registro" class="col-form-label">Fecha de Registro:</label>
+                        <input type="date" class="form-control form-control-sm" id="fec_registro" value="{$gsc->today()}" name="fec_registro" placeholder="Fecha de Registro" autocomplete="false">
+                     </div>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+                  <button class="btn btn-sm btn-primary" type="button" onclick="btn_nueva_retencion(this)">
+                     <span class="bi bi-save2"></span>&nbsp; Guardar
+                  </button>
+               </div>
+            </div>
+         </form>
+      </div>
+   </div>
+{include="footer"}

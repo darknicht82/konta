@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : empresa.xml
+    Author     : Jonathan Guamba
+    Description:
+        Estructura de la tabla empresa.
+-->
+<tabla>
+    <columna>
+        <nombre>idempresa</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('empresa_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>razonsocial</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nombrecomercial</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>ruc</nombre>
+        <tipo>character varying(13)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>telefono</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>email</nombre>
+        <tipo>character varying(150)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>direccion</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>logo</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>firmaelectronica</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_caducidad</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>clave_digital</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>mail_password</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>mail_bcc</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>mail_mailer</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>NO</nulo>
+        <defecto>'smtp'::character varying</defecto>
+    </columna>
+    <columna>
+        <nombre>mail_host</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>NO</nulo>
+        <defecto>'smtp.gmail.com'::character varying</defecto>
+    </columna>
+    <columna>
+        <nombre>mail_port</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>NO</nulo>
+        <defecto>'465'::character varying</defecto>
+    </columna>
+    <columna>
+        <nombre>mail_enc</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>NO</nulo>
+        <defecto>'ssl'::character varying</defecto>
+    </columna>
+    <columna>
+        <nombre>mail_user</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>mail_low_security</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>false</defecto>
+    </columna>
+    <columna>
+        <nombre>regimen</nombre>
+        <tipo>character varying(2)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>produccion</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>false</defecto>
+    </columna>
+    <columna>
+        <nombre>activafacelec</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>false</defecto>
+    </columna>
+    <columna>
+        <nombre>obligado</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>false</defecto>
+    </columna>
+    <columna>
+        <nombre>agretencion</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>false</defecto>
+    </columna>
+    <columna>
+        <nombre>fec_inicio_plan</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_caducidad_plan</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>numusers</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+        <defecto>1</defecto>
+    </columna>
+    <columna>
+        <nombre>numdocs</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+        <defecto>0</defecto>
+    </columna>
+    <columna>
+        <nombre>plan_basico</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>false</defecto>
+    </columna>
+    <columna>
+        <nombre>fec_creacion</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_creacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_modificacion</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_modificacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>empresa_pkey</nombre>
+        <consulta>PRIMARY KEY (idempresa)</consulta>
+    </restriccion>
+</tabla>

@@ -1,0 +1,420 @@
+{include="header"}
+{if="$gsc->cierre"}
+	<script type="text/javascript">
+	</script>
+	<div class='container-fluid'>
+		<div class="row">
+         	<div class="container-fluid">
+            	<div class="row">
+               	<div class="col-sm-6">
+                  	<div class="btn-group">
+                     	<a class="btn btn-sm btn-secondary" href="index.php?page=lista_cierres_caja">
+                        	<span class="bi bi-arrow-left"></span>
+                        	<span class="d-none d-sm-block">&nbsp; Cierres</span>
+                     	</a>
+                     	<a class="btn btn-sm btn-dark" href="{$gsc->cierre->url()}" title="recargar la página">
+                        	<span class="bi bi-bootstrap-reboot"></span>
+                     	</a>
+                  	</div>
+               	</div>
+               	<div class="col-sm-6" style="text-align: right;">
+                 	<div class="btn-group">
+                 	</div>
+               	</div>
+            	</div>
+            	<hr>
+            	<div class="row">
+               	<div class="col-sm-12">
+                  	<div class="page-header">
+                     	<h1>
+                        	<i class="bi bi-folder-fill" aria-hidden="true"></i>
+                        	Cierre de Caja <small class="fs-6">{$gsc->cierre->idcierre} de {$gsc->cierre->nick} </small>
+                     	</h1>
+                  	</div>
+               	</div>
+            	</div>
+         	</div>
+      	</div>
+      	<div class="row"><br></div>
+      	<div class="row">
+      		<ul class="nav nav-tabs" role="tablist">
+      			<li class="nav-item" role="presentation">
+               		<a class="nav-link {if="$gsc->mostrar=='cuadre'"}active{/if}" href="{$gsc->cierre->url()}&mostrar=cuadre" role="tab" aria-selected="true">
+                  		<div class="d-flex align-items-center">
+                     		<div class="tab-icon"><i class="bi bi-plus-slash-minus"></i></div>
+                     		<div class="tab-title">&nbsp;Cuadre</div>
+                  		</div>
+               		</a>
+            	</li>
+            	<li class="nav-item" role="presentation">
+               		<a class="nav-link {if="$gsc->mostrar=='facturas'"}active{/if}" href="{$gsc->cierre->url()}&mostrar=facturas" role="tab" aria-selected="true">
+                  		<div class="d-flex align-items-center">
+                     		<div class="tab-icon"><i class="bi bi-bag-plus"></i></div>
+                     		<div class="tab-title">&nbsp;Facturas</div>
+                  		</div>
+               		</a>
+            	</li>
+            	{if="complemento_exists('notasdeventa')"}
+	            	<li class="nav-item" role="presentation">
+	               		<a class="nav-link {if="$gsc->mostrar=='notas'"}active{/if}" href="{$gsc->cierre->url()}&mostrar=notas" role="tab" aria-selected="true">
+	                  		<div class="d-flex align-items-center">
+	                     		<div class="tab-icon"><i class="bi bi-bookmark-plus"></i></div>
+	                     		<div class="tab-title">&nbsp;Notas de Venta</div>
+	                  		</div>
+	               		</a>
+	            	</li>
+	            {/if}
+	            <li class="nav-item" role="presentation">
+               		<a class="nav-link {if="$gsc->mostrar=='movimientos'"}active{/if}" href="{$gsc->cierre->url()}&mostrar=movimientos" role="tab" aria-selected="true">
+                  		<div class="d-flex align-items-center">
+                     		<div class="tab-icon"><i class="bi bi-clipboard2-pulse"></i></div>
+                     		<div class="tab-title">&nbsp;Movimientos</div>
+                  		</div>
+               		</a>
+            	</li>
+            	{if="complemento_exists('cuadre_producto')"}
+	            	<li class="nav-item" role="presentation">
+	               		<a class="nav-link {if="$gsc->mostrar=='cuadreart'"}active{/if}" href="{$gsc->cierre->url()}&mostrar=cuadreart" role="tab" aria-selected="true">
+	                  		<div class="d-flex align-items-center">
+	                     		<div class="tab-icon"><i class="bi bi-symmetry-vertical"></i></div>
+	                     		<div class="tab-title">&nbsp;Cuadre de Producto</div>
+	                  		</div>
+	               		</a>
+	            	</li>
+	            {/if}
+      		</ul>
+      	</div>
+      	<div class="tab-content py-3">
+      		{if="$gsc->mostrar=='cuadre'"}
+      			<div class="tab-pane fade active show" id="cuadre" role="tabpanel">
+               		<div class="container-fluid">
+                  		<div class="row">
+                  			<div class="col-sm-3 text-center">
+                  				<b>Caja:</b><br>
+                  				{$gsc->cierre->get_caja()}
+                  			</div>
+                  			<div class="col-sm-3 text-center">
+                  				<b>Usuario Responsable:</b><br>
+                  				{$gsc->cierre->nick}
+                  			</div>
+                  			<div class="col-sm-3 text-center">
+                  				<b>Apertura:</b><br>
+                  				{$gsc->cierre->apertura}
+                  			</div>
+                  			<div class="col-sm-3 text-center">
+                  				<b>Cierre:</b><br>
+                  				{if="$gsc->cierre->cierre"}
+                        			{$gsc->cierre->cierre}
+                        		{else}
+                        			<span class="badge rounded-pill bg-primary">Caja Abierta</span>
+                        		{/if}
+                  			</div>
+                  		</div>
+                  		<hr>
+                  		<div class="row">
+                  			<div class="col-sm-12 text-center"><h5>DESGLOSE DE DINERO</h5></div>
+                  		</div>
+                  		<div class="row"><br></div>
+                  		<div class="row">
+                  			<div class="col-sm-2 text-center">
+                  				<b>Monedas 0.01:</b><br>
+                  				{function="show_numero($gsc->cierre->m001)"}
+                  			</div>
+                  			<div class="col-sm-2 text-center">
+                  				<b>Monedas 0.05:</b><br>
+                  				{function="show_numero($gsc->cierre->m005)"}
+                  			</div>
+                  			<div class="col-sm-2 text-center">
+                  				<b>Monedas 0.10:</b><br>
+                  				{function="show_numero($gsc->cierre->m010)"}
+                  			</div>
+                  			<div class="col-sm-2 text-center">
+                  				<b>Monedas 0.25:</b><br>
+                  				{function="show_numero($gsc->cierre->m025)"}
+                  			</div>
+                  			<div class="col-sm-2 text-center">
+                  				<b>Monedas 0.50:</b><br>
+                  				{function="show_numero($gsc->cierre->m050)"}
+                  			</div>
+                  			<div class="col-sm-2 text-center">
+                  				<b>Monedas 1:</b><br>
+                  				{function="show_numero($gsc->cierre->m1)"}
+                  			</div>
+                  		</div>
+                  		<div class="row"><br></div>
+                  		<div class="row">
+                  			<div class="col-sm-2 text-center">
+                  				<b>Billetes 1:</b><br>
+                  				{function="show_numero($gsc->cierre->b1)"}
+                  			</div>
+                  			<div class="col-sm-2 text-center">
+                  				<b>Billetes 5:</b><br>
+                  				{function="show_numero($gsc->cierre->b5)"}
+                  			</div>
+                  			<div class="col-sm-2 text-center">
+                  				<b>Billetes 10:</b><br>
+                  				{function="show_numero($gsc->cierre->b10)"}
+                  			</div>
+                  			<div class="col-sm-2 text-center">
+                  				<b>Billetes 20:</b><br>
+                  				{function="show_numero($gsc->cierre->b20)"}
+                  			</div>
+                  			<div class="col-sm-2 text-center">
+                  				<b>Billetes 50:</b><br>
+                  				{function="show_numero($gsc->cierre->b50)"}
+                  			</div>
+                  			<div class="col-sm-2 text-center">
+                  				<b>Billetes 100:</b><br>
+                  				{function="show_numero($gsc->cierre->b100)"}
+                  			</div>
+                  		</div>
+                  		<hr>
+                  		<div class="row">
+                  			<div class="col-sm-12 text-center"><h5>DETALLE DE VENTAS</h5></div>
+                  		</div>
+                  		<div class="row"><br></div>
+                  		<div class="row">
+                  			{loop="$gsc->getCobros()"}
+                  				{if="$value.cobros > 0"}
+	                  				<div class="col-sm-2 text-center">
+		                  				<b>{$value.nombre}:</b><br>
+		                  				{function="show_numero($value.cobros)"}
+		                  			</div>
+	                  			{/if}
+                  			{/loop}
+                  		</div>
+                  		<hr>
+                  		<div class="row">
+                  			<div class="col-sm-12 text-center"><h5>RESUMEN DE CAJA</h5></div>
+                  		</div>
+                  		<div class="row"><br></div>
+                  		<div class="row">
+	                  		<div class="col-sm-2 text-center">
+	              				<b>Inicial:</b><br>
+	              				{function="show_numero($gsc->cierre->inicial)"}
+	              			</div>
+	              			<div class="col-sm-2 text-center">
+	              				<b>Efectivo:</b><br>
+	              				{function="show_numero($gsc->cierre->getEfectivo())"}
+	              			</div>
+	              			<div class="col-sm-2 text-center">
+	              				<b>Movimientos:</b><br>
+	              				{function="show_numero($gsc->cierre->getMovimiento())"}
+	              			</div>
+	              			<div class="col-sm-2 text-center">
+	              				<b>Cierre Sistema:</b><br>
+	              				{function="show_numero($gsc->cierre->verificarCierre()['cierre'])"}
+	              			</div>
+	              			<div class="col-sm-2 text-center">
+	              				<b>Cierre Empleado:</b><br>
+	              				{function="show_numero($gsc->cierre->totalemp)"}
+	              			</div>
+	              			<div class="col-sm-2 text-center">
+	              				<b>Diferencia (Emp - Sis):</b><br>
+	              				{function="show_numero($gsc->cierre->verificarCierre()['diferencia'])"}
+	              			</div>
+	              		</div>
+	              		<div class="row"><br></div>
+                  		<div class="row">
+                  			<div class="col-sm-12 text-center" style="{if="$gsc->cierre->verificarCierre()['diferencia'] > 0"}background-color: #93c47d;{elseif="$gsc->cierre->verificarCierre()['diferencia'] < 0"}background-color: #e06666;{else}background-color: #D6EAF8;{/if}">
+                  				<br>
+                  				<h4>{$gsc->cierre->verificarCierre()['estado']}</h4>
+                  				<br>
+                  			</div>
+                  		</div>
+               		</div>
+            	</div>
+            {elseif="$gsc->mostrar=='facturas'"}
+      			<div class="tab-pane fade active show" id="facturas" role="tabpanel">
+               		<div class="container-fluid">
+               			<div class="row">
+               				<div class="table-responsive">
+               					<table class="table table-hover">
+               						<tbody>
+               							{loop="$gsc->trans_cobros->getPagosCierre($gsc->idempresa, $gsc->cierre->idcierre, '01')"}
+		               						<tr>
+		               							<th colspan="6" class="text-center"><h4>{$value.nombre}</h4></th>
+		               						</tr>
+		               						<tr>
+		               							<th class="text-center">Fecha de Emisión</th>
+		               							<th class="text-center">Cliente</th>
+		               							<th class="text-center">Número de Documento</th>
+		               							<th class="text-center">Número de Transacción</th>
+		               							<th class="text-center">Fecha de Transacción</th>
+		               							<th class="text-center">Valor</th>
+		               						</tr>
+		               						{loop="$value.datos"}
+		               							<tr>
+		               								<td class="text-center">{$value2.fec_emision}</td>
+		               								<td>{$value2.razonsocial}</td>
+		               								<td class="text-end">
+		               									<a href="index.php?page=ver_factura_cliente&id={$value2.idfacturacli}" target="_blank">{$value2.numero_documento}</a>
+		               								</td>
+		               								<td class="text-center">{$value2.num_doc}</td>
+		               								<td class="text-end">{$value2.fecha_trans}</td>
+		               								<td class="text-end">{$value2.valor} $</td>
+		               							</tr>
+		               						{/loop}
+		               						<tr>
+		               							<th colspan="5" class="text-end">TOTAL: </th>
+		               							<th class="text-end">{function="show_numero($value.total)"} $</th>
+		               						</tr>
+		               					{else}
+		               						<tr>
+		               							<th colspan="6" class="text-center"><h4>Sin Resultados</h4></th>
+		               						</tr>
+		               					{/loop}
+	               					</tbody>
+               					</table>
+               				</div>
+               			</div>
+               		</div>
+               	</div>
+            {elseif="$gsc->mostrar=='notas'"}
+      			<div class="tab-pane fade active show" id="notas" role="tabpanel">
+               		<div class="container-fluid">
+               			<div class="row">
+               				<div class="table-responsive">
+               					<table class="table table-hover">
+               						<tbody>
+               							{loop="$gsc->trans_cobros->getPagosCierre($gsc->idempresa, $gsc->cierre->idcierre, '02')"}
+		               						<tr>
+		               							<th colspan="6" class="text-center"><h4>{$value.nombre}</h4></th>
+		               						</tr>
+		               						<tr>
+		               							<th class="text-center">Fecha de Emisión</th>
+		               							<th class="text-center">Cliente</th>
+		               							<th class="text-center">Número de Documento</th>
+		               							<th class="text-center">Número de Transacción</th>
+		               							<th class="text-center">Fecha de Transacción</th>
+		               							<th class="text-center">Valor</th>
+		               						</tr>
+		               						{loop="$value.datos"}
+		               							<tr>
+		               								<td class="text-center">{$value2.fec_emision}</td>
+		               								<td>{$value2.razonsocial}</td>
+		               								<td class="text-end">
+		               									<a href="index.php?page=ver_factura_cliente&id={$value2.idfacturacli}" target="_blank">{$value2.numero_documento}</a>
+		               								</td>
+		               								<td class="text-center">{$value2.num_doc}</td>
+		               								<td class="text-end">{$value2.fecha_trans}</td>
+		               								<td class="text-end">{$value2.valor} $</td>
+		               							</tr>
+		               						{/loop}
+		               						<tr>
+		               							<th colspan="5" class="text-end">TOTAL: </th>
+		               							<th class="text-end">{function="show_numero($value.total)"} $</th>
+		               						</tr>
+		               					{else}
+		               						<tr>
+		               							<th colspan="6" class="text-center"><h4>Sin Resultados</h4></th>
+		               						</tr>
+		               					{/loop}
+	               					</tbody>
+               					</table>
+               				</div>
+               			</div>
+               		</div>
+               	</div>
+            {elseif="$gsc->mostrar=='movimientos'"}
+      			<div class="tab-pane fade active show" id="notas" role="tabpanel">
+               		<div class="container-fluid">
+               			<div class="row">
+               				<div class="table-responsive">
+               					<table class="table table-hover">
+               						<thead>
+               							<th class="text-center">Tipo</th>
+               							<th class="text-center">Nombre</th>
+               							<th class="text-center">Valor</th>
+               							<th class="text-center"></th>
+               						</thead>
+               						<tbody>
+               							<!--{$x=0}-->
+               							{loop="$gsc->mov_cajas->get_by_idempresa_caja($gsc->idempresa, $gsc->cierre->idcierre)"}
+	               							<tr>
+					               				{if="$value->tipo == 'ingreso'"}
+					               					<!--{$x = $x + $value->valor}-->
+					               				{else}
+					               					<!--{$x = $x - $value->valor}-->
+					               				{/if}
+					               				<td style="text-transform: capitalize;">{$value->tipo}</td>
+		               							<td>{$value->nombre}</td>
+		               							<td class="text-end">
+		               								<b>{if="$value->tipo == 'ingreso'"} + {else} - {/if} </b>
+		                  							{function="show_numero($value->valor)"} $
+		                  						</td>
+		               							<td></td>
+		               						</tr>
+				               			{else}
+					               			<tr>
+					               				<th colspan="4"><h4>Sin Resultados</h4></th>
+					               			</tr>
+				               			{/loop}
+               						</tbody>
+               						<tfoot>
+               							<tr>
+	               							<th colspan="2" class="text-end">TOTAL:</th>
+	               							<th class="text-end">{function="show_numero($x)"} $</th>
+	               							<th></th>
+	               						</tr>
+               						</tfoot>
+               					</table>
+               				</div>
+               			</div>
+               		</div>
+               	</div>
+            {elseif="$gsc->mostrar=='cuadreart'"}
+      			<div class="tab-pane fade active show" id="cuadreart" role="tabpanel">
+               		<div class="container-fluid">
+               			<div class="row">
+               				<div class="table-responsive">
+               					<table class="table table-hover">
+               						<thead>
+               							<th class="text-center">Nombre Articulo</th>
+               							<th class="text-center">Stock Empleado</th>
+               							<th class="text-center">Stock Sistema</th>
+               							<th class="text-center">Diferencia</th>
+               						</thead>
+               						<tbody>
+               							{loop="$gsc->articulos_cuadre->all_by_idcierre($gsc->cierre->idcierre)"}
+               								<!--{$x=$value->stockfinal - $value->getStockFecha()}-->
+	               							<tr>
+	               								<td>
+	               									{if="$gsc->ver_articulo_access"}
+	               										<a href='index.php?page=ver_articulo&id={$value->idarticulo}' target='_blank'>
+	               									{/if}
+	               									{$value->get_articulo()->nombre}
+	               									{if="$gsc->ver_articulo_access"}
+	               										</a>
+	               									{/if}
+	               								</td>
+	               								<td class="text-end">
+	               									{function="show_numero($value->stockfinal)"}
+	               								</td>
+	               								<td class="text-end">{function="show_numero($value->getStockFecha())"}</td>
+	               								<td class="text-end" style="{if="$x > 0"}background-color: #93c47d;{elseif="$x < 0"}background-color: #e06666;{else}background-color: #D6EAF8;{/if}">
+	               									{function="show_numero($x)"}
+	               								</td>
+		               						</tr>
+				               			{else}
+					               			<tr>
+					               				<th colspan="4" class="text-center"><h4>Sin Resultados</h4></th>
+					               			</tr>
+				               			{/loop}
+               						</tbody>
+               					</table>
+               				</div>
+               			</div>
+               		</div>
+               	</div>
+      		{/if}
+      	</div>
+	</div>
+{else}
+   	<div class="thumbnail">
+      	<center>
+        	<img src="{#JG_PATH#}view/img/fuuu_face.png" alt="fuuuuu"/>
+    	</center>
+   	</div>
+{/if}
+{include="footer"}

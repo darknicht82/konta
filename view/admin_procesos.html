@@ -1,0 +1,81 @@
+{include="header"}
+   <script type="text/javascript">
+      let url = "{$gsc->url()}";
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-tools" aria-hidden="true"></i>
+               Procesos
+            </h2>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row"><hr></div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="col-sm-2">
+            <form name="f_regstock" action="{$gsc->page->url()}" method="post" class="form" role="form">
+               <input type="hidden" name="regstock" value="regstock">
+               <div class="card">
+                  <div class="card-header bg-info text-white">
+                     <h7><center><b>Regenerar Stock</b></center></h7>
+                  </div>
+                  <div class="card-footer">
+                     <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-outline-info" type="submit">Procesar</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div class="col-sm-2">
+            <form name="f_recalcular_stock" action="{$gsc->page->url()}" method="post" class="form" role="form">
+               <input type="hidden" name="recalcular_stock" value="recalcular_stock">
+               <div class="card">
+                  <div class="card-header bg-info text-white">
+                     <h7><center><b>Recalcular Stock</b></center></h7>
+                  </div>
+                  <div class="card-footer">
+                     <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-outline-info" type="submit">Procesar</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div class="col-sm-2">
+            <form name="f_procesos_costos" action="{$gsc->page->url()}" method="post" class="form" role="form">
+               <input type="hidden" name="procesos_costos" value="procesos_costos">
+               <div class="card">
+                  <div class="card-header bg-info text-white">
+                     <h7><center><b>Procesos para Costos</b></center></h7>
+                  </div>
+                  <div class="card-footer">
+                     <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-outline-info" type="submit">Procesar</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+{include="footer"}

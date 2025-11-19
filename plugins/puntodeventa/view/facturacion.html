@@ -1,0 +1,862 @@
+{include="header"}
+   {if="!$gsc->arqueo"}
+      <script type="text/javascript">
+         function aperturar_caja(idcaja, nombrecaja, inicial, idestablecimiento) {
+            $("#aperturar_caja").val(idcaja);
+            $("#idestablecimiento").val(idestablecimiento);
+            $("#nombre").val(nombrecaja);
+            $("#inicial").val(inicial);
+            $("#modal_aperturar_caja").modal('show');
+         }
+      </script>
+      <div class='container-fluid'>
+         <div class="row">
+            <div class="col-sm-6">
+               <div class="btn-group">
+                  <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                     <span class="bi bi-bootstrap-reboot"></span>
+                  </a>
+                  {if="$gsc->page->is_default()"}
+                     <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                        <i class="bi bi-house-fill"></i>
+                     </a>
+                  {else}
+                     <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                        <i class="bi bi-house"></i>
+                     </a>
+                  {/if}
+               </div>
+            </div>
+            <div class="col-sm-6 col-xs-5" style="text-align: right;">
+               <h2 style="margin-top: 0px;">
+                  <i class="bi bi-cart4"></i>
+                  Selección de Caja
+               </h2>
+            </div>
+         </div>
+         <div class="row"><br></div>
+         <div class="row"><hr></div>
+         <div class="row"><br></div>
+         <div class="row">
+            {loop="$gsc->cajas->cajasPendientes($gsc->empresa->idempresa)"}
+               <div class="col-sm-3">
+                  <div class="d-grid gap-2">
+                     <a class="btn btn-outline-dark" onclick="aperturar_caja('{$value->idcaja}', '{$value->nombre}', '{$value->inicial}', '{$value->idestablecimiento}')">{$value->nombre}</a>
+                  </div>
+               </div>
+            {/loop}
+         </div>
+      </div>
+      <div class="modal" id="modal_aperturar_caja">
+         <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+               <form name="f_nueva_caja" class="form" role="form" action="{$gsc->url()}" method="post">
+                  <input type="hidden" name="aperturar_caja" id="aperturar_caja" value="">
+                  <input type="hidden" name="idestablecimiento" id="idestablecimiento" value="">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-bag-check-fill"></i>&nbsp; Aperturar Caja</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="col-sm-12">
+                        <label for="nombre" class="col-form-label">Nombre de la Caja:</label>
+                        <input type="text" class="form-control form-control-sm" id="nombre" placeholder="Nombre de la Caja" readonly maxlength="100">
+                     </div>
+                     <div class="col-sm-12">
+                        <label for="inicial" class="col-form-label">Dinero Inicial:</label>
+                        <input type="text" class="form-control form-control-sm solo_precios text-end" id="inicial" name="inicial" placeholder="Dinero Inicial" required>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                     <button class="btn btn-sm btn-success" type="submit">
+                        <span class="bi bi-cast"></span>&nbsp; Aperturar
+                     </button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   {else}
+      <script type="text/javascript">
+         let url = "{$gsc->url()}";
+         let idcierre = "{$gsc->arqueo->idcierre}";
+         let consfinal = {function="json_encode($gsc->cliente_s)"};
+         let establecimiento = "{$gsc->arqueo->idestablecimiento}";
+         let numlineas = 0;
+         let impuestos = {function="json_encode(listar_impuestos())"};
+         let totalfac = 0;
+         let totalcobro = 0;
+         let saldo = 0;
+         let cambio = 0;
+         let val_max_cf = {#JG_MAX_CF#};
+         let paso_um = 0;
+         {if="$gsc->paso_um"}
+            paso_um = 1;
+         {/if}
+         let mosmenu = "{$gsc->mosmenu}";
+         let impresion = "{$gsc->impresion}";
+         let modtotal = {$gsc->modtotal};
+         let reimpresion = {$gsc->reimpresion};
+         let mtipodoc = {$gsc->mtipodoc};
+      </script>
+      <script src="{#JG_PATH#}plugins/puntodeventa/view/js/facturacion.js?v=3"></script>
+      <div class='container-fluid'>
+         <div class="row">
+            <div class="col-sm-6">
+               <div class="btn-group">
+                  <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                     <span class="bi bi-bootstrap-reboot"></span>
+                  </a>
+                  {if="$gsc->page->is_default()"}
+                     <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                        <i class="bi bi-house-fill"></i>
+                     </a>
+                  {else}
+                     <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                        <i class="bi bi-house"></i>
+                     </a>
+                  {/if}
+                  <a class="btn btn-sm btn-warning" href="#" id="b_atajos" title="Ver Atajos de Teclado">
+                     <span class="bi bi-info-square"></span>
+                  </a>
+               </div>
+            </div>
+            <div class="col-sm-6 col-xs-5" style="text-align: right;">
+               <h2 style="margin-top: 0px;">
+                  <i class="bi bi-cart4"></i>
+                  {$gsc->arqueo->get_caja()}
+               </h2>
+            </div>
+         </div>
+         <div class="row"><hr></div>
+         <div class="row">
+            <div class="col-sm-12">
+               <div class="row">
+                  <div class="btn-group" role="group" aria-label="Acciones Facturación">
+                     <button type="button" class="btn btn-success" id="b_nuevo_cliente">
+                        <span class="bi bi-person-plus-fill"></span>
+                        <span class="d-none d-sm-block">&nbsp; Nuevo Cliente</span>
+                     </button>
+                     <button type="button" class="btn btn-info" id="b_historial">
+                        <span class="bi bi-card-list"></span>
+                        <span class="d-none d-sm-block">&nbsp; Historial</span>
+                     </button>
+                     <button type="button" class="btn btn-warning" id="b_mov_caja">
+                        <span class="bi bi-arrow-down-up"></span>
+                        <span class="d-none d-sm-block">&nbsp; Mov. de Caja</span>
+                     </button>
+                     {if="$gsc->mosmenu == 1"}
+                        <button type="button" class="btn btn-secondary" id="b_mosmenu">
+                           <span class="bi bi-card-image"></span>
+                           <span class="d-none d-sm-block">&nbsp; Menú</span>
+                        </button>
+                     {/if}
+                     <button type="button" class="btn btn-danger" id="b_cerrar_caja">
+                        <span class="bi bi-inbox"></span>
+                        <span class="d-none d-sm-block">&nbsp; Cerrar Caja</span>
+                     </button>
+                     <button type="button" class="btn btn-primary" id="b_cobrar">
+                        <span class="bi bi-cash-coin"></span>
+                        <span class="d-none d-sm-block">&nbsp; Cobrar</span>
+                     </button>
+                     <button type="button" class="btn btn-dark">
+                        <span class="fs-3" id="total_venta">0.00 $</span>
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <form name="f_nueva_factura" id="f_nueva_factura" class="form" role="form" action="{$gsc->url()}" method="post">
+            <input type="hidden" name="numlineas" id="numlineas" value="0">
+            <input type="hidden" id="identcons" value="{$gsc->cliente_s->idcliente}">
+            <div class="row">
+               <div class="col-sm-4">
+                  <label for="idcliente" class="col-form-label">Cliente:</label>
+                  <select id="idcliente" name="idcliente" class="form-select form-select-sm" required></select>
+                  <div class="form-check form-switch" style="margin-top: 0.5rem;">
+                     <input class="form-check-input" type="checkbox" id="act_cliente" name="act_cliente">
+                     <label class="form-check-label" for="act_cliente">Actualizar Datos Cliente?</label>
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <label for="direccion" class="col-form-label">Dirección Cliente:</label>
+                  <input type="text" class="form-control form-control-sm mayusculas" id="direccion" name="direccion" placeholder="Dirección Cliente" minlength="1" maxlength="250" required>
+               </div>
+               <div class="col-sm-2">
+                  <label for="telefono" class="col-form-label">Teléfono:</label>
+                  <input type="text" class="form-control form-control-sm solo_numeros" id="telefono" name="telefono" placeholder="Teléfono" minlength="1" maxlength="50" required>
+               </div>
+               <div class="col-sm-3">
+                  <label for="email" class="col-form-label">Email</label>
+                  <input type="email" class="form-control form-control-sm solo_correos minusculas" id="email" name="email" placeholder="Email" minlength="1" maxlength="150" required>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-sm-6">
+                  <div class="form-group">
+                     <label for="codbarras" class="col-form-label">Código de Barras</label>
+                     <div class="input-group input-group-sm">
+                        <span class="input-group-text" id="codbarras">
+                           <i class="bi bi-upc-scan"></i>
+                        </span>
+                        <input type="text" class="form-control form-control-sm" id="codigobarras" placeholder="Código de Barras" autofocus="true">
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-6">
+                  <div class="form-group">
+                     <label for="idarticulo" class="col-form-label">Buscar Artículo:</label>
+                     <select id="idarticulo" class="form-select form-select-sm"></select>
+                  </div>
+               </div>
+            </div>
+            <div class="row"><br></div>
+            <div class="row">
+               <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+                  <div class="card-body">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th width="8%" style="text-align: center;">Código</th>
+                                 {if="$gsc->paso_um"}
+                                    <th width="22%" style="text-align: center;">Nombre del Producto</th>
+                                    <th width="8%">Unidad Medida</th>
+                                 {else}
+                                    <th width="30%" style="text-align: center;">Nombre del Producto</th>
+                                 {/if}
+                                 <th width="8%" style="text-align: center;">Cantidad</th>
+                                 <th width="8%" style="text-align: center;">PVP Unitario</th>
+                                 <th width="8%" style="text-align: center;">Descuento</th>
+                                 <th width="8%" style="text-align: center;">% Impuesto</th>
+                                 <th width="8%" style="text-align: center;">Precio Total</th>
+                                 <th width="9%" style="text-align: center;"></th>
+                              </tr>
+                           </thead>
+                           <tbody id="detalle_fac"></tbody>
+                           <tfoot>
+                              <tr>
+                                 <th style="text-align: right;" {if="$gsc->paso_um"}colspan="7"{else}colspan="6"{/if}>Subtotal Sin Impuestos</th>
+                                 <th style="text-align: right;" id="subtotal">0.00</th>
+                                 <th>$</th>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: right;" {if="$gsc->paso_um"}colspan="7"{else}colspan="6"{/if}>Total Descuento</th>
+                                 <th style="text-align: right;" id="totaldescuento">0.00</th>
+                                 <th>$</th>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: right;" {if="$gsc->paso_um"}colspan="7"{else}colspan="6"{/if}>IVA</th>
+                                 <th style="text-align: right;" id="totaliva">0.00</th>
+                                 <th>$</th>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: right;" {if="$gsc->paso_um"}colspan="7"{else}colspan="6"{/if}>Total</th>
+                                 <th style="text-align: right;" id="totalfac">0.00</th>
+                                 <th>$</th>
+                              </tr>
+                           </tfoot>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="modal" id="modal_cobrar">
+               <div class="modal-dialog modal-lg modal-dialog-centered">
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-cash-coin"></i>&nbsp; Cobrar</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                     </div>
+                     <div class="modal-body">
+                        <div class="row">
+                           <div class="col-sm-12">
+                              <div class="form-group">
+                                 <label for="observaciones" class="col-form-label">Observaciones:</label>
+                                 <textarea class="form-control form-control-sm" id="observaciones" name="observaciones" placeholder="Observaciones" maxlength="300"></textarea>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="row"><br></div>
+                        <div class="row"><hr></div>
+                        <div class="row">
+                           <div class="col-sm-12">
+                              <h4>Formas de Pago: </h4>
+                           </div>
+                        </div>
+                        <div class="row">
+                           <div class="table-responsive">
+                              <input type="hidden" name="lineasfp" id="lineasfp" value="0">
+                              <input type="hidden" id="esefec" value="SI">
+                              <table class="table table-borderless">
+                                 <thead>
+                                    <tr>
+                                       <th>Forma de Pago</th>
+                                       <th>Fecha</th>
+                                       <th>Número Doc.</th>
+                                       <th>Valor</th>
+                                       <th></th>
+                                    </tr>
+                                    <tr>
+                                       <th>
+                                          <select class="form-select form-select-sm" id="fpselec" onchange="buscar_fp()">
+                                             <option value="">Seleccione</option>
+                                             {loop="$gsc->formaspago->allPuntoVenta($gsc->idempresa)"}
+                                                <option data-nombre="{$value->nombre}" value="{$value->idformapago}" {if="$value->esefec"}selected{/if}>{$value->nombre}</option>
+                                             {/loop}
+                                          </select>
+                                       </th>
+                                       <th>
+                                          <input class="form-control form-control-sm" type="date" id="fec_trans" value="{$gsc->today()}">
+                                       </th>
+                                       <th>
+                                          <input class="form-control form-control-sm solo_numeros text-end" disabled type="text" id="num_doc" value="">
+                                       </th>
+                                       <th>
+                                          <input class="form-control form-control-sm solo_precios text-end" type="number" step="0.01" id="valor" value="0">
+                                       </th>
+                                       <th>
+                                          <button class="btn btn-sm btn-success" type="button" id="b_addfp" onclick="add_fp()" title="Añadir Forma de Pago">
+                                             <span class="bi bi-check-circle"></span>
+                                          </button>
+                                       </th>
+                                    </tr>
+                                 </thead>
+                                 <tbody id="detfp">
+                                 </tbody>
+                                 <tfoot>
+                                    <tr>
+                                       <th></th>
+                                       <th></th>
+                                       <th class="text-end">Total Recibido:</th>
+                                       <td>
+                                          <input class="form-control form-control-sm solo_precios text-end" readonly type="text" id="total_rec" value="0">
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <th></th>
+                                       <th></th>
+                                       <th class="text-end">Total Facturado:</th>
+                                       <th>
+                                          <input class="form-control form-control-sm solo_precios text-end" readonly type="text" id="total_fac" value="0">
+                                       </th>
+                                    </tr>
+                                    <tr>
+                                       <th></th>
+                                       <th></th>
+                                       <th class="text-end">Cambio:</th>
+                                       <th>
+                                          <input class="form-control form-control-sm solo_precios text-end" readonly type="text" name="cambio" id="cambio_fac" value="0">
+                                       </th>
+                                    </tr>
+                                 </tfoot>
+                              </table>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="modal-footer">
+                        {if="complemento_exists('notasdeventa') && !complemento_exists('manejo_notasventa')"}
+                           <div class="form-check form-switch" style="margin-top: 0.5rem;{if="JG_ECAUTE == 1"}display: none;{/if}">
+                              <input class="form-check-input" type="checkbox" id="isnota" name="isnota" {if="JG_ECAUTE == 1"}checked{/if}>
+                              <label class="form-check-label" for="isnota">Nota de Venta?</label>
+                           </div>
+                        {/if}
+                        <div class="btn-group">
+                           <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                              <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                           </button>
+                           <button class="btn btn-sm btn-primary" id="btn_guardar" type="button" onclick="validar_guardar(this)">
+                              <span class="bi bi-save2"></span>&nbsp; Guardar
+                           </button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+      {if="$gsc->modtotal == 1"}
+         <div class="modal" id="modal_editar_total">
+            <div class="modal-dialog modal-sm modal-dialog-centered">
+               <input type="hidden" id="numlineasmod">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-pen" aria-hidden="true"></i>&nbsp; Editar Total</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <label for="edit_total" class="col-form-label">Total:</label>
+                           <input type="text" class="form-control form-control-sm text-end solo_precios" id="edit_total" name="edit_total" placeholder="Total" minlength="1" maxlength="250" required>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button class="btn btn-sm btn-info" type="button" onclick="recalcular_total()" title="Modificar Total.">
+                        <span class="bi bi-pen"></span>&nbsp; Editar
+                     </button>
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </div>
+      {/if}
+      <div class="modal" id="modal_nuevo_cliente">
+         <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+               <form name="f_nuevo_cliente" id="f_nuevo_cliente" class="form" role="form" action="{$gsc->url()}" method="post">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-person-plus-fill"></i>&nbsp; Crear Cliente</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="col-sm-5">
+                           <label for="tipoid" class="col-form-label">Tipo de Identificación:</label>
+                           <select class="form-control form-control-sm" name="tipoid" id="tipoid" onchange="cambio_ident();">
+                              {loop="function=tiposIdentificacion()"}
+                                 {if="$key != 'F'"}
+                                    <option value="{$key}" {if="'R' == $key"}selected{/if}>{$value}</option>
+                                 {/if}
+                              {/loop}
+                           </select>
+                        </div>
+                        <div class="col-sm-7">
+                           <div class="form-group">
+                              <label for="identificacion" class="col-form-label">Nro. Identificación:</label>
+                              <div class="input-group">
+                                 <input type="text" class="form-control form-control-sm ident" id="identificacion" name="identificacion" placeholder="Nro. Identificación" minlength="13" maxlength="13" required>
+                                 <button class="btn btn-outline-primary" type="button" id="btn_buscarcli" onclick="buscar_cliente()"><i class="bi bi-search"></i></button>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-6">
+                           <label for="razonsocial" class="col-form-label">Razon Social:</label>
+                           <input type="text" class="form-control form-control-sm mayusculas" id="razonsocial" name="razonsocial" placeholder="Razon Social" minlength="1" maxlength="250" required>
+                        </div>
+                        <div class="col-sm-6">
+                           <label for="nombrecomercial" class="col-form-label">Nombre Comercial</label>
+                           <input type="text" class="form-control form-control-sm mayusculas" id="nombrecomercial" name="nombrecomercial" placeholder="Nombre Comercial" minlength="1" maxlength="250">
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <label for="telefono" class="col-form-label">Teléfono:</label>
+                           <input type="text" class="form-control form-control-sm solo_numeros" id="telefono2" name="telefono" placeholder="Teléfono" minlength="1" maxlength="50" required>
+                        </div>
+                        <div class="col-sm-4">
+                           <label for="celular" class="col-form-label">Celular</label>
+                           <input type="text" class="form-control form-control-sm solo_numeros" id="celular" name="celular" placeholder="Celular" minlength="1" maxlength="50">
+                        </div>
+                        <div class="col-sm-4">
+                           <label for="email" class="col-form-label">Email</label>
+                           <input type="email" class="form-control form-control-sm solo_correos minusculas" id="email2" name="email" placeholder="Email" minlength="1" maxlength="150" required>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <label for="direccion" class="col-form-label">Dirección:</label>
+                           <input type="text" class="form-control form-control-sm mayusculas" id="direccion2" name="direccion" placeholder="Dirección" minlength="1" maxlength="250" required>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <div class="form-group">
+                              <label for="regimen" class="col-form-label">Regimén:</label>
+                              <select class="form-control form-control-sm" name="regimen" id="regimen">
+                                 <option value="">Seleccione Regimen</option>
+                                 {loop="function=regimen()"}
+                                    <option value="{$key}" {if="'GE' == $key"}selected{/if}>{$value}</option>
+                                 {/loop}
+                              </select>
+                           </div>
+                        </div>
+                        <div class="col-sm-8">
+                           <label for="otros" class="col-form-label"></label>
+                           <div class="checkbox">
+                              <label>
+                                 <input type="checkbox" id="obligado" name="obligado" value="TRUE"/>
+                                 Obligado a llevar Contabilidad
+                              </label>
+                              <br>
+                              <label>
+                                 <input type="checkbox" id="agretencion" name="agretencion" value="TRUE"/>
+                                 Agente de Retención
+                              </label>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                     <button class="btn btn-sm btn-primary" type="submit">
+                        <span class="bi bi-save2"></span>&nbsp; Guardar
+                     </button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+      <div class="modal" id="modal_historial">
+         <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-card-list"></i>&nbsp; Historial de Venta</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="table-responsive">
+                     <table class="table table-hover">
+                        <thead>
+                           <tr>
+                              <th style="text-align: center;">Fecha</th>
+                              {if="$gsc->mtipodoc == 1"}
+                                 <th style="text-align: center;">Tipo Documento</th>
+                              {/if}
+                              <th style="text-align: center;">Nro. Documento</th>
+                              <th style="text-align: center;">Razon Social</th>
+                              <th style="text-align: center;">Total</th>
+                              <th style="text-align: center;"></th>
+                           </tr>
+                        </thead>
+                        <tbody id="detalle_his"></tbody>
+                     </table>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="modal" id="modal_movimientos">
+         <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-arrow-down-up"></i>&nbsp; Movimientos de Caja</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="table-responsive">
+                     <table class="table table-hover">
+                        <thead>
+                           <tr>
+                              <th style="text-align: center;">Tipo</th>
+                              <th style="text-align: center;">Nombre</th>
+                              <th style="text-align: center;">Valor</th>
+                              <th></th>
+                           </tr>
+                           <tr>
+                              <form name="f_nuevo_mov" class="form" role="form" action="{$gsc->url()}" method="post">
+                                 <th>
+                                    <select class="form-select form-select-sm" name="t_mov" required>
+                                       <option value="ingreso" selected>Ingreso</option>
+                                       <option value="egreso">Egreso</option>
+                                    </select>
+                                 </th>
+                                 <th>
+                                    <input class="form-control form-control-sm" type="text" required maxlength="100" name="n_mov" id="n_mov" value="" placeholder="Nombre" autocomplete="off">
+                                 </th>
+                                 <th>
+                                    <input class="form-control form-control-sm solo_precios text-end" required type="number" step="0.01" name="v_mov" value="0">
+                                 </th>
+                                 <th>
+                                    <button class="btn btn-sm btn-primary" type="submit" title="Guardar Movimiento">
+                                       <span class="bi bi-save2"></span>
+                                    </button>
+                                 </th>
+                              </form>
+                           </tr>
+                        </thead>
+                        <tbody id="detalle_movs"></tbody>
+                        <tfoot>
+                           <tr>
+                              <th></th>
+                              <th style="text-align: right;">Total:</th>
+                              <th style="text-align: right;" id="tot_mov">0.00 $</th>
+                              <th></th>
+                           </tr>
+                        </tfoot>
+                     </table>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="modal" id="modal_cierrecaja">
+         <div class="modal-dialog modal-lg modal-dialog-centered">
+            <form name="f_nuevo_mov" class="form" role="form" action="{$gsc->url()}" method="post">
+               <input type="hidden" name="idcierrecaja" value="{$gsc->arqueo->idcierre}">
+               <input type="hidden" name="totalc" id="totalc" value="0">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-inbox"></i>&nbsp; Cerrar Caja</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th colspan="4">
+                                    <div class="d-grid gap-2">
+                                       <button class="btn btn-sm btn-dark" type="button">
+                                          <span class="fs-3" id="total_caja">0.00</span>
+                                       </button>
+                                    </div>
+                                 </th>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: center;">Monedas</th>
+                                 <th style="text-align: center;">Valor</th>
+                                 <th style="text-align: center;">Billetes</th>
+                                 <th style="text-align: center;">Valor</th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              <tr>
+                                 <th style="text-align: center;">0.01</th>
+                                 <td>
+                                    <input class="form-control form-control-sm text-end solo_numeros" type="text" required name="m001" id="m001" value="0" minlength="0" autocomplete="off" onblur="calcular_cierre()">
+                                 </td>
+                                 <th style="text-align: center;">1</th>
+                                 <td>
+                                    <input class="form-control form-control-sm text-end solo_numeros" type="text" required name="b1" id="b1" value="0" minlength="0" autocomplete="off" onblur="calcular_cierre()">
+                                 </td>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: center;">0.05</th>
+                                 <td>
+                                    <input class="form-control form-control-sm text-end solo_numeros" type="text" required name="m005" id="m005" value="0" minlength="0" autocomplete="off" onblur="calcular_cierre()">
+                                 </td>
+                                 <th style="text-align: center;">5</th>
+                                 <td>
+                                    <input class="form-control form-control-sm text-end solo_numeros" type="text" required name="b5" id="b5" value="0" minlength="0" autocomplete="off" onblur="calcular_cierre()">
+                                 </td>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: center;">0.10</th>
+                                 <td>
+                                    <input class="form-control form-control-sm text-end solo_numeros" type="text" required name="m010" id="m010" value="0" minlength="0" autocomplete="off" onblur="calcular_cierre()">
+                                 </td>
+                                 <th style="text-align: center;">10</th>
+                                 <td>
+                                    <input class="form-control form-control-sm text-end solo_numeros" type="text" required name="b10" id="b10" value="0" minlength="0" autocomplete="off" onblur="calcular_cierre()">
+                                 </td>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: center;">0.25</th>
+                                 <td>
+                                    <input class="form-control form-control-sm text-end solo_numeros" type="text" required name="m025" id="m025" value="0" minlength="0" autocomplete="off" onblur="calcular_cierre()">
+                                 </td>
+                                 <th style="text-align: center;">20</th>
+                                 <td>
+                                    <input class="form-control form-control-sm text-end solo_numeros" type="text" required name="b20" id="b20" value="0" minlength="0" autocomplete="off" onblur="calcular_cierre()">
+                                 </td>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: center;">0.50</th>
+                                 <td>
+                                    <input class="form-control form-control-sm text-end solo_numeros" type="text" required name="m050" id="m050" value="0" minlength="0" autocomplete="off" onblur="calcular_cierre()">
+                                 </td>
+                                 <th style="text-align: center;">50</th>
+                                 <td>
+                                    <input class="form-control form-control-sm text-end solo_numeros" type="text" required name="b50" id="b50" value="0" minlength="0" autocomplete="off" onblur="calcular_cierre()">
+                                 </td>
+                              </tr>
+                              <tr>
+                                 <th style="text-align: center;">1</th>
+                                 <td>
+                                    <input class="form-control form-control-sm text-end solo_numeros" type="text" required name="m1" id="m1" value="0" minlength="0" autocomplete="off" onblur="calcular_cierre()">
+                                 </td>
+                                 <th style="text-align: center;">100</th>
+                                 <td>
+                                    <input class="form-control form-control-sm text-end solo_numeros" type="text" required name="b100" id="b100" value="0" minlength="0" autocomplete="off" onblur="calcular_cierre()">
+                                 </td>
+                              </tr>
+                           </tbody>
+                           {if="complemento_exists('cuadre_producto')"}
+                              {if="$gsc->articulos->getArticulosCuadre($gsc->idempresa)"}
+                                 <tfoot>
+                                    <tr>
+                                       <td colspan="4">
+                                          <div class="d-grid gap-2">
+                                             <button class="btn btn-sm btn-info" type="button">
+                                                <span class="fs-3">Cuadre de Producto</span>
+                                             </button>
+                                          </div>
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <th colspan="3" style="text-align: center;">Producto</th>
+                                       <th style="text-align: center;">Stock Final</th>
+                                    </tr>
+                                    {loop="$gsc->articulos->getArticulosCuadre($gsc->idempresa)"}
+                                       <tr>
+                                          <td colspan="3">{$value.nombre}</td>
+                                          <td>
+                                             <input class="form-control form-control-sm text-end solo_precios" type="text" required name="cuadre_{$value.idarticulo}" value="" minlength="1" autocomplete="off">
+                                          </td>
+                                       </tr>
+                                    {/loop}
+                                 </tfoot>
+                              {/if}
+                           {/if}
+                        </table>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                     <button class="btn btn-sm btn-success" type="submit">
+                        <span class="bi bi-save2"></span>&nbsp; Cerrar Caja
+                     </button>
+                  </div>
+               </div>
+            </form>
+         </div>
+      </div>
+      <div class="modal" id="modal_atajos">
+         <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-info-square"></i>&nbsp; Atajos de Teclado</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="table-responsive">
+                     <table class="table table-hover">
+                        <thead>
+                           <tr>
+                              <th style="text-align: center;">Teclas</th>
+                              <th style="text-align: center;">Acción</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           <tr>
+                              <th>F2</th>
+                              <td>Nuevo Cliente</td>
+                           </tr>
+                           <tr>
+                              <th>F4</th>
+                              <td>Ver Historial</td>
+                           </tr>
+                           <tr>
+                              <th>F6</th>
+                              <td>Movimientos de Caja</td>
+                           </tr>
+                           <tr>
+                              <th>F8</th>
+                              <td>Cerrar Caja</td>
+                           </tr>
+                           <tr>
+                              <th>F9</th>
+                              <td>Cobrar</td>
+                           </tr>
+                           <tr>
+                              <th>ALT + N</th>
+                              <td>Nueva Pestaña de Facturación</td>
+                           </tr>
+                           <tr>
+                              <th>ALT + I</th>
+                              <td>Ver Atajos</td>
+                           </tr>
+                           {if="$gsc->mosmenu == 1"}
+                              <tr>
+                                 <th>ALT + M</th>
+                                 <td>Mostrar Menú</td>
+                              </tr>
+                           {/if}
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+               </div>
+            </div>
+         </div>
+      </div>
+      {if="$gsc->paso_um"}
+         <div class="modal" id="modal_presentaciones">
+            <div class="modal-dialog modal-dialog-centered">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-speedometer2"></i>&nbsp; Unidades de Medida <span id="articuloname" class="badge rounded-pill bg-secondary"></span></h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th style="text-align: center;">Unidad</th>
+                                 <th style="text-align: center;">Cantidad</th>
+                                 <th style="text-align: center;">Precio</th>
+                                 <th style="text-align: center;">Precio + IVA</th>
+                                 <th style="text-align: center;"></th>
+                              </tr>
+                           </thead>
+                           <tbody id="detalle_pre">
+                           </tbody>
+                        </table>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </div>
+      {/if}
+      {if="$gsc->mosmenu == 1"}
+         <div class="modal" id="modal_menu">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+               <input type="hidden" id="idpadre" value="">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-card-image"></i>&nbsp; Menú <span id="gruponame" class="badge rounded-pill bg-secondary"></span></h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="card-group" id="b_detalle">
+                        </div>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-success" id="btn_regresar">
+                        <span class="bi bi-arrow-left-short"></span>&nbsp; Anterior
+                     </button>
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </div>
+      {/if}
+   {/if}
+{include="footer"}

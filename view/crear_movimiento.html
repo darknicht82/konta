@@ -1,0 +1,85 @@
+{include="header"}
+   <script type="text/javascript">
+      let url = "{$gsc->url()}";
+   </script>
+   <!--script src="{#JG_PATH#}view/js/ventas/crear_venta.js"></script-->
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-secondary" href="index.php?page=lista_movimientos_stock">
+                  <span class="bi bi-arrow-left"></span>
+                  <span class="d-none d-sm-block">&nbsp; Movimientos</span>
+               </a>
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+            </div>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row"><hr></div>
+      <div class="row"><br></div>
+      <div class="row">
+         <form name="f_nuevo_mov_stock" action="{$gsc->page->url()}" method="post" class="form" role="form">
+            <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+               <div class="card-header">
+                  <h4>
+                     <i class="bi bi-cart-dash-fill" aria-hidden="true"></i>
+                     Nuevo Movimiento de Stock
+                  </h4>
+               </div>
+               <div class="card-body">
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <label for="tipo" class="col-form-label">Tipo:</label>
+                        <select id="tipo" name="tipo" class="form-select" required>
+                           <option value="ingr" selected>Ingreso</option>
+                           <option value="egre">Egreso</option>
+                        </select>
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="idestablecimiento" class="col-form-label">Establecimiento:</label>
+                        <select id="idestablecimiento" name="idestablecimiento" class="form-select" required>
+                              <option value="" selected>Seleccione</option>
+                           {loop="$gsc->establecimiento->get_by_idempresa($gsc->empresa->idempresa)"}
+                              <option value="{$value->idestablecimiento}">{$value->nombre}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                     <div class="col-sm-2">
+                        <label for="fec_emision" class="col-form-label">Fecha de Emisión:</label>
+                        <input type="date" class="form-control" name="fec_emision" value="{$gsc->today()}" placeholder="Fecha de Emisión." required>
+                     </div>
+                     <div class="col-sm-2">
+                        <label for="hora_emision" class="col-form-label">Hora de Emisión:</label>
+                        <input type="time" class="form-control" readonly value="{$gsc->hour()}" placeholder="Hora de Emisión." required>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <label for="observaciones" class="col-form-label">Observaciones:</label>
+                        <textarea cols="5" name="observaciones" id="observaciones" class="form-control" maxlength="300"></textarea>
+                     </div>
+                  </div>
+               </div>
+               <div class="card-footer" style="text-align: right;">
+                  <button class="btn btn-primary" type="submit" id="btn_save_fac">
+                     <span class="bi bi-save"></span>
+                     <span class="d-none d-sm-block">&nbsp;Guardar</span>
+                  </button>
+               </div>
+            </div>
+         </form>
+      </div>
+   </div>
+{include="footer"}

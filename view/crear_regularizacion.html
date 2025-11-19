@@ -1,0 +1,155 @@
+{include="header"}
+   <script type="text/javascript">
+      $(document).ready(function() {
+
+      });
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-secondary" href="index.php?page=lista_regularizaciones_stock">
+                  <span class="bi bi-arrow-left"></span>
+                  <span class="d-none d-sm-block">&nbsp; Regularizaciones</span>
+               </a>
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-file-earmark-plus" aria-hidden="true"></i>
+               Nueva Regularización
+            </h2>
+         </div>
+      </div>
+      <div class="row"><hr></div>
+      <div class="row">
+         <form name="f_buscador" action="{$gsc->page->url()}" method="post" class="form" role="form">
+            <div class="row">
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="query" class="col-form-label">Buscador:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="query">
+                           <i class="bi bi-search"></i>
+                        </span>
+                     <input class="form-control form-control-sm" type="query" name="query" value="{$gsc->query}" id="query" autocomplete="off" placeholder="Buscador" onchange="this.form.submit()" autofocus="" />
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="b_grupo" class="col-form-label">Grupo:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="b_grupo">
+                           <i class="bi bi-boxes"></i>
+                        </span>
+                        <select class="form-control form-control-sm" name="b_grupo" id="b_grupo" onchange="this.form.submit()">
+                           <option value="">Seleccione Grupo</option>
+                           {loop="function=traer_grupos($gsc->user->idempresa)"}
+                              <option value="{$value->idgrupo}" {if="$gsc->b_grupo == $value->idgrupo"}selected{/if}>{$value->nombre}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="b_marca" class="col-form-label">Marca:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="b_marca">
+                           <i class="bi bi-reddit"></i>
+                        </span>
+                        <select class="form-control form-control-sm" name="b_marca" id="b_marca" onchange="this.form.submit()">
+                           <option value="">Seleccione Marca</option>
+                           {loop="function=traer_marcas($gsc->user->idempresa)"}
+                              <option value="{$value->idmarca}" {if="$gsc->b_marca == $value->idmarca"}selected{/if}>{$value->nombre}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <label for="idestablecimiento" class="col-form-label">Establecimiento:</label>
+                  <select id="idestablecimiento" name="idestablecimiento" class="form-select" onchange="this.form.submit()">
+                     <option value="" selected>Todos</option>
+                     {loop="$gsc->establecimiento->get_by_idempresa($gsc->idempresa)"}
+                        <option value="{$value->idestablecimiento}" {if="$gsc->idestablecimiento == $value->idestablecimiento"}selected{/if}>{$value->nombre}</option>
+                     {/if}
+                  </select>
+               </div>
+            </div>
+         </form>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th class="text-center">Codigo</th>
+                     <th class="text-center">Nombre</th>
+                     <th class="text-center">Grupo</th>
+                     <th class="text-center">Marca</th>
+                     <th class="text-center">Stock Actual</th>
+                     <th width="10" class="text-center">Nuevo Stock</th>
+                     <th class="text-center">Costo Actual</th>
+                  </tr>
+               </thead>
+               {if="$gsc->resultados"}
+                  <form name="f_regularizacion" action="{$gsc->url()}" method="post" class="form" role="form">
+                     <tbody>
+                        <input type="hidden" name="establecimiento" value="{$gsc->idestablecimiento}">
+                        {loop="$gsc->resultados"}
+                           <tr>
+                              <td><a href="{$value->url()}" target="_blank" disabled>{$value->codprincipal}</a></td>
+                              <td>{$value->nombre}</td>
+                              <td>{$value->get_nombre_grupo()}</td>
+                              <td>{$value->get_nombre_marca()}</td>
+                              <td>{$value->getstock()}</td>
+                              <td width="10" >
+                                 <input type="text" class="form-control form-control-sm text-end solo_precios" name="nstock[{$value->idarticulo}]" id="nstock_{$value->idarticulo}" value="">
+                              </td>
+                              <td class="text-end">{$value->getCostoArt()} $</td>
+                           </tr>
+                        {/loop}
+                     </tbody>
+                     <tfoot>
+                        <tr>
+                           <th colspan="7">
+                              <label for="observaciones" class="col-form-label">Observaciones:</label>
+                              <textarea cols="5" name="observaciones" id="observaciones" class="form-control" maxlength="300"></textarea>
+                           </th>
+                        </tr>
+                        <tr>
+                           <td class="text-end" colspan="7">
+                              <button class="btn btn-sm btn-primary" type="submit">
+                                 <span class="bi bi-save2"></span>&nbsp; Generar
+                              </button>
+                           </td>
+                        </tr>
+                     </tfoot>
+                  </form>
+               {else}
+                  <tbody>
+                     <tr class="table-warning">
+                        <td colspan="7">Sin Resultados.!</td>
+                     </tr>
+                  </tbody>
+               {/if}
+            </table>
+         </div>
+      </div>
+   </div>
+{include="footer"}

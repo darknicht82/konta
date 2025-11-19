@@ -1,0 +1,202 @@
+{include="header"}
+   <script type="text/javascript">
+      $(document).ready(function() {
+         
+      });
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
+               Informacion del Plan Actual
+            </h2>
+         </div>
+      </div>
+      <div class="row"><br></div>
+         <div class="row">
+            <ul class="nav nav-tabs" role="tablist">
+               <li class="nav-item" role="presentation">
+                  <a class="nav-link {if="$gsc->mostrar=='datos'"}active{/if}" href="{$gsc->url()}&mostrar=datos" role="tab" aria-selected="true">
+                     <div class="d-flex align-items-center"> 
+                        <div class="tab-icon"><i class="bi bi-cart"></i></div>
+                        <div class="tab-title">&nbsp;Datos Plan</div>
+                     </div>
+                  </a>
+               </li>
+            </ul>
+            <div class="tab-content py-3">
+               {if="$gsc->mostrar=='datos'"}
+                  <div class="tab-pane fade active show" id="datos" role="tabpanel">
+                     <div class="row"><br></div>
+                     <div class="row">
+                        <div class="col">
+                           <div class="card radius-10">
+                              <div class="card-body">
+                                 <div class="d-flex align-items-center">
+                                    <div>
+                                       <h4 class="my-1 text-success"><b>Plan Actual: </b>{if="$gsc->empresa->numdocs < 0"}Ilimitado{else}{$gsc->empresa->numdocs} Docs.{/if} {if="$gsc->empresa->plan_basico"} (Básico){/if}</h4>
+                                       <p class="mb-0"><b>Numero de Usuarios Permitidos:  </b>{$gsc->empresa->numusers}</p>
+                                       <p class="mb-0"><b>Fecha de Inicio:  </b>{function="show_fecha($gsc->empresa->fec_inicio_plan)"}</p>
+                                       <p class="mb-0"><b>Fecha de Caducidad:  </b>{function="show_fecha($gsc->empresa->fec_caducidad_plan)"}</p>
+                                       <p class="mb-0"><b>Estado del Plan:  </b>{$gsc->empresa->getEstado()}</p>
+                                    </div>
+                                    <div class="widget-icon-large {if="$gsc->empresa->getEstado2() == 'V'"}bg-gradient-success{elseif="$gsc->empresa->getEstado2() == 'PC'"}bg-gradient-warning{else}bg-gradient-danger{/if} text-white ms-auto"><i class="bi bi-graph-up"></i>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="row"><br></div>
+                     <div class="row">
+                        <div class="col-12">
+                           <div class="card radius-10 w-100">
+                              <div class="card-body">
+                                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-xl-3 row-cols-xxl-3 g-3">
+                                    <div class="col">
+                                       <div class="card radius-10 mb-0 border shadow-none">
+                                          <div class="card-body text-center">
+                                             <div class="widget-icon mx-auto mb-3 bg-tiffany text-white">
+                                                <i class="bi bi-clipboard-plus"></i>
+                                             </div>
+                                             <h3 class="mb-0">{$gsc->empresa->countFacturas()}</h3>
+                                             <p class="mb-0"><b>Facturas</b></p>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col">
+                                       <div class="card radius-10 mb-0 border shadow-none">
+                                          <div class="card-body text-center">
+                                             <div class="widget-icon mx-auto mb-3 bg-danger text-white">
+                                                <i class="bi bi-calendar-minus"></i>
+                                             </div>
+                                             <h3 class="mb-0">{$gsc->empresa->countNotasCredito()}</h3>
+                                             <p class="mb-0"><b>Notas de Crédito</b></p>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col">
+                                       <div class="card radius-10 mb-0 border shadow-none">
+                                          <div class="card-body text-center">
+                                             <div class="widget-icon mx-auto mb-3 bg-gradient-success text-white">
+                                                <i class="bi bi-clipboard2-plus-fill"></i>
+                                             </div>
+                                             <h3 class="mb-0">{$gsc->empresa->countNotasDebito()}</h3>
+                                             <p class="mb-0"><b>Notas de Débito</b></p>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col">
+                                       <div class="card radius-10 mb-0 border shadow-none">
+                                          <div class="card-body text-center">
+                                             <div class="widget-icon mx-auto mb-3 bg-pink text-white">
+                                                <i class="bi bi-truck"></i>
+                                             </div>
+                                             <h3 class="mb-0">{$gsc->empresa->countGuiasRemision()}</h3>
+                                             <p class="mb-0"><b>Guías de Remisión</b></p>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col">
+                                       <div class="card radius-10 mb-0 border shadow-none">
+                                          <div class="card-body text-center">
+                                             <div class="widget-icon mx-auto mb-3 bg-purple text-white">
+                                                <i class="bi bi-filter-circle-fill"></i>
+                                             </div>
+                                             <h3 class="mb-0">{$gsc->empresa->countRetenciones()}</h3>
+                                             <p class="mb-0"><b>Retenciones</b></p>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col">
+                                       <div class="card radius-10 mb-0 border shadow-none">
+                                          <div class="card-body text-center">
+                                             <div class="widget-icon mx-auto mb-3 bg-orange text-white">
+                                                <i class="bi bi-hammer"></i>
+                                             </div>
+                                             <h3 class="mb-0">{$gsc->empresa->countLiquidaciones()}</h3>
+                                             <p class="mb-0"><b>Liquidaciones de Compra</b></p>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    {if="complemento_exists('notasdeventa')"}
+                                       <div class="col">
+                                          <div class="card radius-10 mb-0 border shadow-none">
+                                             <div class="card-body text-center">
+                                                <div class="widget-icon mx-auto mb-3 bg-gradient-info text-white">
+                                                   <i class="bi bi-file-plus"></i>
+                                                </div>
+                                                <h3 class="mb-0">{$gsc->empresa->countNotasVenta()}</h3>
+                                                <p class="mb-0"><b>Notas de Venta</b></p>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    {/if}
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="row"><br></div>
+                     <div class="row">
+                        <div class="col-12">
+                           <div class="card radius-10 w-100">
+                              <div class="card-body">
+                                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-xl-2 row-cols-xxl-2 g-2">
+                                    <div class="col">
+                                       <div class="card radius-10 mb-0 border shadow-none">
+                                          <div class="card-body text-center">
+                                             <div class="widget-icon mx-auto mb-3 bg-gradient-success text-white">
+                                                <i class="bi bi-file-earmark"></i>
+                                             </div>
+                                             <h3 class="mb-0">
+                                                {if="$gsc->empresa->numdocs == -1"}
+                                                   {$gsc->empresa->count_docs()} / &#x221e;
+                                                {else}
+                                                   {$gsc->empresa->count_docs()} / {$gsc->empresa->numdocs}
+                                                {/if}
+                                             </h3>
+                                             <p class="mb-0"><b>Documentos</b></p>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col">
+                                       <div class="card radius-10 mb-0 border shadow-none">
+                                          <div class="card-body text-center">
+                                             <div class="widget-icon mx-auto mb-3 bg-gradient-warning text-white">
+                                                <i class="bi bi-person-circle"></i>
+                                             </div>
+                                             <h3 class="mb-0">{$gsc->empresa->count_users()} / {$gsc->empresa->numusers}</h3>
+                                             <p class="mb-0"><b>Usuarios</b></p>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               {/if}
+            </div>
+         </div>
+      </div>
+   </div>
+{include="footer"}

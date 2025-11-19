@@ -1,0 +1,200 @@
+{include="header"}
+   <script type="text/javascript">
+      let url = "{$gsc->url()}";
+   </script>
+   <script src="{#JG_PATH#}plugins/pagosycobros/view/js/crear_pago.js"></script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-secondary" href="index.php?page=lista_pagos_proveedores">
+                  <span class="bi bi-arrow-left"></span>
+                  <span class="d-none d-sm-block">&nbsp; Pagos</span>
+               </a>
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+            </div>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row"><hr></div>
+      <div class="row"><br></div>
+      <div class="row">
+         <form name="f_selec_proveedor" id="f_selec_proveedor" action="{$gsc->url()}" method="post" class="form" role="form">
+            <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+               <div class="card-header">
+                  <h4>
+                     <i class="bi bi-cash-coin" aria-hidden="true"></i>
+                     Nuevo Pago
+                  </h4>
+               </div>
+               <div class="card-body">
+                  <div class="row">
+                     <div class="col-sm-6">
+                        <label for="idproveedor" class="col-form-label">Proveedor:</label>
+                        <select id="idproveedor" name="idproveedor" class="form-select" required onchange="this.form.submit()">
+                           {if="$gsc->nom_proveedor != ''"}
+                              <option value="{$gsc->idproveedor}">{$gsc->nom_proveedor}</option>
+                           {/if}
+                        </select>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+      <div class="row">
+         <form name="f_nuevo_pago" id="f_nuevo_pago" action="{$gsc->url()}" method="post" class="form" role="form">
+            <input type="hidden" name="gen_pago">
+            <input type="hidden" name="proveedorselect" value="{$gsc->idproveedor}">
+            <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+               <div class="card-body">
+                  <div class="row">
+                     <div class="table-responsive">
+                        <table class="table table-hover saldos">
+                           <thead>
+                              <tr>
+                                 <th class="text-center">Nro. Documento</th>
+                                 <th></th>
+                                 <th class="text-center">Fecha Emisión</th>
+                                 <th class="text-center">Fecha Vencimiento</th>
+                                 <th class="text-center">Saldo Pendiente</th>
+                                 <th></th>
+                                 <th>
+                                    <div class="form-check form-switch" title="Marcar Todos">
+                                       <input class="form-check-input" type="checkbox" id="mtodos" onclick="marcar_todos()">
+                                    </div>
+                                 </th>
+                                 <th class="text-center">Valor a Pagar</th>
+                                 <th class="text-center">Saldo Final</th>
+                                 <th></th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              <!--{$x=0}-->
+                              {loop="$gsc->resultados"}
+                                 <!--{$x+=$value.valor}-->
+                                 <tr>
+                                    <td class="text-end">
+                                       <!--{$url="index.php?page=ver_factura_proveedor&id=" . $value.idfacturaprov}-->
+                                       {if="$value.coddocumento == '02'"}
+                                          <!--{$url="index.php?page=ver_nota_venta&id=" . $value.idfacturaprov}-->
+                                       {/if}
+                                       <a href="{$url}" target="_blank">
+                                          {$value.numero_documento}
+                                       </a>
+                                    </td>
+                                    <td class="text-left">
+                                       <span class="badge bg-info">{$value.documento}</span>
+                                    </td>
+                                    <td class="text-end">{function="show_fecha($value.fec_emision)"}</td>
+                                    <td class="text-end">{function="show_fecha($value.vencimiento)"}</td>
+                                    <td class="text-end" id="saldop_{$value.idfacturaprov}">{function="show_numero2($value.valor)"}</td>
+                                    <td class="text-left">$</td>
+                                    <td>
+                                       <div class="form-check form-switch">
+                                          <input class="form-check-input facturaspen" type="checkbox" id="marcar_{$value.idfacturaprov}" name="idfacturas[]" onclick="activar_saldo('{$value.idfacturaprov}')" value="{$value.idfacturaprov}">
+                                       </div>
+                                    </td>
+                                    <td>
+                                       <input type="text" class="form-control form-control-sm solo_precios text-end" onclick="this.select()" onchange="calcular_total()" disabled name="valor_{$value.idfacturaprov}" value="0.00" id="valor_{$value.idfacturaprov}">
+                                    </td>
+                                    <td class="text-end" id="saldof_{$value.idfacturaprov}">{function="show_numero2($value.valor)"}</td>
+                                    <td class="text-left">$</td>
+                                 </tr>
+                              {else}
+                                 <tr class="table-warning">
+                                    <td colspan="10">Sin Resultados.!</td>
+                                 </tr>
+                              {/loop}
+                           </tbody>
+                           <tfoot>
+                              <input type="hidden" id="total_pagar" value="{$x}">
+                              <tr>
+                                 <td colspan="4"></td>
+                                 <td>
+                                    <button type="button" class="form-control btn btn-primary">
+                                       <span class="d-none d-sm-block">&nbsp; Saldo por Pagar</span>
+                                       <span id="saldo_total">{function="show_numero2($x)"}</span>
+                                       <span>$</span>
+                                    </button>
+                                 </td>
+                                 <td></td>
+                                 <td>
+                                    <div class="form-check form-switch" title="Marcar Todos">
+                                       <input class="form-check-input" type="checkbox" id="mtodos2" onclick="marcar_todos2()">
+                                    </div>
+                                 </td>
+                                 <td>
+                                    <button type="button" class="form-control btn btn-success">
+                                       <span class="d-none d-sm-block">&nbsp; Total Pagado</span>
+                                       <span id="total_pagado">0.00</span>
+                                       <span>$</span>
+                                    </button>
+                                 </td>
+                                 <td>
+                                    <button type="button" class="form-control btn btn-info">
+                                       <span class="d-none d-sm-block">&nbsp; Pendiente por Pagar</span>
+                                       <span id="saldo_final">{function="show_numero2($x)"}</span>
+                                       <span>$</span>
+                                    </button>
+                                 </td>
+                                 <td></td>
+                              </tr>
+                           </tfoot>
+                        </table>
+                     </div>
+                  </div>
+                  <div class="row" id="div_forma_pago" style="display: none;">
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           <label for="fpselec" class="col-form-label">Forma de Pago:</label>
+                           <select class="form-select form-select-sm" id="fpselec" name="fpselec" onchange="buscar_fp()" required>
+                              <option value="" selected>Seleccione</option>
+                              {loop="$gsc->formaspago->allPagos($gsc->idempresa)"}
+                                 <option value="{$value->idformapago}">{$value->nombre}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                     </div>
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           <label for="fec_trans" class="col-form-label">Fecha de Transacción:</label>
+                           <input class="form-control form-control-sm" type="date" id="fec_trans" name="fec_trans" required value="{$gsc->today()}">
+                        </div>
+                     </div>
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           <label for="num_doc" class="col-form-label">Número de Documento:</label>
+                           <input class="form-control form-control-sm solo_numeros text-end" disabled type="text" id="num_doc" required name="num_doc" value="">
+                        </div>
+                     </div>
+                     <div class="col-sm-12">
+                        <div class="form-group">
+                           <label for="observaciones" class="col-form-label">Observaciones:</label>
+                           <textarea class="form-control form-control-sm" id="observaciones" name="observaciones" placeholder="Observaciones" maxlength="300"></textarea>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="card-footer" style="text-align: right;">
+                  <button class="btn btn-primary" id="btn_save_pago" disabled type="submit">
+                     <span class="bi bi-save"></span>
+                     <span class="d-none d-sm-block">&nbsp;Generar</span>
+                  </button>
+               </div>
+            </div>
+         </form>
+      </div>
+   </div>
+{include="footer"}

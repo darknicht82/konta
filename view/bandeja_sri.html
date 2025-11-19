@@ -1,0 +1,221 @@
+{include="header"}
+   <script type="text/javascript">
+      let url = "{$gsc->url()}";
+   </script>
+   <script src="{#JG_PATH#}view/js/bandeja/bandeja_sri.js"></script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               <a class="btn btn-sm btn-info" href="#" id="b_cargardatos">
+                  <span class="bi bi-upload"></span>
+                  <span class="d-none d-sm-block">&nbsp; Cargar Datos</span>
+               </a>
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-inbox" aria-hidden="true"></i>
+               Bandeja SRI
+            </h2>
+         </div>
+      </div>
+      <div class="row"><hr></div>
+      <div class="row">
+         <form name="f_buscador" id="f_buscador" action="{$gsc->page->url()}" method="post" class="form" role="form">
+            <div class="row">
+               <div class="col-sm-4">
+                  <div class="form-group">
+                     <label for="query" class="col-form-label">Buscador:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="query">
+                           <i class="bi bi-search"></i>
+                        </span>
+                        <input class="form-control form-control-sm" type="query" name="query" value="{$gsc->query}" id="query" autocomplete="off" placeholder="Buscador" onchange="this.form.submit()" autofocus=""/>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-2">
+                  <div class="form-group">
+                     <label for="query" class="col-form-label">Estado:</label>
+                     <select class="form-select" name="estado" id="estado" onchange="this.form.submit()">
+                        <option value="0" {if="$gsc->estado == 0"}selected{/if}>Pendientes</option>
+                        <option value="1" {if="$gsc->estado == 1"}selected{/if}>No Procesados</option>
+                     </select>
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="desde" class="col-form-label">Fecha Desde:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="desde">
+                           <i class="bi bi-calendar-date-fill"></i>
+                        </span>
+                        <input class="form-control form-control-sm" type="date" name="desde" id="desde" value="{$gsc->desde}" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="hasta" class="col-form-label">Fecha Hasta:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="hasta">
+                           <i class="bi bi-calendar-date-fill"></i>
+                        </span>
+                        <input class="form-control form-control" type="date" name="hasta" id="hasta" value="{$gsc->hasta}" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="accordion" id="bandejaelec">
+            <div class="accordion-item">
+               <h2 class="accordion-header" id="hfacproveedor">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#facproveedor" id="facpro" aria-expanded="false" aria-controls="facproveedor" onclick="cargar_datos(this, '01')">
+                     <span class="bi bi-cart-dash-fill"></span>&nbsp; Facturas de Compra&nbsp; <span class="badge rounded-pill bg-secondary">{$gsc->num_facproveedor}</span>
+                  </button>
+               </h2>
+               <div id="facproveedor" class="accordion-collapse collapse" aria-labelledby="facproveedor" data-bs-parent="#bandejaelec">
+                  <div class="accordion-body">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th>Identificacion</th>
+                                 <th>Razon Social</th>
+                                 <th>Número de Autorización</th>
+                                 <th>Fecha Emisión</th>
+                                 <th>Total</th>
+                                 <th>Acciones</th>
+                              </tr>
+                           </thead>
+                           <tbody id="detalle_fac"></tbody>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="accordion-item">
+               <h2 class="accordion-header" id="hncpproveedor">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ncpproveedor" id="ncppro" aria-expanded="false" aria-controls="ncpproveedor" onclick="cargar_datos(this, '04')">
+                     <span class="bi bi-cart-dash-fill"></span>&nbsp; Notas de Crédito&nbsp; <span class="badge rounded-pill bg-secondary">{$gsc->num_ncpproveedor}</span>
+                  </button>
+               </h2>
+               <div id="ncpproveedor" class="accordion-collapse collapse" aria-labelledby="ncpproveedor" data-bs-parent="#bandejaelec">
+                  <div class="accordion-body">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th>Identificacion</th>
+                                 <th>Razon Social</th>
+                                 <th>Número de Autorización</th>
+                                 <th>Fecha Emisión</th>
+                                 <th>Total</th>
+                                 <th>Acciones</th>
+                              </tr>
+                           </thead>
+                           <tbody id="detalle_ncp"></tbody>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="accordion-item">
+               <h2 class="accordion-header" id="hncdproveedor">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ncdproveedor" id="ncdpro" aria-expanded="false" aria-controls="ncdproveedor" onclick="cargar_datos(this, '05')">
+                     <span class="bi bi-cart-dash-fill"></span>&nbsp; Notas de Débito&nbsp; <span class="badge rounded-pill bg-secondary">{$gsc->num_ncdproveedor}</span>
+                  </button>
+               </h2>
+               <div id="ncdproveedor" class="accordion-collapse collapse" aria-labelledby="ncdproveedor" data-bs-parent="#bandejaelec">
+                  <div class="accordion-body">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th>Identificacion</th>
+                                 <th>Razon Social</th>
+                                 <th>Número de Autorización</th>
+                                 <th>Fecha Emisión</th>
+                                 <th>Total</th>
+                                 <th>Acciones</th>
+                              </tr>
+                           </thead>
+                           <tbody id="detalle_ndc"></tbody>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="accordion-item">
+               <h2 class="accordion-header" id="hretcliente">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#retcliente" id="retcli" aria-expanded="false" aria-controls="retcliente" onclick="cargar_datos(this, '07')">
+                     <span class="bi bi-clipboard2-minus"></span>&nbsp; Retenciones de Cliente&nbsp; <span class="badge rounded-pill bg-secondary">{$gsc->num_retcliente}</span>
+                  </button>
+               </h2>
+               <div id="retcliente" class="accordion-collapse collapse" aria-labelledby="retcliente" data-bs-parent="#bandejaelec">
+                  <div class="accordion-body">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th>Identificacion</th>
+                                 <th>Razon Social</th>
+                                 <th>Número de Autorización</th>
+                                 <th>Fecha Emisión</th>
+                                 <th>Total</th>
+                                 <th>Acciones</th>
+                              </tr>
+                           </thead>
+                           <tbody id="detalle_ret"></tbody>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="modal" tabindex="-1" id="modal_cargardatos">
+      <div class="modal-dialog modal-dialog-centered">
+         <div class="modal-content">
+            <form name="f_cargardatos" class="form" role="form" action="{$gsc->url()}" method="post" enctype="multipart/form-data">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-upload" aria-hidden="true"></i>&nbsp; Cargar datos</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <p>Puede utilizar el Archivo TXT del <b>SRI</b> o el <b>Nro. Autorización</b> del Documento.</p>
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <label for="nro_aut" class="col-form-label">Nro. Autorización:</label>
+                        <input type="text" class="form-control form-control-sm" id="nro_aut" name="nro_aut" placeholder="Nro. Autorización" minlength="49" maxlength="49">
+                     </div>
+                  </div>
+                  <div class="row"><div class="col-sm-12"><br></div></div>
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <label for="archivo" class="col-form-label">Seleccionar Archivo:</label>
+                        <input class="form-control form-control-sm" type="file" name="archivotxt" id="archivo" accept=".txt">
+                     </div>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+                  <button class="btn btn-sm btn-success" type="submit">
+                     <span class="bi bi-collection-play-fill"></span>&nbsp; Procesar
+                  </button>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+{include="footer"}

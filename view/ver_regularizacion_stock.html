@@ -1,0 +1,169 @@
+{include="header"}
+{if="$gsc->regularizacion"}
+   <script type="text/javascript">
+      let regularizacion_url = "{$gsc->regularizacion->url()}";
+      let url = "{$gsc->url()}";
+      let allow_delete = "{$gsc->allow_delete}";
+      let impresion = "{$gsc->impresion}";
+      let idregularizacion = "{$gsc->regularizacion->idregularizacion}";
+      let establecimiento = "{$gsc->regularizacion->idestablecimiento}";
+   </script>
+   <script src="{#JG_PATH#}view/js/ver_regularizacion_stock.js"></script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-sm-6">
+                  <div class="btn-group">
+                     <a class="btn btn-sm btn-secondary" href="index.php?page=lista_regularizaciones_stock">
+                        <span class="bi bi-arrow-left"></span>
+                        <span class="d-none d-sm-block">&nbsp; Regularizaciones</span>
+                     </a>
+                     <a class="btn btn-sm btn-dark" href="{$gsc->regularizacion->url()}" title="recargar la página">
+                        <span class="bi bi-bootstrap-reboot"></span>
+                     </a>
+                     <a class="btn btn-sm btn btn-success" href="index.php?page=crear_regularizacion" title="Nueva Regularización">
+                        <span class="bi bi-plus"></span>
+                     </a>
+                     {if="$gsc->impresion"}
+                        <a class="btn btn-sm btn-primary" href="#" id="btn_opciones" type="button">
+                           <span class="bi bi-diagram-3-fill"></span>
+                           <span class="d-none d-sm-block">&nbsp; Opciones</span>
+                        </a>
+                     {/if}
+                  </div>
+               </div>
+               <div class="col-sm-6" style="text-align: right;">
+                  <div class="btn-group">
+                     {if="$gsc->allow_delete"}
+                        <a href="#" id="b_eliminar_regularizacion" class="btn btn-sm btn-danger">
+                           <span class="bi bi-trash3"></span>
+                           <span class="d-none d-sm-block">&nbsp;Eliminar</span>
+                        </a>
+                     {/if}
+                  </div>
+               </div>
+            </div>
+            <hr>
+            <div class="row">
+               <div class="col-sm-12">
+                  <div class="page-header">
+                     <h1>
+                        <i class="bi bi-person-circle" aria-hidden="true"></i>
+                        {$gsc->regularizacion->get_tipodoc()} <small class="fs-6">{$gsc->regularizacion->numero} </small>
+                     </h1>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+               <a class="nav-link active" data-bs-toggle="tab" href="#datos" role="tab" aria-selected="true">
+                  <div class="d-flex align-items-center"> 
+                     <div class="tab-icon"><i class="bi bi-person-circle"></i></div>
+                     <div class="tab-title">&nbsp;Datos {$gsc->regularizacion->get_tipodoc()}</div>
+                  </div>
+               </a>
+            </li>
+         </ul>
+         <div class="tab-content py-3">
+            <div class="tab-pane fade active show" id="datos" role="tabpanel">
+               <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+                  <div class="card-body">
+                     <div class="table-responsive">
+                        <table class="table table-borderless">
+                           <tbody>
+                              <tr>
+                                 <th>Numero</th>
+                                 <th>Establecimiento</th>
+                                 <th>Fecha Emisión</th>
+                                 <th>Hora Emisión</th>
+                              </tr>
+                              <tr>
+                                 <td>{$gsc->regularizacion->numero}</td>
+                                 <td>{$gsc->regularizacion->get_nombreestablecimiento()}</td>
+                                 <td>{$gsc->regularizacion->fec_emision}</td>
+                                 <td>{$gsc->regularizacion->hora_emision}</td>
+                              </tr>
+                              <tr>
+                                 <th colspan="4">Observaciones</th>
+                              </tr>
+                              <tr>
+                                 <td colspan="4">{$gsc->regularizacion->observaciones}</td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+               <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+                  <div class="card-body">
+                     <div class="table-responsive">
+                        <table class="table table-hover">
+                           <thead>
+                              <tr>
+                                 <th style="text-align: center;">Código</th>
+                                 <th style="text-align: center;">Nombre</th>
+                                 <th style="text-align: center;">Cantidad Anterior</th>
+                                 <th style="text-align: center;">Nueva Cantidad</th>
+                                 <th style="text-align: center;">Movimiento</th>
+                                 <th style="text-align: center;">Costo</th>
+                                 <th style="text-align: center;">Total</th>
+                                 <th style="text-align: center;"></th>
+                              </tr>
+                           </thead>
+                           <tbody id="detalle_reg">
+                           </tbody>
+                           <tfoot>
+                              <tr>
+                                 <th style="text-align: right;" colspan="6">Total</th>
+                                 <th style="text-align: right;" id="totalmov">0.00</th>
+                                 <th>$</th>
+                              </tr>
+                           </tfoot>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   {if="$gsc->impresion"}
+      <div class="modal" id="modal_ver_opciones">
+         <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-diagram-3-fill" aria-hidden="true"></i>&nbsp; Opciones {$gsc->regularizacion->get_tipo()}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="row">
+                     <h5>Impresiones</h5>
+                     <hr>
+                     <div class="d-grid gap-2">
+                        <a class="btn btn-outline-dark" target="_blank" href="index.php?page=impresion_docs&mov=a4&id={$gsc->regularizacion->idregularizacion}">{$gsc->regularizacion->get_tipodoc()} </a>
+                        <a class="btn btn-outline-dark" target="_blank" href="index.php?page=impresion_docs&mov=a5&id={$gsc->regularizacion->idregularizacion}">{$gsc->regularizacion->get_tipodoc()} <b>(A5)</b></a>
+                     </div>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-outline-dark" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+               </div>
+            </div>
+         </div>
+      </div>
+   {/if}
+{else}
+   <div class="thumbnail">
+      <center>
+         <img src="{#JG_PATH#}view/img/fuuu_face.png" alt="fuuuuu"/>
+      </center>
+   </div>
+{/if}
+{include="footer"}

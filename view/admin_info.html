@@ -1,0 +1,120 @@
+{include="header"}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-header" style="margin-bottom: 0px;">
+                <h1>
+                    <i class="bi bi-server" aria-hidden="true"></i>
+                    Información del sistema
+                    <div class="btn-group">
+                        <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                            <span class="bi bi-bootstrap-reboot"></span>
+                        </a>
+                        {if="$gsc->page->is_default()"}
+                            <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                                <i class="bi bi-house-fill" aria-hidden="true"></i>
+                            </a>
+                        {else}
+                            <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                                <i class="bi bi-house" aria-hidden="true"></i>
+                            </a>
+                        {/if}
+                    </div>
+                </h1>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th class="text-left">GSC_Systems</th>
+                        <th class="text-center">Servidor</th>
+                        <th class="text-center">PHP</th>
+                        <th class="text-center">Base de datos</th>
+                        <th class="text-center">Motor de base de datos</th>
+                        <th class="text-end">Caché</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>{$gsc->version()}</td>
+                    <td class="text-center">{$gsc->getIpServer()}</td>
+                    <td class="text-center">{$gsc->php_version()}</td>
+                    <td class="text-center">{$gsc->db_name()}</td>
+                    <td class="text-center">{$gsc->db_version()}</td>
+                    <td class="text-end">{$gsc->cache_version()}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 text-end">
+            {if="$gsc->allow_delete"}
+            <a class="btn btn-xs btn-danger" href="{$gsc->url()}&clean_cache=TRUE">
+                <i class="bi bi-trash3" aria-hidden="true"></i>
+                <span class="d-none d-sm-block">&nbsp;Limpiar la cache</span>
+            </a>
+            {/if}
+        </div>
+    </div>
+    {if="$gsc->user->admin"}
+        <div class="row"><br></div>
+        <div class="row"><br></div>
+        <form name="f_configuraciones_sistema" id="f_configuraciones_sistema" action="{$gsc->url()}" method="post" class="form" role="form">
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <h2>
+                        <i class="bi bi-wrench-adjustable-circle-fill" aria-hidden="true"></i>
+                        Configuraciones del Sistema
+                    </h2>
+                </div>
+                <div class="col-sm-12 text-center">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                Mail User:
+                                <input class="form-control text-end" type="text" name="mail_user" value="{$gsc->config->mail_user}"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                Mail Host:
+                                <input class="form-control text-end" type="text" name="mail_host" value="{$gsc->config->mail_host}"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                Mail Encriptacion:
+                                <input class="form-control text-end" type="text" name="mail_enc" value="{$gsc->config->mail_enc}"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                Mail Port:
+                                <input class="form-control text-end" type="text" name="mail_port" value="{$gsc->config->mail_port}"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                Mail Password:
+                                <div class="input-group">
+                                    <input class="form-control text-end" type="password" id="pss1" name="mail_password" value="{$gsc->config->mail_password}"/>
+                                    <button class="btn btn-info btn-sm" onclick="ver_password('pass1', 'pss1', 'icon1')" type="button" id="pass1"><i id="icon1" class="bi bi-eye-slash-fill"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row"><br></div>
+            <div class="row">
+                <div class="col-sm-12 text-end">
+                    <button class="btn btn-primary" id="btn_save_configuraciones" type="submit">
+                        <span class="bi bi-save"></span>
+                        <span class="d-none d-sm-block">&nbsp;Guardar</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    {/if}
+</div>
+{include="footer"}

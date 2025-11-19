@@ -1,0 +1,165 @@
+{include="header"}
+   <script type="text/javascript">      
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-coin" aria-hidden="true"></i>
+               Mis Facturas <span class="badge bg-secondary">{$gsc->cantidad}</span>
+            </h2>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row"><hr></div>
+      <div class="row"><br></div>
+      <div class="row">
+         <form name="f_buscador" action="{$gsc->page->url()}" method="post" class="form" role="form">
+            <div class="row">
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="query" class="col-form-label">Buscador:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="query">
+                           <i class="bi bi-search"></i>
+                        </span>
+                        <input class="form-control form-control-sm" type="text" name="query" value="{$gsc->query}" id="query" autocomplete="off" placeholder="Buscador" onchange="this.form.submit()" autofocus=""/>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <label for="idmedidor" class="col-form-label">Medidor:</label>
+                  <select id="idmedidor" name="idmedidor" class="form-select select2" onchange="this.form.submit()">
+                     <option value="">Todos</option>
+                     {if="$gsc->idcliente != ''"}
+                        {loop="$gsc->medidores->all_by_idcliente($gsc->idcliente)"}
+                           <option value="{$value->idmedidor}" {if="$gsc->idmedidor == $value->idmedidor"}selected{/if}>{$value->numero}</option>
+                        {/loop}
+                     {/if}
+                  </select>
+               </div>
+               <div class="col-sm-2">
+                  <label for="estado" class="col-form-label">Estado:</label>
+                  <select id="estado" name="estado" class="form-select" onchange="this.form.submit()">
+                     <option value="1" {if="$gsc->estado==1"}selected{/if}>Todas</option>
+                     <option value="2" {if="$gsc->estado==2"}selected{/if}>Pendientes</option>
+                     <option value="3" {if="$gsc->estado==3"}selected{/if}>Pagadas</option>
+                  </select>
+               </div>
+               <div class="col-sm-2">
+                  <div class="form-group">
+                     <label for="desde" class="col-form-label">Fecha Desde:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="desde">
+                           <i class="bi bi-calendar-date-fill"></i>
+                        </span>
+                        <input class="form-control form-control-sm" type="date" name="desde" id="desde" value="{$gsc->desde}" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-2">
+                  <div class="form-group">
+                     <label for="hasta" class="col-form-label">Fecha Hasta:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="hasta">
+                           <i class="bi bi-calendar-date-fill"></i>
+                        </span>
+                        <input class="form-control form-control" type="date" name="hasta" id="hasta" value="{$gsc->hasta}" onchange="this.form.submit()"/>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="row"><br></div>
+         </form>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th class="text-center">Fecha Emisión</th>
+                     <th class="text-center">Nro. Documento</th>
+                     <th class="text-center">Medidor</th>
+                     <th class="text-center">Razón Social</th>
+                     <th class="text-center">Total</th>
+                     <th class="text-center">Abono</th>
+                     <th class="text-center">Saldo</th>
+                     <th class="text-center">Observaciones</th>
+                     <th>PDF</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {loop="$gsc->resultados"}
+                     <tr class="{if="$value.saldo==0"}table-success{else}{if="$value.vencimiento < date('Y-m-d')"}table-danger{else}table-info{/if}{/if}">
+                        <td>{function="show_fecha($value.fec_emision)"}</td>
+                        <td>{$value.numero_documento}</td>
+                        <td>{$value.numero}</td>
+                        <td>{$value.razonsocial}</td>
+                        <td class="text-end">{function="show_numero($value.total)"} $</td>
+                        <td class="text-end">{function="show_numero($value.total - $value.saldo)"} $</td>
+                        <td class="text-end">{function="show_numero($value.saldo)"} $</td>
+                        <td class="text-end">
+                           {if="$value.saldo==0"}
+                              Pagada
+                           {else}
+                              {if="$value.vencimiento < date('Y-m-d')"}
+                                 Vencida el {function="show_fecha($value.vencimiento)"}
+                              {else}
+                                 Por Vencer el {function="show_fecha($value.vencimiento)"}
+                              {/if}
+                           {/if}
+                        </td>
+                        <td>
+                           <div class="btn-group">
+                              {if="$gsc->impresion"}
+                                 <a class="btn btn-sm btn-success" target="_blank" href="index.php?page=impresion_ventas&tipo=a4&id={$value.idfacturacli}" title="Descargar Documento en PDF">
+                                    <span class="bi bi-file-earmark-pdf"></span>
+                                 </a>
+                              {/if}
+                           </div>
+                        </td>
+                     </tr>
+                  {else}
+                     <tr class="table-warning">
+                        <td colspan="9">Sin Resultados.!</td>
+                     </tr>
+                  {/loop}
+               </tbody>
+            </table>
+         </div>
+      </div>
+      {if="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+         <div class="row"><br></div>
+         <div class="row">
+            <div class="col-sm-12 ">
+               <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+                     {loop="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+                        <li class="page-item {if="$value['actual']"}active{/if}">
+                           <a class="page-link" href="{$value['url']}">{$value['num']}</a>
+                        </li>
+                     {/loop}
+                  </ul>
+               </nav>
+            </div>
+         </div>
+      {/if}
+   </div>
+{include="footer"}

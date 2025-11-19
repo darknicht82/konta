@@ -1,0 +1,562 @@
+{include="header"}
+
+<script type="text/javascript">
+   $(document).ready(function() {
+      if(window.location.hash.substring(1) == 'nuevo')
+      {
+         $("#modal_nuevo_usuario").modal('show');
+         document.f_nuevo_usuario.nnick.focus();
+      }
+      else if(window.location.hash.substring(1) == 'roles')
+      {
+         $('#tab_usuarios a[href="#roles"]').tab('show');
+      }
+      else if(window.location.hash.substring(1) == 'nuevorol')
+      {
+         $('#tab_usuarios a[href="#roles"]').tab('show');
+         $("#modal_nuevo_rol").modal('show');
+         document.f_nuevo_rol.descripcion.focus();
+      }
+      $("#b_nuevo_usuario").click(function(event) {
+         event.preventDefault();
+         $("#modal_nuevo_usuario").modal('show');
+         document.f_nuevo_usuario.nick.focus();
+      });
+      $("#b_nuevo_rol").click(function(event) {
+         event.preventDefault();
+         $("#modal_nuevo_rol").modal('show');
+         document.f_nuevo_rol.nrol.focus();
+      });
+      $("#idempresa").select2({
+         dropdownParent: $('#modal_nuevo_usuario'),
+         placeholder: 'Buscar Empresa',
+         theme: 'bootstrap-5',
+         allowClear: true
+      });
+
+      {if="complemento_exists('juntadeagua') && ($gsc->user->admin || $gsc->user->supervisor)"}
+         $("#idcliente").select2({
+            language: {
+               noResults: function() {
+                  return "No hay resultado"; 
+               },
+               searching: function() {
+                  return "Buscando...";
+               },
+               inputTooShort: function () {
+                  return "Ingrese al menos 3 caracteres para realizar la busqueda";
+               },
+            },
+            ajax: {
+               url: "{$gsc->url()}",
+               dataType: 'json',
+               delay: 250,
+               data: function (params) {
+                  return {
+                     buscar_cliente: params.term
+                  };
+               },
+               processResults: function (data, params) {
+                  return {
+                     results: $.map(data, function(obj, index) {
+                        return { id: obj.idcliente, text: obj.identificacion +" - "+ obj.razonsocial };
+                     })
+                  };
+               },
+               cache: true
+            },
+            dropdownParent: $('#modal_nuevo_usuario'),
+            placeholder: 'Buscar Cliente',
+            minimumInputLength: 3,
+            theme: 'bootstrap-5',
+            allowClear: true
+         });
+      {/if}
+   });
+
+
+   function validar_empresa()
+   {
+      if ($("#nueva_empresa").is(':checked')) {
+         $("#idempresa").attr('required', false);
+         $("#div_nueva_empresa").show('slow');
+         $("#ruc").attr('required', true);
+         $("#razonsocial").attr('required', true);
+         $("#nombrecomercial").attr('required', true);
+         $("#telefono").attr('required', true);
+         $("#email").attr('required', true);
+         $("#direccion").attr('required', true);
+         $("#fec_inicio_plan").attr('required', true);
+         $("#fec_caducidad_plan").attr('required', true);
+         $("#numusers").attr('required', true);
+         $("#numdocs").attr('required', true);
+      } else {
+         $("#idempresa").attr('required', true);
+         $("#div_nueva_empresa").hide('slow');
+         $("#ruc").attr('required', false);
+         $("#razonsocial").attr('required', false);
+         $("#nombrecomercial").attr('required', false);
+         $("#telefono").attr('required', false);
+         $("#email").attr('required', false);
+         $("#direccion").attr('required', false);
+         $("#fec_inicio_plan").attr('required', false);
+         $("#fec_caducidad_plan").attr('required', false);
+         $("#numusers").attr('required', false);
+         $("#numdocs").attr('required', false);
+      }
+   }
+
+   function buscar_empresa()
+      {
+         let tipoid = 'R';
+         let identificacion = $("#ruc").val();
+
+         if (tipoid != '' && identificacion != '')
+         {
+            if (tipoid == 'R')
+            {
+               $.ajax({
+                  url: "{$gsc->url()}",
+                  dataType: 'json',
+                  delay: 250,
+                  data : { 
+                     tipoid_b: tipoid,
+                     identificacion_b: identificacion,
+                  },
+                  success : function(data) {
+                     if (data.error == 'F') {
+                        $("#razonsocial").val(data.razonsocial);
+                        $("#nombrecomercial").val(data.nombre);
+                        $("#direccion").val(data.direccion);
+                     } else {
+                        alert(data.msj);
+                     }
+                  },
+               });
+            } else {
+               alert("Tipo de Identificación no Válido para realizar la busqueda.");
+            }
+         } else {
+            alert("Debe tener la Identificación y el tipo de Identificación para realizar la busqueda.");
+         }
+      }
+</script>
+
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-sm-6 col-xs-7">
+         <div class="btn-group">
+            <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+               <span class="bi bi-bootstrap-reboot"></span>
+            </a>
+            {if="$gsc->page->is_default()"}
+                <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                    <i class="bi bi-house-fill" aria-hidden="true"></i>
+                </a>
+            {else}
+                <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                    <i class="bi bi-house" aria-hidden="true"></i>
+                </a>
+            {/if}
+         </div>
+      </div>
+      <div class="col-sm-6 col-xs-5" style="text-align: right;">
+         <h2 style="margin-top: 0px;">
+            <i class="bi bi-person-lines-fill" aria-hidden="true"></i>
+            Usuarios
+         </h2>
+      </div>
+   </div>
+   <hr>
+   <div class="row"><br></div>
+   <div class="row">
+      <ul class="nav nav-tabs" role="tablist">
+         <li class="nav-item" role="presentation">
+            <a class="nav-link active" data-bs-toggle="tab" href="#usuarios" role="tab" aria-selected="true">
+               <div class="d-flex align-items-center"> 
+                  <div class="tab-icon"><i class="bi bi-person-bounding-box"></i></div>
+                  <div class="tab-title">
+                     &nbsp;Usuarios <span class="badge rounded-pill bg-secondary">{function="count($gsc->usuarios())"}</span>
+                  </div>
+               </div>
+            </a>
+         </li>
+         {if="$gsc->user->admin"}
+            <li class="nav-item" role="presentation">
+               <a class="nav-link" data-bs-toggle="tab" href="#permisos" role="tab" aria-selected="true">
+                  <div class="d-flex align-items-center"> 
+                  <div class="tab-icon"><i class="bi bi-card-checklist"></i></div>
+                  <div class="tab-title">&nbsp;Permisos</div>
+                  </div>
+               </a>
+            </li>
+         {/if}
+         <!--
+         {if="!complemento_exists('facturador')"}
+            <li class="nav-item" role="presentation">
+               <a class="nav-link" data-bs-toggle="tab" href="#roles" role="tab" aria-selected="true">
+                  <div class="d-flex align-items-center"> 
+                  <div class="tab-icon"><i class="bi bi-cone-striped"></i></div>
+                  <div class="tab-title">&nbsp;Roles</div>
+                  </div>
+               </a>
+            </li>
+         {/if}
+         -->
+         {if="$gsc->user->admin"}
+            <li class="nav-item" role="presentation">
+               <a class="nav-link" data-bs-toggle="tab" href="#historial" role="tab" aria-selected="true">
+                  <div class="d-flex align-items-center"> 
+                  <div class="tab-icon"><i class="bi bi-clock-history"></i></div>
+                  <div class="tab-title">&nbsp;Historial</div>
+                  </div>
+               </a>
+            </li>
+         {/if}
+      </ul>
+      <div class="tab-content py-3">
+         <div class="tab-pane fade active show" id="usuarios" role="tabpanel">
+            <div class="col-sm-12" style="text-align: right;">
+               <a id="b_nuevo_usuario" class="btn btn-sm btn-success" href="#">
+                  <span class="bi bi-plus"></span>
+                  <span class="d-none d-sm-block">&nbsp;Nuevo</span>
+               </a>
+            </div>
+            <div class="table-responsive">
+               <table class="table table-hover">
+                  <thead>
+                     <tr>
+                        <th></th>
+                        <th class="text-left">Nick</th>
+                        <th class="text-left">Nombres y Apellidos</th>
+                        <th class="text-center">Activo</th>
+                     </tr>
+                  </thead>
+                  {loop="$gsc->usuarios()"}
+                     <tr href='{$value->url()}'>
+                        <td class="text-center">
+                           {if="$value->admin"}
+                              <span class="bi bi-check2-circle" title="Es un Administrador.!"></span>
+                           {elseif="$value->supervisor"}
+                              <span class="bi bi-check-all" title="Es un Supervisor.!"></span>
+                           {/if}
+                        </td>
+                        <td><a href="{$value->url()}">{$value->nick}</a></td>
+                        <td>{$value->nombres} {$value->apellidos}</td>
+                        <td class="text-center">
+                           {if="$value->activo"}<span class="bi bi-check-circle"></span>{else}<span class="bi bi-shield-slash-fill"></span>{/if}
+                        </td>
+                     </tr>
+                  {/loop}
+               </table>
+            </div>
+         </div>
+         {if="$gsc->user->admin"}
+            <div class="tab-pane" id="permisos" role="tabpanel">
+               <div class="table-responsive">
+                  <table class="table table-hover">
+                     <thead>
+                        <tr>
+                           <th class="text-left">Página</th>
+                           <th class="text-left">Usuarios con permiso</th>
+                        </tr>
+                     </thead>
+                     {loop="$gsc->all_pages()"}
+                        <tr>
+                           <td>{$value->name}</td>
+                           <td>
+                              {loop="$value->users"}
+                                 {if="$value2['delete']"}
+                                 <a href="index.php?page=admin_user&snick={$key2}" class="label label-warning" title="{$key2} puede ver, modificar y eliminar en {$value1->name}">
+                                    {$key2}
+                                 </a>&nbsp;
+                                 {elseif="$value2['modify']"}
+                                 <a href="index.php?page=admin_user&snick={$key2}" class="label label-default" title="{$key2} puede ver y modificar en {$value1->name}, pero no eliminar">
+                                    {$key2}
+                                 </a>&nbsp;
+                                 {/if}
+                              {/loop}
+                           </td>
+                        </tr>
+                     {/loop}
+                  </table>
+               </div>
+            </div>
+            <div class="tab-pane" id="roles" role="tabpanel">
+               <div class="row">
+                  <div class="col-sm-6">
+                     <a id="b_nuevo_rol" class="btn btn-sm btn-success" href="#">
+                        <span class="bi bi-plus"></span>
+                        <span class="d-none d-sm-block">&nbsp;Nuevo</span>
+                     </a>
+                  </div>
+                  <div class="col-sm-6 text-end">
+                     <p class="help-block">
+                        <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;
+                        Los roles permiten definir paquetes de permisos para aplicar rápidamente
+                        a usuarios, en lugar de ir uno por uno.
+                     </p>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="table-responsive">
+                     <table class="table table-hover">
+                        <thead>
+                           <tr>
+                              <th>Código</th>
+                              <th>Descripción</th>
+                           </tr>
+                        </thead>
+                        {loop="$gsc->rol->all()"}
+                        <tr class="clickableRow" href="{$value->url()}">
+                           <td>
+                              <a href="{$value->url()}">{$value->codrol}</a>
+                           </td>
+                           <td>{$value->descripcion}</td>
+                        </tr>
+                        {else}
+                        <tr class="warning">
+                           <td colspan="2">Sin resultados.</td>
+                        </tr>
+                        {/loop}
+                     </table>
+                  </div>
+               </div>
+            </div>
+            <div class="tab-pane" id="historial" role="tabpanel">
+               <div class="row">
+                  <div class="col-sm-8">
+                     <p class="help-block">
+                        <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;
+                        Puedes ver más detalles desde Administrador &gt; Información del sistema.
+                     </p>
+                  </div>
+                  <div class="col-sm-4" style="text-align: right;">
+                     <a href="index.php?page=admin_info" class="btn btn-xs btn-secondary">
+                        <span class="bi bi-book" aria-hidden="true"></span>
+                        <span class="d-none d-sm-block">&nbsp; Historial completo</span>
+                     </a>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="table-responsive">
+                     <table class="table table-hover">
+                        <thead>
+                           <tr>
+                              <th class="text-left">Usuario</th>
+                              <th></th>
+                              <th class="text-left">Detalle</th>
+                              <th class="text-left">IP</th>
+                              <th class="text-end">Fecha</th>
+                           </tr>
+                        </thead>
+                        {loop="$gsc->historial"}
+                           <tr {if="$value->alerta"}class="danger"{/if}>
+                              <td><a href="index.php?page=admin_user&snick={$value->usuario}">{$value->usuario}</a></td>
+                              <td class="text-end">
+                                 {if="$value->alerta"}
+                                 <span class="glyphicon glyphicon-warning-sign" aria-hidden="true" title="Podría ser importante"></span>
+                                 {/if}
+                              </td>
+                              <td>{$value->detalle}</td>
+                              <td>{$value->ip}</td>
+                              <td class="text-end">{$value->fecha}</td>
+                           </tr>
+                        {else}
+                           <tr class="warning">
+                              <td colspan="5">Sin resultados.</td>
+                           </tr>
+                        {/loop}
+                     </table>
+                  </div>
+               </div>
+            </div>
+         {/if}
+      </div>
+   </div>
+</div>
+
+<div class="modal" id="modal_nuevo_usuario">
+   <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content">
+         <form name="f_nuevo_usuario" class="form" role="form" action="{$gsc->url()}" method="post">
+            <div class="modal-header">
+               <h5 class="modal-title"><i class="bi bi-person-circle" aria-hidden="true"></i>&nbsp; Nuevo usuario</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+               <div class="row">
+                  <div class="col-sm-3">
+                     <label for="nick" class="col-form-label">Nick:</label>
+                     <input type="text" class="form-control" id="nick" name="nick" placeholder="Usuario" required maxlength="25">
+                  </div>
+                  <div class="col-sm-3">
+                     <label for="password" class="col-form-label">Contraseña:</label>
+                     <div class="input-group">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required minlength="6" maxlength="30">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="ver_password('pass1', 'password', 'icon1')" type="button" id="pass1"><i id="icon1" class="bi bi-eye-slash-fill"></i></button>
+                     </div>
+                  </div>
+                  <div class="col-sm-3">
+                     <label for="nombres" class="col-form-label">Nombres:</label>
+                     <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Nombres" required maxlength="100">
+                  </div>
+                  <div class="col-sm-3">
+                     <label for="apellidos" class="col-form-label">Apellidos:</label>
+                     <input type="text" class="form-control" id="apellidos" name="apellidos" placeholder="Apellidos" required maxlength="100">
+                  </div>
+               </div>
+               <div class="row"><div class="col-sm-12"><br></div></div>
+               <div class="row">
+                  <div class="col-sm-12">
+                     {if="$gsc->user->admin"}
+                        <label class="checkbox-inline">
+                           <input type="checkbox" name="nadmin" value="TRUE"/>
+                           Super Admin
+                        </label>
+                     {/if}
+                     {if="$gsc->user->admin || $gsc->user->supervisor"}
+                        <label class="checkbox-inline">
+                           <input type="checkbox" name="nsupervisor" value="TRUE"/>
+                           Administrador
+                        </label>
+                     {/if}
+                     {loop="$gsc->rol->all()"}
+                        <label class="checkbox-inline">
+                           <input type="checkbox" name="roles[]" value="{$value->codrol}"/>
+                           {$value->descripcion}
+                        </label>
+                     {/loop}
+                  </div>
+               </div>
+               {if="complemento_exists('facturador') && $gsc->user->admin"}
+                  <div class="row"><div class="col-sm-12"><hr></div></div>
+                  <div class="row">
+                     <div class="col-sm-6">
+                        <label for="idempresa" class="col-form-label">Empresa:</label>
+                        <select id="idempresa" name="idempresa" class="form-select select2" required>
+                              <option value="" selected>Seleccione</option>
+                           {loop="$gsc->empresa_model->all()"}
+                              <option value="{$value->idempresa}">{$value->ruc} - {$value->razonsocial}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                     <div class="col-sm-6">
+                        <br>
+                        <br>
+                        <div class="form-check form-switch">
+                           <input class="form-check-input" type="checkbox" id="nueva_empresa" name="nueva_empresa" onchange="validar_empresa();">
+                           <label class="form-check-label" for="nueva_empresa">Es Nueva?</label>
+                        </div>
+                     </div>
+                  </div>
+                  <div id="div_nueva_empresa" style="display: none;">
+                     <div class="row">
+                        <div class="col-sm-3">
+                           <label for="ruc" class="col-form-label">RUC:</label>
+                           <div class="input-group">
+                              <input type="text" class="form-control" id="ruc" name="ruc" placeholder="RUC" maxlength="13">
+                              <button class="btn btn-outline-primary" type="button" id="btn_buscarprov" onclick="buscar_empresa()"><i class="bi bi-search"></i></button>
+                           </div>
+                        </div>
+                        <div class="col-sm-5">
+                           <label for="razonsocial" class="col-form-label">Razon Social:</label>
+                           <input type="razonsocial" class="form-control" id="razonsocial" name="razonsocial" placeholder="Razon Social" maxlength="250">
+                        </div>
+                        <div class="col-sm-4">
+                           <label for="nombrecomercial" class="col-form-label">Nombre Comercial:</label>
+                           <input type="text" class="form-control" id="nombrecomercial" name="nombrecomercial" placeholder="Nombre Comercial" maxlength="250">
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-3">
+                           <label for="telefono" class="col-form-label">Teléfono:</label>
+                           <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Teléfono" maxlength="50">
+                        </div>
+                        <div class="col-sm-7">
+                           <label for="direccion" class="col-form-label">Dirección:</label>
+                           <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Dirección" maxlength="250">
+                        </div>
+                        <div class="col-sm-2">
+                           <br>
+                           <br>
+                           <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="plan_basico" name="plan_basico">
+                              <label class="form-check-label" for="plan_basico">Plan Básico?</label>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-3">
+                           <label for="fec_inicio_plan" class="col-form-label">Fecha Inicio:</label>
+                           <input type="date" class="form-control" id="fec_inicio_plan" value="{$gsc->today()}" name="fec_inicio_plan">
+                        </div>
+                        <div class="col-sm-3">
+                           <label for="fec_caducidad_plan" class="col-form-label">Fecha Caducidad:</label>
+                           <input type="date" class="form-control" id="fec_caducidad_plan" value="{$gsc->today()}" name="fec_caducidad_plan">
+                        </div>
+                        <div class="col-sm-3">
+                           <label for="numusers" class="col-form-label">Cant. Usuarios:</label>
+                           <input type="number" class="form-control" id="numusers" name="numusers" minlength="1" placeholder="Cant. Usuarios">
+                        </div>
+                        <div class="col-sm-3">
+                           <label for="numdocs" class="col-form-label">Cant. Documentos:</label>
+                           <input type="number" class="form-control" id="numdocs" name="numdocs" placeholder="Cant. Documentos">
+                           <p>Ubicar (-1) para los planes ilimitados</p>
+                        </div>
+                     </div>
+                  </div>
+               {elseif="complemento_exists('juntadeagua') && ($gsc->user->admin || $gsc->user->supervisor)"}
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <label for="idcliente" class="col-form-label">Cliente:</label>
+                        <select id="idcliente" name="idcliente" class="form-select select2" required>
+                        </select>
+                     </div>
+                  </div>
+               {/if}
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                  <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+               </button>
+               <button class="btn btn-sm btn-primary" type="submit">
+                  <span class="bi bi-save"></span>&nbsp; Guardar
+               </button>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+<div class="modal" id="modal_nuevo_rol">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <form name="f_nuevo_rol" class="form" role="form" action="{$gsc->url()}" method="post">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">
+                  <i class="fa fa-address-card-o" aria-hidden="true"></i>&nbsp; Nuevo rol
+               </h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  Código:
+                  <input type="text" name="nrol" class="form-control" maxlength="20" autocomplete="off" required=""/>
+               </div>
+               <div class="form-group">
+                  Descripcion:
+                  <input type="text" name="descripcion" class="form-control" autocomplete="off" required=""/>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <button class="btn btn-sm btn-primary" type="submit">
+                  <span class="bi bi-save"></span>&nbsp; Guardar
+               </button>
+            </div>
+         </form>
+      </div>
+   </div>
+</div>
+
+{include="footer"}

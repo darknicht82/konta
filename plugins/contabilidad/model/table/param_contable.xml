@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : param_contable.xml
+    Author     : Jonathan Guamba
+    Description:
+        Estructura de la tabla param_contable.
+-->
+<tabla>
+    <columna>
+        <nombre>idparam</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('param_contable_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>idempresa</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idejercicio</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idimpuesto</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idarticulo</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idgrupo</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idformapago</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idcliente</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idproveedor</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcivaventas</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcivacompras</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcivanotasventa</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubccompras</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcventas</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubccostos</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcntventas</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcntcostos</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcgrcompras</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcgrventas</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcgrcostos</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcgrntventas</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcgrntcostos</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcformapago</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubccliente</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcantcliente</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcntcliente</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcproveedor</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>idsubcantproveedor</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+        <defecto>NULL</defecto>
+    </columna>
+    <columna>
+        <nombre>fec_creacion</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_creacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_modificacion</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_modificacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>param_contable_pkey</nombre>
+        <consulta>PRIMARY KEY (idparam)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_empresa_param_contable</nombre>
+        <consulta>FOREIGN KEY (idempresa) REFERENCES empresa (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_ejercicios_param_contable</nombre>
+        <consulta>FOREIGN KEY (idejercicio) REFERENCES ejercicios (idejercicio) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_impuestos_param_contable</nombre>
+        <consulta>FOREIGN KEY (idimpuesto) REFERENCES impuestos (idimpuesto) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_articulos_param_contable</nombre>
+        <consulta>FOREIGN KEY (idarticulo) REFERENCES articulos (idarticulo) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_grupos_param_contable</nombre>
+        <consulta>FOREIGN KEY (idgrupo) REFERENCES grupos (idgrupo) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_formaspago_param_contable</nombre>
+        <consulta>FOREIGN KEY (idformapago) REFERENCES formaspago (idformapago) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_clientes_param_contable</nombre>
+        <consulta>FOREIGN KEY (idcliente) REFERENCES clientes (idcliente) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_proveedores_param_contable</nombre>
+        <consulta>FOREIGN KEY (idproveedor) REFERENCES proveedores (idproveedor) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_ivav</nombre>
+        <consulta>FOREIGN KEY (idsubcivaventas) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_ivac</nombre>
+        <consulta>FOREIGN KEY (idsubcivacompras) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_ivant</nombre>
+        <consulta>FOREIGN KEY (idsubcivanotasventa) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_vta</nombre>
+        <consulta>FOREIGN KEY (idsubccompras) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_cmp</nombre>
+        <consulta>FOREIGN KEY (idsubcventas) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_cst</nombre>
+        <consulta>FOREIGN KEY (idsubccostos) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_ntvta</nombre>
+        <consulta>FOREIGN KEY (idsubcntventas) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_ntcst</nombre>
+        <consulta>FOREIGN KEY (idsubcntcostos) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_grcmp</nombre>
+        <consulta>FOREIGN KEY (idsubcgrcompras) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_grvta</nombre>
+        <consulta>FOREIGN KEY (idsubcgrventas) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_grcst</nombre>
+        <consulta>FOREIGN KEY (idsubcgrcostos) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_grntvta</nombre>
+        <consulta>FOREIGN KEY (idsubcgrntventas) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_grntcst</nombre>
+        <consulta>FOREIGN KEY (idsubcgrntcostos) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_fp</nombre>
+        <consulta>FOREIGN KEY (idsubcformapago) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_cli</nombre>
+        <consulta>FOREIGN KEY (idsubccliente) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_antcli</nombre>
+        <consulta>FOREIGN KEY (idsubcantcliente) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_ntcli</nombre>
+        <consulta>FOREIGN KEY (idsubcntcliente) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_prov</nombre>
+        <consulta>FOREIGN KEY (idsubcproveedor) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_subcuentas_param_contable_antprov</nombre>
+        <consulta>FOREIGN KEY (idsubcantproveedor) REFERENCES plancuentas (id) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>

@@ -1,0 +1,255 @@
+{include="header"}
+{if="$gsc->servicio"}
+   <script type="text/javascript">
+      let url = "{$gsc->servicio->url()}";
+      let activo_cont = 0;
+      {if="complemento_exists('contabilidad')"}
+         activo_cont = 1;
+      {/if}
+      let activo_nt = 0;
+      {if="complemento_exists('notasdeventa')"}
+         activo_nt = 1;
+      {/if}
+      let impuestos = {function="json_encode(listar_impuestos())"};
+   </script>
+   <script src="{#JG_PATH#}view/js/ver_servicio.js?v=1"></script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-sm-6">
+                  <div class="btn-group">
+                     <a class="btn btn-sm btn-secondary" href="index.php?page=lista_servicios">
+                        <span class="bi bi-arrow-left"></span>
+                        <span class="d-none d-sm-block">&nbsp; Servicios</span>
+                     </a>
+                     <a class="btn btn-sm btn-dark" href="{$gsc->servicio->url()}" title="recargar la página">
+                        <span class="bi bi-bootstrap-reboot"></span>
+                     </a>
+                     <a class="btn btn-sm btn btn-success" href="index.php?page=lista_servicios#nuevo" title="Nuevo Servicio">
+                        <span class="bi bi-plus"></span>
+                     </a>
+                  </div>
+               </div>
+               <div class="col-sm-6" style="text-align: right;">
+                  <div class="btn-group">
+                     {if="$gsc->allow_delete"}
+                        <a href="#" id="b_eliminar_articulo" class="btn btn-sm btn-danger">
+                           <span class="bi bi-trash3"></span>
+                           <span class="d-none d-sm-block">&nbsp;Eliminar</span>
+                        </a>
+                     {/if}
+                  </div>
+               </div>
+            </div>
+            <hr>
+            <div class="row">
+               <div class="col-sm-12">
+                  <div class="page-header">
+                     <h1>
+                        <i class="bi bi-person-circle" aria-hidden="true"></i>
+                        Servicio <small class="fs-6">{$gsc->servicio->nombre}</small>
+                     </h1>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+               <a class="nav-link active" data-bs-toggle="tab" href="#datos" role="tab" aria-selected="true">
+                  <div class="d-flex align-items-center"> 
+                     <div class="tab-icon"><i class="bi bi-person-circle"></i></div>
+                     <div class="tab-title">&nbsp;Datos Servicio</div>
+                  </div>
+               </a>
+            </li>
+            {if="complemento_exists('contabilidad')"}
+               <li class="nav-item" role="presentation">
+                  <a class="nav-link" data-bs-toggle="tab" href="#contabilidad" role="tab" aria-selected="true">
+                     <div class="d-flex align-items-center"> 
+                        <div class="tab-icon"><i class="bi bi-gear-fill"></i></div>
+                        <div class="tab-title">&nbsp;Contabilidad</div>
+                     </div>
+                  </a>
+               </li>
+            {/if}
+         </ul>
+         <div class="tab-content py-3">
+            <div class="tab-pane fade active show" id="datos" role="tabpanel">
+               <form class="form" role="form" id="f_articulo" action="{$gsc->servicio->url()}" method="post">
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <label for="codprincipal" class="col-form-label">Código Principal:</label>
+                        <input type="text" class="form-control form-control-sm" id="codprincipal" name="codprincipal" placeholder="Código Principal" value="{$gsc->servicio->codprincipal}" minlength="1" maxlength="100" required>
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="codauxiliar" class="col-form-label">Código Auxiliar:</label>
+                        <input type="text" class="form-control form-control-sm" id="codauxiliar" name="codauxiliar" placeholder="Código Auxiliar" value="{$gsc->servicio->codauxiliar}" minlength="1" maxlength="100">
+                     </div>
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           <label for="idgrupo" class="col-form-label">Grupo:</label>
+                           <div class="input-group">
+                              <span class="input-group-text" id="idgrupo">
+                                 <i class="bi bi-boxes"></i>
+                              </span>
+                              <select class="form-control form-control-sm" name="idgrupo" id="idgrupo">
+                                 <option value="">Seleccione Grupo</option>
+                                 {loop="function=traer_grupos($gsc->user->idempresa)"}
+                                    <option value="{$value->idgrupo}" {if="$gsc->servicio->idgrupo == $value->idgrupo"}selected{/if}>{$value->nombre}</option>
+                                 {/if}
+                              </select>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <label for="nombre" class="col-form-label">Nombre:</label>
+                        <textarea class="form-control form-control-sm" id="nombre" name="nombre" placeholder="Nombre" minlength="1" maxlength="250" required rows="3">{$gsc->servicio->nombre}</textarea>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <label for="precio" class="col-form-label">Precio:</label>
+                        <input type="text" class="form-control form-control-sm" id="precio_art" name="precio" placeholder="Precio" value="{$gsc->servicio->precio}" readonly>
+                     </div>
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           <label for="idimpuesto" class="col-form-label">Impuesto:</label>
+                           <div class="input-group">
+                              <span class="input-group-text" id="idimpuesto">
+                                 <i class="bi bi-percent"></i>
+                              </span>
+                              <select class="form-control form-control-sm" name="idimpuesto" id="impuesto" required onchange="calcular_precio()">
+                                 <option value="">Seleccione Impuesto</option>
+                                 {loop="function=listar_impuestos()"}
+                                    <option value="{$value->idimpuesto}" {if="$gsc->servicio->idimpuesto == $value->idimpuesto"}selected{/if}>{$value->nombre}</option>
+                                 {/if}
+                              </select>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="pvpiva" class="col-form-label">PVP + IVA</label>
+                        <input type="text" class="form-control form-control-sm solo_precios" id="pvpiva" placeholder="PVP + IVA" value="{$gsc->servicio->get_precio_iva()}" minlength="1" required onchange="calcular_precio()">
+                     </div>
+                  </div>
+                  <div class="row"><br></div>
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <div class="form-check form-switch">
+                           <input class="form-check-input" type="checkbox" id="sevende" name="sevende" {if="$gsc->servicio->sevende"}checked{/if} title="Serv. para Vender?">
+                           <label class="form-check-label" for="sevende">Serv. para Vender?</label>
+                        </div>
+                     </div>
+                     <div class="col-sm-4">
+                        <div class="form-check form-switch">
+                           <input class="form-check-input" type="checkbox" id="secompra" name="secompra" {if="$gsc->servicio->secompra"}checked{/if} title="Serv. para Comprar?">
+                           <label class="form-check-label" for="secompra">Serv. para Comprar?</label>
+                        </div>
+                     </div>
+                     <div class="col-sm-4">
+                        <div class="form-check form-switch">
+                           <input class="form-check-input" type="checkbox" id="bloqueado" name="bloqueado" {if="$gsc->servicio->bloqueado"}checked{/if} title="Serv. Bloqueado?">
+                           <label class="form-check-label" for="bloqueado">Serv. Bloqueado?</label>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row"><br></div>
+                  <div class="row">
+                     <div class="col-sm-12" style="text-align: right;">
+                        <div class="btn-group">
+                           {if="$gsc->allow_modify"}
+                              <button class="btn btn-sm btn-primary" type="submit">
+                                 <span class="bi bi-save"></span>
+                                 <span class="d-none d-sm-block">&nbsp;Guardar</span>
+                              </button>
+                           {/if}
+                        </div>
+                     </div>
+                  </div>
+               </form>
+            </div>
+            {if="complemento_exists('contabilidad')"}
+               <div class="tab-pane fade" id="contabilidad" role="tabpanel">
+                  <form name="f_config_servicio" id="f_config_servicio" class="form" action="{$gsc->servicio->url()}" method="post">
+                     <input type="hidden" name="idservicio_config" id="idservicio_config">
+                     <div class="row">
+                        <div class="row">
+                           <div class="form-group">
+                              <label for="idejercicio" class="col-form-label">Ejercicio:</label>
+                              <select id="idejercicio" name="idejercicio" class="form-select" onchange="buscar_config()" required>
+                                 <option value="" selected>Seleccione</option>
+                                 {loop="$gsc->ejercicios->all_by_idempresa($gsc->idempresa)"}
+                                    <option value="{$value->idejercicio}">{$value->nombre}</option>
+                                 {/loop}
+                              </select>
+                           </div>
+                        </div>
+                        <div class="row"><br></div>
+                        <div class="row">
+                           <div class="table-responsive">
+                              <table class="table table-hover">
+                                 <thead>
+                                    <tr>
+                                       <th class="text-center" width="30%">Nombre</th>
+                                       <th class="text-center">Cuenta</th>
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    <tr>
+                                       <td class="text-end">Cuenta de Compras</td>
+                                       <td>
+                                          <select id="idsubccompras" name="idsubccompras" class="form-select" disabled style="width: 100%"></select>
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td class="text-end">Cuenta de Ventas</td>
+                                       <td>
+                                          <select id="idsubcventas" name="idsubcventas" class="form-select" disabled style="width: 100%"></select>
+                                       </td>
+                                    </tr>
+                                    {if="complemento_exists('notasdeventa')"}
+                                       <tr>
+                                          <td class="text-end">Cuenta de Ventas (Notas de Venta)</td>
+                                          <td>
+                                             <select id="idsubcntventas" name="idsubcntventas" class="form-select" disabled style="width: 100%"></select>
+                                          </td>
+                                       </tr>
+                                    {/if}
+                                 </tbody>
+                              </table>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="row"><br></div>
+                     <div class="row">
+                        <div class="col-sm-12" style="text-align: right;">
+                           <div class="btn-group">
+                              {if="$gsc->allow_modify"}
+                                 <button class="btn btn-sm btn-primary" type="submit" id="btn_save_conf" disabled>
+                                    <span class="bi bi-save"></span>
+                                    <span class="d-none d-sm-block">&nbsp;Guardar</span>
+                                 </button>
+                              {/if}
+                           </div>
+                        </div>
+                     </div>
+                  </form>
+               </div>
+            {/if}
+         </div>
+      </div>
+   </div>
+{else}
+   <div class="thumbnail">
+      <center>
+         <img src="{#JG_PATH#}view/img/fuuu_face.png" alt="fuuuuu"/>
+      </center>
+   </div>
+{/if}
+{include="footer"}

@@ -1,0 +1,153 @@
+{include="header"}
+	<script type="text/javascript">
+	</script>
+	<div class='container-fluid'>
+		<div class="row">
+         	<div class="col-sm-6">
+            	<div class="btn-group">
+               	<a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  	<span class="bi bi-bootstrap-reboot"></span>
+               	</a>
+               	{if="$gsc->page->is_default()"}
+                  	<a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     	<i class="bi bi-house-fill" aria-hidden="true"></i>
+                  	</a>
+               	{else}
+                  	<a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     	<i class="bi bi-house" aria-hidden="true"></i>
+                  	</a>
+               	{/if}
+            	</div>
+         	</div>
+         	<div class="col-sm-6 col-xs-5" style="text-align: right;">
+            	<h2 style="margin-top: 0px;">
+               	<i class="bi bi-folder-fill" aria-hidden="true"></i>
+               	Cierres de Caja <span class="badge bg-secondary">{$gsc->cantidad}</span>
+            	</h2>
+         	</div>
+      	</div>
+	    <div class="row"><hr></div>
+	    <div class="row">
+        	<form name="f_buscador" action="{$gsc->page->url()}" method="post" class="form" role="form">
+	            <div class="row">
+               		<div class="col-sm-3">
+                       	<label for="idestablecimiento" class="col-form-label">Establecimiento:</label>
+                       	<select id="idestablecimiento" name="idestablecimiento" class="form-select form-select-sm" onchange="this.form.submit()">
+                          	<option value="" selected>Seleccione</option>
+                          	{loop="$gsc->establecimiento->get_by_idempresa($gsc->empresa->idempresa)"}
+                             	<option value="{$value->idestablecimiento}" {if="$value->idestablecimiento == $gsc->idestablecimiento"} selected{/if}>{$value->nombre}</option>
+                          	{/loop}
+                       	</select>
+                    </div>
+                    <div class="col-sm-3">
+                       	<label for="idcaja" class="col-form-label">Caja:</label>
+                       	<select id="idcaja" name="idcaja" class="form-select form-select-sm" onchange="this.form.submit()">
+                          	<option value="" selected>Seleccione</option>
+                          	{loop="$gsc->cajas->all_by_idempresa($gsc->empresa->idempresa)"}
+                             	<option value="{$value->idcaja}" {if="$value->idcaja == $gsc->idcaja"} selected{/if}>{$value->nombre}</option>
+                          	{/loop}
+                       	</select>
+                    </div>
+                    <div class="col-sm-2">
+                       	<label for="nick" class="col-form-label">Usuario:</label>
+                       	<select id="nick" name="nick" class="form-select form-select-sm" onchange="this.form.submit()">
+                          	<option value="" selected>Seleccione</option>
+                          	{loop="$gsc->usuarios->all_by_empresa($gsc->empresa->idempresa)"}
+                             	<option value="{$value->nick}" {if="$value->nick == $gsc->nick"} selected{/if}>{$value->nombres} {$value->apellidos}</option>
+                          	{/loop}
+                       	</select>
+                    </div>
+               		<div class="col-sm-2">
+                  		<div class="form-group">
+                     		<label for="desde" class="col-form-label">Fecha Desde:</label>
+                        	<input class="form-control form-control-sm" type="date" name="desde" id="desde" value="{$gsc->desde}" onchange="this.form.submit()"/>
+                  		</div>
+               		</div>
+               		<div class="col-sm-2">
+                  		<div class="form-group">
+                     		<label for="hasta" class="col-form-label">Fecha Hasta:</label>
+                        	<input class="form-control form-control-sm" type="date" name="hasta" id="hasta" value="{$gsc->hasta}" onchange="this.form.submit()"/>
+                  		</div>
+               		</div>
+	            </div>
+	        </form>
+	    </div>
+	    <div class="row"><br></div>
+      	<div class="row">
+      		<div class="table-responsive">
+            	<table class="table table-hover">
+	               	<thead>
+	                  	<tr>
+	                     	<th>ID</th>
+	                     	<th>Establecimiento</th>
+	                     	<th>Caja</th>
+	                     	<th>Usuario</th>
+	                     	<th>Apertura</th>
+	                     	<th>Cierre</th>
+	                     	<th>Total Cierre</th>
+	                     	<th></th>
+	                  	</tr>
+	               	</thead>
+	               	<tbody>
+	                  	{loop="$gsc->resultados"}
+	                     	<tr>
+	                        	<td>{$value->idcierre}</td>
+	                        	<td>{$value->get_establecimiento()}</td>
+	                        	<td>{$value->get_caja()}</td>
+	                        	<td>{$value->nick}</td>
+	                        	<td>{$value->apertura}</td>
+	                        	<td>
+	                        		{if="$value->cierre"}
+	                        			{$value->cierre}
+	                        		{else}
+	                        			<span class="badge rounded-pill bg-primary">Caja Abierta</span>
+	                        		{/if}
+	                        	</td>
+	                        	<td class="text-end">{$value->totalemp}</td>
+	                        	<td>
+	                        		<div class="btn-group">
+	                        			{if="$value->cierre && $gsc->impresion"}
+			                        		<a class="btn btn-sm btn-success" href="{$gsc->url()}&reimprimir_cierre={$value->idcierre}" title='Reimprimir Cierre de Caja'>
+				                                <span class='bi bi-printer-fill'></span>
+				                            </a>
+				                        {/if}
+				                        {if="$value->cierre && $gsc->impresion && $value->tieneCuadreProducto()"}
+			                        		<a class="btn btn-sm btn-primary" href="index.php?page=impresion_puntoventa&cuadreprod={$value->idcierre}" target="_blank" title='Imprimir Cuadre de Producto'>
+				                                <span class='bi bi-file-earmark-pdf'></span>
+				                            </a>
+				                        {/if}
+	                        			{if="$gsc->ver_cierre"}
+				                            <a class="btn btn-sm btn-info" target="_blank" href="{$value->url()}" title='Revisar Cierre de Caja'>
+				                                <span class='bi bi-eye'></span>
+				                            </a>
+			                            {/if}
+			                        </div>
+	                        	</td>
+	                     	</tr>
+	                  	{else}
+	                     	<tr class="table-warning">
+	                        	<td colspan="8">Sin Resultados.!</td>
+	                     	</tr>
+	                  	{/loop}
+	               	</tbody>
+            	</table>
+         	</div>
+      	</div>
+      	{if="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+	        <div class="row"><br></div>
+	        <div class="row">
+	            <div class="col-sm-12 ">
+	               <nav aria-label="Page navigation example">
+	                  <ul class="pagination justify-content-center">
+	                     {loop="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+	                        <li class="page-item {if="$value['actual']"}active{/if}">
+	                           <a class="page-link" href="{$value['url']}">{$value['num']}</a>
+	                        </li>
+	                     {/loop}
+	                  </ul>
+	               </nav>
+	            </div>
+	        </div>
+	     {/if}
+   	</div>
+{include="footer"}

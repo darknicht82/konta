@@ -1,0 +1,209 @@
+{include="header"}
+   <script type="text/javascript">
+      $(document).ready(function() {
+         $("#b_nuevo_ejercicio").click(function(event) {
+            event.preventDefault();
+            $("#modal_nuevo_ejercicio").modal('show');
+            document.f_nuevo_ejercicio.nombre.focus();
+         });
+      });
+      function delete_ejercicio(idejercicio, nombre) {
+         event.preventDefault();
+         bootbox.confirm({
+            message: '¿Realmente desea eliminar el Ejercicio '+nombre+'?',
+            title: '<b>Atención</b>',
+            callback: function(result) {
+               if (result) {
+                  window.location.href = '{$gsc->url()}&delete='+idejercicio;
+               }
+            }
+         });
+      }
+      function cerrar_ejercicio(idejercicio, nombre) {
+         event.preventDefault();
+         bootbox.confirm({
+            message: '¿Realmente desea cerrar el Ejercicio '+nombre+'?',
+            title: '<b>Cerrar Ejercicio</b>',
+            callback: function(result) {
+               if (result) {
+                  window.location.href = '{$gsc->url()}&cerrar='+idejercicio;
+               }
+            }
+         });
+      }
+
+      function cargar_plan(idejercicio, nombre) {
+         $("#nombre_ejer").html(nombre);
+         $("#cargar_plan").val(idejercicio);
+         $("#modal_cargarplan").modal('show');
+      }
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+               {if="$gsc->allow_modify"}
+                  <a class="btn btn-sm btn-success" href="#" id="b_nuevo_ejercicio">
+                     <span class="bi bi-calendar-plus"></span>
+                     <span class="d-none d-sm-block">&nbsp; Nuevo</span>
+                  </a>
+               {/if}
+               <a class="btn btn-sm btn-info" href="{$gsc->url()}&formato">
+                  <span class="bi bi-arrow-down-circle"></span>
+                  <span class="d-none d-sm-block">&nbsp; Formato</span>
+               </a>
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-hdd-stack-fill" aria-hidden="true"></i>
+               Ejercicios Fiscales <span class="badge bg-secondary">{$gsc->cantidad}</span>
+            </h2>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row"><hr></div>
+      <div class="row">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th>Nombre</th>
+                     <th>Fecha Inicio</th>
+                     <th>Fecha Fin</th>
+                     <th>Asiento Inicial</th>
+                     <th>Asiento Cierre</th>
+                     <th>Estado</th>
+                     <th>Archivos</th>
+                     <th>Acciones</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {loop="$gsc->resultados"}
+                     <tr {if="!$value->abierto"}class="table-warning"{/if}>
+                        <td>
+                           <a href="{$value->url()}">
+                              {$value->nombre}
+                           </a>
+                        </td>
+                        <td>{$value->fec_inicio}</td>
+                        <td>{$value->fec_fin}</td>
+                        <td>{if="$value->idasientoi"}{else} - {/if}</td>
+                        <td>{if="$value->idasientoc"}{else} - {/if}</td>
+                        <td>{if="$value->abierto"}Abierto{else}Cerrado{/if}</td>
+                        <td>
+                           <div class="btn-group">
+                              {if="!$value->existsPlanCuentas()"}
+                                 <a class="btn btn-sm btn-info" href="#" onclick="cargar_plan('{$value->idejercicio}', '{$value->nombre}')" title="Cargar Plan de Cuentas">
+                                    <span class="bi bi-upload"></span>
+                                 </a>
+                              {else}
+                                 <a class="btn btn-sm btn-info" target="_blank" href="index.php?page=impresion_contabilidad&tipo=pdf&idejercicio={$value->idejercicio}" title="Descargar Plan de Cuentas en PDF">
+                                    <span class="bi bi-file-earmark-pdf"></span>
+                                 </a>
+                                 <a class="btn btn-sm btn-success" target="_blank" href="index.php?page=impresion_contabilidad&tipo=xls&idejercicio={$value->idejercicio}" title="Descargar Plan de Cuentas en Excel">
+                                    <span class="bi bi-filetype-xls"></span>
+                                 </a>
+                              {/if}
+                           </div>
+                        </td>
+                        <td>
+                           <div class="btn-group">
+                              {if="$value->abierto"}
+                                 {if="$gsc->allow_modify"}
+                                    <button class="btn btn-sm btn-warning" type="button" onclick="cerrar_ejercicio('{$value->idejercicio}', '{$value->nombre}')" title="Cerrar el Ejercicio {$value->nombre}">
+                                       <span class="bi bi-exclamation-octagon"></span>
+                                    </button>
+                                 {/if}
+                                 {if="$gsc->allow_delete"}
+                                    <button class="btn btn-sm btn-danger" type="button" onclick="delete_ejercicio('{$value->idejercicio}', '{$value->nombre}')" title="Eliminar el Ejercicio {$value->nombre}">
+                                       <span class="bi bi-trash3"></span>
+                                    </button>
+                                 {/if}
+                              {/if}
+                           </div>
+                        </td>
+                     </tr>
+                  {else}
+                     <tr class="table-warning">
+                        <td colspan="8">Sin Resultados.!</td>
+                     </tr>
+                  {/loop}
+               </tbody>
+            </table>
+         </div>
+      </div>
+   </div>
+   <div class="modal" tabindex="-1" id="modal_cargarplan">
+      <div class="modal-dialog modal-dialog-centered">
+         <div class="modal-content">
+            <form name="f_cargardatos" class="form" role="form" action="{$gsc->url()}" method="post" enctype="multipart/form-data">
+               <input type="hidden" name="cargar_plan" id="cargar_plan" value="">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-upload" aria-hidden="true"></i>&nbsp; Cargar Plan de Cuentas <span class="badge rounded-pill bg-secondary" id="nombre_ejer"></span></h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <p>Puede utilizar el <b>Formato</b>, lo puede descargar en la parte superior de la pantalla.</p>
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <label for="archivo" class="col-form-label">Seleccionar Archivo:</label>
+                        <input class="form-control form-control-sm" type="file" name="archivoxlsx" id="archivo" accept=".xlsx">
+                     </div>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+                  <button class="btn btn-sm btn-success" type="submit">
+                     <span class="bi bi-collection-play-fill"></span>&nbsp; Procesar
+                  </button>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+   {if="$gsc->allow_modify"}
+      <div class="modal" id="modal_nuevo_ejercicio">
+         <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+               <form name="f_nuevo_ejercicio" class="form" role="form" action="{$gsc->url()}" method="post">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-hdd-stack-fill" aria-hidden="true"></i>&nbsp; Crear Ejercicio</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <label for="new_nombre" class="col-form-label">Nombre:</label>
+                           <input type="number" min="2020" max="2100" step="1" value="{function="date('Y')"}" id="new_nombre" name="new_nombre" class="form-control solo_numeros text-end"/>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                     <button class="btn btn-sm btn-primary" type="submit">
+                        <span class="bi bi-save2"></span>&nbsp; Crear
+                     </button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   {/if}
+{include="footer"}

@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - gsc-network
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: gsc
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - gsc-network
+
+volumes:
+  db_data:
+
+networks:
+  gsc-network:

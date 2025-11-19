@@ -1,0 +1,521 @@
+{include="header"}
+   <script type="text/javascript">
+      function eliminar_logo() {
+         if ( confirm('¿Está seguro que desea eliminar el logo?') ) {
+            window.location.href = "{$gsc->url()}&delete_logo";
+         }
+      }
+
+      function eliminar_firma() {
+         if ( confirm('¿Está seguro que desea eliminar la Firma Digital?') ) {
+            window.location.href = "{$gsc->url()}&delete_firma";
+         }
+      }
+
+      function eliminar_establecimiento(nombre, idestablecimiento) {
+         if ( confirm('¿Está seguro que desea eliminar el establecimiento '+nombre+'?') ) {
+            window.location.href = "{$gsc->url()}&mostrar=establecimientos&del_est="+idestablecimiento;
+         }
+      }
+   </script>
+   <div class='container-fluid'>
+      <form name="f_empresa" action="{$gsc->page->url()}" method="post" class="form" role="form">
+         <div class="row">
+            <div class="col-sm-6">
+               <div class="btn-group">
+                  <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                     <span class="bi bi-bootstrap-reboot"></span>
+                  </a>
+               </div>
+            </div>
+            <div class="col-sm-6" style="text-align: right;">
+               <div class="btn-group">
+                  <button class="btn btn-sm btn-primary" type="submit">
+                     <span class="bi bi-save"></span>
+                     <span class="d-none d-sm-block">&nbsp;Guardar</span>
+                  </button>
+               </div>
+            </div>
+         </div>
+         <hr>
+         <div class="row">
+            <div class="col-sm-12">
+               <div class="panel panel-primary">
+                  <div class="panel-heading">
+                     <h3 class="panel-title">
+                        <span class="bi bi-globe2"></span>
+                        Datos Empresa
+                     </h3>
+                  </div>
+                  <div class="row">
+                     <div class="col-md-6">
+                        <label for="razonsocial" class="col-form-label">Razon Social:</label>
+                        <input type="text" class="form-control" name="razonsocial" value="{$gsc->empresa->razonsocial}" required>
+                     </div>
+                     <div class="col-md-6">
+                        <label for="nombrecomercial" class="col-form-label">Nombre Comercial:</label>
+                        <input type="text" class="form-control" name="nombrecomercial" value="{$gsc->empresa->nombrecomercial}" required>
+                     </div>
+                  </div>
+                  <div class="row">                  
+                     <div class="col-md-3">
+                        <label for="ruc" class="col-form-label">RUC:</label>
+                        <input type="text" class="form-control" {if="$gsc->user->admin"}name="ruc"{else}readonly{/if} value="{$gsc->empresa->ruc}" required>
+                     </div>
+                     <div class="col-md-3">
+                        <label for="telefono" class="col-form-label">Telefono:</label>
+                        <input type="text" class="form-control" name="telefono" value="{$gsc->empresa->telefono}" required>
+                     </div>               
+                     <div class="col-md-6">
+                        <label for="direccion" class="col-form-label">Dirección:</label>
+                        <input type="text" class="form-control" name="direccion" value="{$gsc->empresa->direccion}" required>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           <label for="regimen" class="col-form-label">Régimen:</label>
+                           <div class="input-group">
+                              <span class="input-group-text" id="regimen">
+                                 <i class="bi bi-card-heading"></i>
+                              </span>
+                              <select class="form-control form-control-sm" name="regimen" id="regimen">
+                                 <option value="">Seleccione Regimen</option>
+                                 {loop="function=regimen()"}
+                                    <option value="{$key}" {if="$gsc->empresa->regimen == $key"}selected{/if}>{$value}</option>
+                                 {/loop}
+                              </select>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="otros" class="col-form-label"></label>
+                        <div class="form-group" id="otros">
+                           <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="obligado" name="obligado" {if="$gsc->empresa->obligado"}checked{/if}>
+                              Obligado a llevar Contabilidad
+                           </div>
+                           <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="agretencion" name="agretencion" {if="$gsc->empresa->agretencion"}checked{/if}>
+                              Agente de Retención
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="otros1" class="col-form-label"></label>
+                        <div class="form-group" id="otros1">
+                           <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="activafacelec" name="activafacelec" {if="$gsc->empresa->activafacelec"}checked{/if}>
+                              Facturación Electrónica
+                           </div>
+                           <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="produccion" name="produccion" {if="$gsc->empresa->produccion"}checked disabled{/if}>
+                              Producción
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </form>
+      <div class="row"><br></div>
+      <div class="row">
+         <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+               <a class="nav-link {if="$gsc->mostrar=='logo'"}active{/if}" href="{$gsc->url()}&mostrar=logo" role="tab" aria-selected="true">
+                  <div class="d-flex align-items-center"> 
+                     <div class="tab-icon"><i class="bi bi-file-image"></i></div>
+                     <div class="tab-title">&nbsp;Logo</div>
+                  </div>
+               </a>
+            </li>
+            <li class="nav-item" role="presentation">
+               <a class="nav-link {if="$gsc->mostrar=='correo'"}active{/if}" href="{$gsc->url()}&mostrar=correo" role="tab" aria-selected="true">
+                  <div class="d-flex align-items-center"> 
+                     <div class="tab-icon"><i class="bi bi-envelope"></i></div>
+                     <div class="tab-title">&nbsp;Correo</div>
+                  </div>
+               </a>
+            </li>
+            <li class="nav-item" role="presentation">
+               <a class="nav-link {if="$gsc->mostrar=='establecimientos'"}active{/if}" href="{$gsc->url()}&mostrar=establecimientos" role="tab" aria-selected="true">
+                  <div class="d-flex align-items-center"> 
+                     <div class="tab-icon"><i class="bi bi-layout-wtf"></i></div>
+                     <div class="tab-title">&nbsp;Establecimientos</div>
+                  </div>
+               </a>
+            </li>
+            <!--li class="nav-item" role="presentation">
+               <a class="nav-link {if="$gsc->mostrar=='configuraciones'"}active{/if}" href="{$gsc->url()}&mostrar=configuraciones" role="tab" aria-selected="true">
+                  <div class="d-flex align-items-center"> 
+                     <div class="tab-icon"><i class="bi bi-journal-richtext"></i></div>
+                     <div class="tab-title">&nbsp;Conf. Empresa</div>
+                  </div>
+               </a>
+            </li-->
+            <li class="nav-item" role="presentation">
+               <a class="nav-link {if="$gsc->mostrar=='firmaelec'"}active{/if}" href="{$gsc->url()}&mostrar=firmaelec" role="tab" aria-selected="true">
+                  <div class="d-flex align-items-center"> 
+                     <div class="tab-icon"><i class="bi bi-pen"></i></div>
+                     <div class="tab-title">&nbsp;Firma Electrónica</div>
+                  </div>
+               </a>
+            </li>
+         </ul>
+      </div>
+      <div class="tab-content py-3">
+         {if="$gsc->mostrar=='logo'"}
+            <div class="tab-pane fade active show" id="logo" role="tabpanel">
+               <div class="container-fluid">
+                  <div class="row" style="text-align: center;">
+                     <div class="col-sm-6">
+                        <form name="f_logo" action="{$gsc->page->url()}&mostrar=logo" method="post" class="form" enctype="multipart/form-data">
+                           <input type="hidden" name="logo">
+                           <div class="row">
+                              <label for="logo" class="col-form-label">Seleccionar imagen:</label>
+                              <input class="form-control" type="file" name="logoimagen" id="logo" accept=".jpg, .png" required>
+                           </div>
+                           <div class="row"><br></div>
+                           <div class="row">
+                              <div class="col-sm-12" style="text-align: right;">
+                                 {if="$gsc->empresa->logo"}
+                                    <button class="btn btn-sm btn-danger" type="button" onclick="eliminar_logo()">
+                                       <span class="bi bi-trash"></span>&nbsp; Eliminar logo
+                                    </button>
+                                 {else}
+                                    <button class="btn btn-sm btn-success" type="submit">
+                                       <span class="bi bi-save"></span>&nbsp; Guardar logo
+                                    </button>
+                                 {/if}
+                              </div>
+                           </div>
+                        </form>
+                     </div>
+                     <div class="col-sm-6">
+                        <label for="img_logo" class="col-form-label">&nbsp;</label>
+                        <div class="card" id="img_logo">
+                           <div class="card-body">
+                              {if="$gsc->empresa->logo"}
+                                 <img src="{$gsc->empresa->logo}" alt="logotipo" height="500">
+                              {/if}
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         {elseif="$gsc->mostrar=='correo'"}
+            <div class="tab-pane fade active show" id="correo" role="tabpanel">
+               <form name="f_correo" action="{$gsc->page->url()}&mostrar=correo" method="post" class="form" role="form">
+                  <div class="row">
+                     <div class="col-sm-6">
+                        <div class="form-group">
+                           <label for="email" class="col-form-label">Email:</label>
+                           <div class="input-group">
+                              <span class="input-group-text" id="email">
+                                 <i class="bi bi-envelope"></i>
+                              </span>
+                              <input class="form-control solo_correos" type="email" name="email" value="{$gsc->empresa->email}" id="email" autocomplete="off" placeholder="email" autofocus=""/>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-sm-6">
+                        <div class="form-group">
+                           <label for="mail_bcc" class="col-form-label">CC:</label>
+                           <div class="input-group">
+                              <span class="input-group-text" id="mail_bcc">
+                                 <i class="bi bi-files"></i>
+                              </span>
+                              <input class="form-control solo_correos" type="text" name="mail_bcc" id="mail_bcc" value="{$gsc->empresa->mail_bcc}" placeholder="Enviar copias:"/>
+                           </div>
+                           <p class="help-block">Aquí llegaran copias de los Documentos Autorizados.</p>
+                        </div>
+                     </div>
+                  </div>                  <div class="row"><br></div>
+                  <div class="row">
+                     <div class="col-sm-12" style="text-align: right;">
+                        <button class="btn btn-sm btn-success" type="submit">
+                           <span class="bi bi-save"></span>&nbsp; Guardar Conf. Correo
+                        </button>
+                     </div>
+                  </div>
+               </form>
+            </div>
+         {elseif="$gsc->mostrar=='establecimientos'"}
+            <div class="tab-pane fade active show" id="establecimientos" role="tabpanel">
+               <div class="row">
+                  <div class="col-sm-6">
+                     <form name="f_establecimiento_nuevo" action="{$gsc->page->url()}&mostrar=establecimientos" method="post" class="form">
+                        <input type="hidden" name="idestablecimiento" value="">
+                        <div class="card">
+                           <div class="card-header">
+                              <h4>Nuevo Establecimiento</h4>
+                           </div>
+                           <div class="card-body">
+                              <div class="col-sm-12">
+                                 <div class="row">
+                                    <div class="col-sm-3">
+                                       <div class="form-group">
+                                          <label for="codigo" class="col-form-label">Codigo:</label>
+                                          <input class="form-control" style="text-align: right;" type="text" maxlength="3" name="codigo" id="codigo" value="" required />
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                       <div class="form-group">
+                                          <label for="ptoemision" class="col-form-label">Punto de Emisión:</label>
+                                          <input class="form-control" type="text" maxlength="3" name="ptoemision" id="ptoemision" value="" required />
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                       <div class="form-group">
+                                          <label for="nombre" class="col-form-label">Nombre:</label>
+                                          <input class="form-control" type="text" maxlength="250" name="nombre" id="nombre" value="" required />
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-sm-12">
+                                       <div class="form-group">
+                                          <label for="direccion" class="col-form-label">Dirección:</label>
+                                          <input class="form-control" type="text" maxlength="250" name="direccion" id="direccion" value="" required />
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-sm-4">
+                                       <div class="form-group">
+                                          <label for="numfac" class="col-form-label">Num. Factura:</label>
+                                          <input class="form-control" type="number" name="numfac" id="numfac" value="1" required />
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                       <div class="form-group">
+                                          <label for="numndd" class="col-form-label">Num. Nota Debito:</label>
+                                          <input class="form-control" type="text" maxlength="3" name="numndd" id="numndd" value="1" required />
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                       <div class="form-group">
+                                          <label for="numncc" class="col-form-label">Num. Nota Crédito:</label>
+                                          <input class="form-control" type="number" name="numncc" id="numncc" value="1" required />
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-sm-4">
+                                       <div class="form-group">
+                                          <label for="numliq" class="col-form-label">Num. Liq. Compra:</label>
+                                          <input class="form-control" type="number" name="numliq" id="numliq" value="1" required />
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                       <div class="form-group">
+                                          <label for="numret" class="col-form-label">Num. Retención:</label>
+                                          <input class="form-control" type="number" name="numret" id="numret" value="1" required />
+                                       </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                       <div class="form-group">
+                                          <label for="numguia" class="col-form-label">Num. Guía Remisión:</label>
+                                          <input class="form-control" type="number" name="numguia" id="numguia" value="1" required />
+                                       </div>
+                                    </div>
+                                 </div>
+                                 {if="complemento_exists('notasdeventa')"}
+                                    <div class="row">
+                                       <div class="col-sm-4">
+                                          <div class="form-group">
+                                             <label for="numnvt" class="col-form-label">Num. Nota de Venta:</label>
+                                             <input class="form-control" type="number" name="numnvt" id="numnvt" value="1" required />
+                                          </div>
+                                       </div>
+                                    </div>
+                                 {/if}
+                              </div>
+                           </div>
+                           <div class="card-footer">
+                              <div class="col-sm-12" style="text-align: right;">
+                                 <button class="btn btn-success" type="submit">
+                                    <span class="bi bi-save"></span>&nbsp; Crear
+                                 </button>
+                              </div>
+                           </div>
+                        </div>
+                     </form>
+                  </div>
+                  {loop="$gsc->establecimiento->get_by_idempresa($gsc->empresa->idempresa)"}
+                     <div class="col-sm-6">
+                        <form name="f_establecimiento_{$value->idestablecimiento}" action="{$gsc->page->url()}&mostrar=establecimientos" method="post" class="form">
+                           <input type="hidden" name="idestablecimiento" value="{$value->idestablecimiento}">
+                           <div class="card">
+                              <div class="card-header">
+                                 <h4>{$value->codigo} - {$value->nombre}</h4>
+                              </div>
+                              <div class="card-body">
+                                 <div class="col-sm-12">
+                                    <div class="row">
+                                       <div class="col-sm-3">
+                                          <div class="form-group">
+                                             <label for="codigo" class="col-form-label">Codigo:</label>
+                                             <input class="form-control" style="text-align: right;" type="text" maxlength="3" name="codigo" id="codigo" value="{$value->codigo}" required />
+                                          </div>
+                                       </div>
+                                       <div class="col-sm-3">
+                                          <div class="form-group">
+                                             <label for="ptoemision" class="col-form-label">Punto de Emisión:</label>
+                                             <input class="form-control" type="text" maxlength="3" name="ptoemision" id="ptoemision" value="{$value->ptoemision}" required />
+                                          </div>
+                                       </div>
+                                       <div class="col-sm-6">
+                                          <div class="form-group">
+                                             <label for="nombre" class="col-form-label">Nombre:</label>
+                                             <input class="form-control" type="text" maxlength="250" name="nombre" id="nombre" value="{$value->nombre}" required />
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="row">
+                                       <div class="col-sm-12">
+                                          <div class="form-group">
+                                             <label for="direccion" class="col-form-label">Dirección:</label>
+                                             <input class="form-control" type="text" maxlength="250" name="direccion" id="direccion" value="{$value->direccion}" required />
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="row">
+                                       <div class="col-sm-4">
+                                          <div class="form-group">
+                                             <label for="numfac" class="col-form-label">Num. Factura:</label>
+                                             <input class="form-control" type="number" name="numfac" id="numfac" value="{$value->numfac}" required />
+                                          </div>
+                                       </div>
+                                       <div class="col-sm-4">
+                                          <div class="form-group">
+                                             <label for="numndd" class="col-form-label">Num. Nota Debito:</label>
+                                             <input class="form-control" type="text" maxlength="3" name="numndd" id="numndd" value="{$value->numndd}" required />
+                                          </div>
+                                       </div>
+                                       <div class="col-sm-4">
+                                          <div class="form-group">
+                                             <label for="numncc" class="col-form-label">Num. Nota Crédito:</label>
+                                             <input class="form-control" type="number" name="numncc" id="numncc" value="{$value->numncc}" required />
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="row">
+                                       <div class="col-sm-4">
+                                          <div class="form-group">
+                                             <label for="numliq" class="col-form-label">Num. Liq. Compra:</label>
+                                             <input class="form-control" type="number" name="numliq" id="numliq" value="{$value->numliq}" required />
+                                          </div>
+                                       </div>
+                                       <div class="col-sm-4">
+                                          <div class="form-group">
+                                             <label for="numret" class="col-form-label">Num. Retención:</label>
+                                             <input class="form-control" type="number" name="numret" id="numret" value="{$value->numret}" required />
+                                          </div>
+                                       </div>
+                                       <div class="col-sm-4">
+                                          <div class="form-group">
+                                             <label for="numguia" class="col-form-label">Num. Guía Remisión:</label>
+                                             <input class="form-control" type="number" name="numguia" id="numguia" value="{$value->numguia}" required />
+                                          </div>
+                                       </div>
+                                    </div>
+                                    {if="complemento_exists('notasdeventa')"}
+                                       <div class="row">
+                                          <div class="col-sm-4">
+                                             <div class="form-group">
+                                                <label for="numnvt" class="col-form-label">Num. Nota de Venta:</label>
+                                                <input class="form-control" type="number" name="numnvt" id="numnvt" value="{$value->numnvt}" required />
+                                             </div>
+                                          </div>
+                                       </div>
+                                    {/if}
+                                 </div>
+                              </div>
+                              <div class="card-footer">
+                                 <div class="col-sm-12" style="text-align: right;">
+                                    <div class="btn-group">
+                                       <button class="btn btn-danger" type="button" onclick="eliminar_establecimiento('{$value->codigo} - {$value->nombre}', {$value->idestablecimiento})">
+                                          <span class="bi bi-trash"></span>&nbsp; Eliminar
+                                       </button>                                       
+                                       <button class="btn btn-info" type="submit">
+                                          <span class="bi bi-pencil-square"></span>&nbsp; Modificar
+                                       </button>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </form>
+                     </div>
+                  {/loop}
+               </div>
+            </div>
+         {elseif="$gsc->mostrar=='configuraciones'"}
+            <div class="tab-pane fade active show" id="configuraciones" role="tabpanel">
+            </div>
+         {elseif="$gsc->mostrar=='firmaelec'"}
+            <div class="tab-pane fade active show" id="firmaelec" role="tabpanel">
+               <div class="container-fluid">
+                  <div class="row" style="text-align: center;">
+                     <div class="col-sm-6">
+                        <form name="f_logo" action="{$gsc->page->url()}&mostrar=firmaelec" method="post" class="form" enctype="multipart/form-data">
+                           <input type="hidden" name="firma">
+                           <div class="row">
+                              <label for="firmaelectronica" class="col-form-label">Seleccionar Archivo:</label>
+                              <input class="form-control" type="file" name="firmaelectronica" id="firmaelectronica" accept=".p12" required>
+                           </div>
+                           {if="!$gsc->empresa->firmaelectronica"}
+                              <div class="row">
+                                 <div class="col-sm-6">
+                                    <label for="fec_caducidad" class="col-form-label">Fecha Caducidad:</label>
+                                    <input type="date" class="form-control" name="fec_caducidad" value="{$gsc->empresa->fec_caducidad}" required>
+                                 </div>
+                                 <div class="col-sm-6">
+                                    <label for="clave_digital" class="col-form-label">Clave Digital:</label>
+                                    <div class="input-group">
+                                       <input type="password" class="form-control" name="clave_digital" id="clave_digital" value="{$gsc->empresa->clave_digital}" required>
+                                       <button class="btn btn-outline-secondary" onclick="ver_password('pass1', 'clave_digital', 'icon1')" type="button" id="pass1"><i id="icon1" class="bi bi-eye-slash-fill"></i></button>
+                                    </div>
+                                 </div>
+                              </div>
+                           {/if}
+                           <div class="row">
+                              <div class="col-sm-12" style="text-align: right;">
+                                 {if="$gsc->empresa->firmaelectronica"}
+                                    <button class="btn btn-sm btn-danger" type="button" onclick="eliminar_firma()">
+                                       <span class="bi bi-trash"></span>&nbsp; Eliminar Firma Electronica
+                                    </button>
+                                 {else}
+                                    <button class="btn btn-sm btn-success" type="submit">
+                                       <span class="bi bi-save"></span>&nbsp; Guardar Firma Electronica
+                                    </button>
+                                 {/if}
+                              </div>
+                           </div>
+                        </form>
+                     </div>
+                     <div class="col-sm-6">
+                        <label for="firma_elec" class="col-form-label">&nbsp;</label>
+                        <div class="card" id="firma_elec">
+                           <div class="card-body">
+                              {if="$gsc->empresa->firmaelectronica"}
+                                 <a href="{$gsc->empresa->firmaelectronica}" class="btn btn-primary" target="_blank">
+                                    <span class="bi bi-cloud-download"></span>&nbsp; Descargar Firma Electronica
+                                 </a>
+                                 <br>
+                                 <br>
+                                 <br>
+                                 <h2><center>Su firma Digital se caduca el <br><b>{$gsc->empresa->fec_caducidad}</b></center></h2>
+                              {/if}
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         {/if}
+      </div>
+   </div>
+{include="footer"}

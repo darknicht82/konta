@@ -1,0 +1,108 @@
+{include="header"}
+
+    <script type="text/javascript">
+        function fs_marcar_todo() {
+            $('#f_enable_pages input:checkbox').prop('checked', true);
+        }
+
+        $(document).ready(function () {
+            if (window.location.hash.substring(1) == 'paginas') {
+                $('#tab_panel_control a[href="#t_paginas"]').tab('show');
+            } else if (window.location.hash.substring(1) == 'complementos') {
+                $('#tab_panel_control a[href="#t_complementos"]').tab('show');
+            } else if (window.location.hash.substring(1) == 'avanzado') {
+                $('#tab_panel_control a[href="#t_avanzado"]').tab('show');
+            }
+
+            $('#marcar_todo_enabled').click(function () {
+                var checked = $(this).prop('checked');
+                $("#f_enable_pages input[name='enabled[]']").prop('checked', checked);
+            });
+        });
+    </script>
+    {if="!$gsc->step"}
+        <div class="well">
+            <div class="page-header" style="margin-top: 0px;">
+                <h1>
+                    Bienvenido
+                    <small>{$gsc->version()}</small>
+                </h1>
+            </div>
+            <p class="help-block">
+                Ya tienes instalado el núcleo. Como ves, el núcleo permite gestionar páginas,
+                y usuarios. Pulsa continuar para seguir con la instalación.
+            </p>
+            <a href="#" class="btn btn-sm btn-primary" onclick="fs_marcar_todo();f_enable_pages.submit();">
+                <span class="glyphicon glyphicon-ok"></span>&nbsp; Continuar
+            </a>
+        </div>
+    {else}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="btn-group">
+                        <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                            <span class="bi bi-bootstrap-reboot"></span>
+                        </a>
+                        {if="$gsc->page->is_default()"}
+                            <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                                <i class="bi bi-house-fill" aria-hidden="true"></i>
+                            </a>
+                        {else}
+                            <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                                <i class="bi bi-house" aria-hidden="true"></i>
+                            </a>
+                        {/if}
+                    </div>
+                </div>
+                <div class="col-sm-6" style="text-align: right;">
+                    <h2 style="margin-top: 0px;">
+                        <i class="bi bi-cpu" aria-hidden="true"></i>
+                        Panel de control
+                    </h2>
+                </div>
+            </div>
+        </div>
+    {/if}
+    <hr>
+    <div class="row"><br></div>
+    <div class="row">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" data-bs-toggle="tab" href="#t_paginas" role="tab" aria-selected="true">
+                    <div class="d-flex align-items-center"> 
+                    <div class="tab-icon"><i class="bi bi-menu-app"></i></div>
+                    <div class="tab-title">&nbsp;Menú</div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="tab" href="#t_complementos" role="tab" aria-selected="true">
+                    <div class="d-flex align-items-center"> 
+                    <div class="tab-icon"><i class="bi bi-cloud-fog-fill"></i></div>
+                    <div class="tab-title">&nbsp;Complementos</div>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" data-bs-toggle="tab" href="#t_avanzado" role="tab" aria-selected="true">
+                    <div class="d-flex align-items-center"> 
+                    <div class="tab-icon"><i class="bi bi-wrench"></i></div>
+                    <div class="tab-title">&nbsp;Avanzado</div>
+                    </div>
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content py-3">
+            <div class="tab-pane fade active show" id="t_paginas" role="tabpanel">
+                {include="tab/admin_home_pages"}
+            </div>
+            <div class="tab-pane fade" id="t_complementos" role="tabpanel">
+                {include="tab/admin_home_plugins"}
+            </div>
+            <div class="tab-pane fade" id="t_avanzado" role="tabpanel">
+                {include="tab/admin_home_advanced"}
+            </div>
+        </div>
+    </div>
+{include="footer"}

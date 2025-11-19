@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : pages.xml
+    Author     : Jonathan Guamba
+    Description:
+        Estructura de la tabla pages.
+-->
+<tabla>
+    <columna>
+        <nombre>name</nombre>
+        <tipo>character varying(30)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>title</nombre>
+        <tipo>character varying(40)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>folder</nombre>
+        <tipo>character varying(15)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>subfolder</nombre>
+        <tipo>character varying(15)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>version</nombre>
+        <tipo>character varying(10)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>show_on_menu</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>true</defecto>
+    </columna>
+    <columna>
+        <nombre>important</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>false</defecto>
+    </columna>
+    <columna>
+        <nombre>orden</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+        <defecto>100</defecto>
+    </columna>
+    <columna>
+        <nombre>icono</nombre>
+        <tipo>character varying(50)</tipo>
+        <nulo>NO</nulo>
+        <defecto>'bi bi-arrow-right-short'::character varying</defecto>
+    </columna>   
+    <restriccion>
+        <nombre>pages_pkey</nombre>
+        <consulta>PRIMARY KEY (name)</consulta>
+    </restriccion>
+</tabla>

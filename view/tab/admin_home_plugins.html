@@ -1,0 +1,48 @@
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="text-left">Complemento</th>
+                <th class="text-left">Descripción</th>
+                <th class="text-end">Versión</th>
+                <th class="text-end">Opciones</th>
+            </tr>
+        </thead>
+        {loop="$gsc->plugin_manager->installed()"}
+        <!--{$tr_class=''}-->
+        {if="!$value.compatible"}<!--{$tr_class=' class="danger"'}-->{elseif="$value.enabled"}<!--{$tr_class=' class="success"'}-->{/if}
+            <tr{$tr_class}>
+                <td>{$value.name}</td>
+                <td>
+                    <p>{$value.description}</p>
+                </td>
+                <td class="text-end">
+                    <a href="" target="_blank">
+                        {$value.version}
+                    </a>
+                </td>
+                <td>
+                    {if="$value.enabled"}
+                        <a class="btn btn-xs btn-warning" href="{$gsc->url()}&disable={$value.name}#complementos">
+                            <span class="bi bi-exclamation-octagon-fill"></span> Desactivar
+                        </a>
+                    {else}
+                        <div class="btn-group">
+                            {if="$value.compatible"}
+                            <a class="btn btn-xs btn-primary" href="{$gsc->url()}&complemento={$gsc->random_string(4)}&enable={$value.name}#complementos">
+                                <span class="bi bi-check-circle"></span>&nbsp; Activar
+                            </a>
+                            {/if}
+                        </div>
+                    {/if}
+                </td>
+            </tr>
+        {else}
+        <tr class="warning">
+            <td colspan="5">
+                No tienes complementos instalados.
+            </td>
+        </tr>
+        {/loop}
+    </table>
+</div>

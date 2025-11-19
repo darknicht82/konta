@@ -1,0 +1,257 @@
+{include="header"}
+   <script type="text/javascript">
+      $(document).ready(function() {
+      });
+
+      function descargar_formato(tipo, param)
+      {
+         bootbox.confirm({
+            message: '¿Realmente desea descargar el formato de '+tipo+'?',
+            title: '<b>Atención</b>',
+            buttons: {
+               confirm: {
+                  label: 'Si',
+                  className: 'btn-success'
+               },
+               cancel: {
+                  label: 'No',
+                  className: 'btn-danger'
+               }
+            },
+            callback: function(result) {
+               if (result) {
+                  window.location.href = 'index.php?page=cargas_masivas&exportar='+param;
+               }
+            }
+         });
+      }
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-cloud-arrow-down" aria-hidden="true"></i>
+               Cargas Masivas
+            </h2>
+         </div>
+      </div>
+      <div class="row"><hr></div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="col-sm-12">
+            <form name="f_importar_datos" action="{$gsc->page->url()}" method="post" enctype="multipart/form-data">
+               <input type="hidden" name="importar" value="art">
+               <div class="card">
+                  <div class="card-header bg-secondary text-white">
+                     <h5><center><b>Importador de Articulos</b></center></h5>
+                  </div>
+                  <div class="card-body">
+                     <div class="row">
+                        <div class="col-sm-3">
+                           <label for="archivo" class="col-form-label">Seleccionar Archivo:</label>
+                           <input class="form-control form-control-sm" type="file" name="fxlsx" id="archivo" accept=".xlsx" required>
+                        </div>
+                        <div class="col-sm-3">
+                           <label for="idestablecimiento" class="col-form-label">Establecimiento Stock:</label>
+                           <select id="idestablecimiento" name="idestablecimiento" class="form-select form-select-sm" required>
+                                 <option value="" selected>Seleccione</option>
+                              {loop="$gsc->establecimiento->get_by_idempresa($gsc->empresa->idempresa)"}
+                                 <option value="{$value->idestablecimiento}">{$value->nombre}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                        <div class="col-sm-3">
+                           <label for="fecha" class="col-form-label">Fecha de Carga Inventario:</label>
+                           <input class="form-control form-control-sm" type="date" name="fecha" id="fecha" required value="{function="date('Y-m-d')"}">
+                        </div>
+                        <div class="col-sm-2">
+                           <label for="hora" class="col-form-label">Hora de Carga Inventario:</label>
+                           <input class="form-control form-control-sm" type="time" name="hora" id="hora" required value="{function="date('H:i')"}">
+                        </div>
+                        <div class="col-sm-1">
+                           <br>
+                           <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="stock" name="stock">
+                              <label class="form-check-label" for="stock">Cargar Stock?</label>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="card-footer text-center">
+                     <div class="btn-group col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-success" type="submit">Importar</button>
+                        <button class="btn btn-sm btn btn-info" type="button" onclick="descargar_formato('Articulos', 'art')">Formato</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div class="col-sm-12">
+            <form name="f_importar_datos" action="{$gsc->page->url()}" method="post" enctype="multipart/form-data">
+               <input type="hidden" name="importar" value="serv">
+               <div class="card">
+                  <div class="card-header bg-secondary text-white">
+                     <h5><center><b>Importador de Servicios</b></center></h5>
+                  </div>
+                  <div class="card-body">
+                     <div class="row">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-6 text-center">
+                           <label for="archivo" class="col-form-label">Seleccionar Archivo:</label>
+                           <input class="form-control form-control-sm" type="file" name="fxlsx" id="archivo" accept=".xlsx" required>
+                        </div>
+                        <div class="col-sm-3"></div>
+                     </div>
+                  </div>
+                  <div class="card-footer text-center">
+                     <div class="btn-group col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-success" type="submit">Importar</button>
+                        <button class="btn btn-sm btn btn-info" type="button" onclick="descargar_formato('Servicios', 'serv')">Formato</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         {if="complemento_exists('articulos_compuestos')"}
+            <div class="col-sm-12">
+               <form name="f_importar_datos" action="{$gsc->page->url()}" method="post" enctype="multipart/form-data">
+                  <input type="hidden" name="importar" value="artcomp">
+                  <div class="card">
+                     <div class="card-header bg-secondary text-white">
+                        <h5><center><b>Importador de Articulos Compuestos</b></center></h5>
+                     </div>
+                     <div class="card-body">
+                        <div class="row">
+                           <div class="col-sm-3"></div>
+                           <div class="col-sm-6 text-center">
+                              <label for="archivo" class="col-form-label">Seleccionar Archivo:</label>
+                              <input class="form-control form-control-sm" type="file" name="fxlsx" id="archivo" accept=".xlsx" required>
+                           </div>
+                           <div class="col-sm-3"></div>
+                        </div>
+                     </div>
+                     <div class="card-footer text-center">
+                        <div class="btn-group col-6 mx-auto">
+                           <button class="btn btn-sm btn btn-success" type="submit">Importar</button>
+                           <button class="btn btn-sm btn btn-info" type="button" onclick="descargar_formato('Articulos Compuestos', 'artcomp')">Formato</button>
+                        </div>
+                     </div>
+                  </div>
+               </form>
+            </div>
+         {/if}
+         <div class="col-sm-12">
+            <form name="f_importar_datos" action="{$gsc->page->url()}" method="post" enctype="multipart/form-data">
+               <input type="hidden" name="importar" value="cxp">
+               <div class="card">
+                  <div class="card-header bg-secondary text-white">
+                     <h5><center><b>Importador de Cuentas Por Pagar</b></center></h5>
+                  </div>
+                  <div class="card-body">
+                     <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-5 text-center">
+                           <label for="archivo" class="col-form-label">Seleccionar Archivo:</label>
+                           <input class="form-control form-control-sm" type="file" name="fxlsx" id="archivo" accept=".xlsx" required>
+                        </div>
+                        <div class="col-sm-3">
+                           <label for="idestablecimiento" class="col-form-label">Establecimiento:</label>
+                           <select id="idestablecimiento" name="idestablecimiento" class="form-select form-select-sm" required>
+                                 <option value="" selected>Seleccione</option>
+                              {loop="$gsc->establecimiento->get_by_idempresa($gsc->empresa->idempresa)"}
+                                 <option value="{$value->idestablecimiento}">{$value->nombre}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                        <div class="col-sm-2"></div>
+                     </div>
+                  </div>
+                  <div class="card-footer text-center">
+                     <div class="btn-group col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-success" type="submit">Importar</button>
+                        <button class="btn btn-sm btn btn-info" type="button" onclick="descargar_formato('Cuentas Por Pagar', 'cxp')">Formato</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div class="col-sm-12">
+            <form name="f_importar_datos" action="{$gsc->page->url()}" method="post" enctype="multipart/form-data">
+               <input type="hidden" name="importar" value="cxc">
+               <div class="card">
+                  <div class="card-header bg-secondary text-white">
+                     <h5><center><b>Importador de Cuentas Por Cobrar</b></center></h5>
+                  </div>
+                  <div class="card-body">
+                     <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-5 text-center">
+                           <label for="archivo" class="col-form-label">Seleccionar Archivo:</label>
+                           <input class="form-control form-control-sm" type="file" name="fxlsx" id="archivo" accept=".xlsx" required>
+                        </div>
+                        <div class="col-sm-3">
+                           <label for="idestablecimiento" class="col-form-label">Establecimiento:</label>
+                           <select id="idestablecimiento" name="idestablecimiento" class="form-select form-select-sm" required>
+                                 <option value="" selected>Seleccione</option>
+                              {loop="$gsc->establecimiento->get_by_idempresa($gsc->empresa->idempresa)"}
+                                 <option value="{$value->idestablecimiento}">{$value->nombre}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                        <div class="col-sm-2"></div>
+                     </div>
+                  </div>
+                  <div class="card-footer text-center">
+                     <div class="btn-group col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-success" type="submit">Importar</button>
+                        <button class="btn btn-sm btn btn-info" type="button" onclick="descargar_formato('Cuentas Por Cobrar', 'cxc')">Formato</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div class="col-sm-12">
+            <form name="f_importar_datos" action="{$gsc->page->url()}" method="post" enctype="multipart/form-data">
+               <input type="hidden" name="importar" value="cli">
+               <div class="card">
+                  <div class="card-header bg-secondary text-white">
+                     <h5><center><b>Importador de Clientes</b></center></h5>
+                  </div>
+                  <div class="card-body">
+                     <div class="row">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-6 text-center">
+                           <label for="archivo" class="col-form-label">Seleccionar Archivo:</label>
+                           <input class="form-control form-control-sm" type="file" name="fxlsx" id="archivo" accept=".xlsx" required>
+                        </div>
+                        <div class="col-sm-3"></div>
+                     </div>
+                  </div>
+                  <div class="card-footer text-center">
+                     <div class="btn-group col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-success" type="submit">Importar</button>
+                        <button class="btn btn-sm btn btn-info" type="button" onclick="descargar_formato('Clientes', 'cli')">Formato</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+{include="footer"}

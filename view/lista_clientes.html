@@ -1,0 +1,312 @@
+{include="header"}
+   <script type="text/javascript">
+      $(document).ready(function() {
+         if(window.location.hash.substring(1) == 'nuevo')
+         {
+            $("#modal_nuevo_cliente").modal('show');
+            limpiar_campos();
+            document.f_nuevo_cliente.identificacion.focus();
+         }
+         $("#b_nuevo_cliente").click(function(event) {
+            event.preventDefault();
+            $("#modal_nuevo_cliente").modal('show');
+            limpiar_campos();
+            document.f_nuevo_cliente.identificacion.focus();
+         });
+      });
+      function limpiar_campos()
+      {
+         $("#tipoid").attr('readonly', false);
+         $("#identificacion").attr('readonly', false);
+         $("#tipoid").val('R');
+         $("#identificacion").val('');
+         $("#razonsocial").val('');
+         $("#nombrecomercial").val('');
+         $("#telefono").val('');
+         $("#celular").val('');
+         $("#email").val('');
+         $("#direccion").val('');
+         $("#regimen").val('GE');
+      }
+
+      function buscar_cliente()
+      {
+         let tipoid = $("#tipoid").val();
+         let identificacion = $("#identificacion").val();
+
+         if (tipoid != '' && identificacion != '')
+         {
+            if (tipoid == 'C' || tipoid == 'R')
+            {
+               $.ajax({
+                  url: "{$gsc->url()}",
+                  dataType: 'json',
+                  delay: 250,
+                  data : { 
+                     tipoid_b: tipoid,
+                     identificacion_b: identificacion,
+                  },
+                  beforeSend: function() {
+                     $("#tipoid").attr('readonly', true);
+                     $("#identificacion").attr('readonly', true);
+                  },
+                  success : function(data) {
+                     if (data.error == 'F') {
+                        $("#razonsocial").val(data.razonsocial);
+                        $("#nombrecomercial").val(data.nombre);
+                        $("#direccion").val(data.direccion);
+                        $("#regimen").val(data.regimen);
+                        if (data.obligado == 'No') {
+                           $("#obligado").attr('checked', false);
+                        } else {
+                           $("#obligado").attr('checked', true);
+                        }
+                        
+                        if (data.agenteR == 'No') {
+                           $("#agretencion").attr('checked', false);
+                        } else {
+                           $("#agretencion").attr('checked', true);
+                        }
+                     } else if (data.error == 'T') {
+                        $("#tipoid").attr('readonly', false);
+                        $("#identificacion").attr('readonly', false);
+                        alert(data.msj);
+                     } else if (data.error == 'R') {
+                        $("#modal_nuevo_cliente").modal('hide');
+                        alert(data.msj);
+                     }
+                  },
+               });
+            } else {
+               alert("Tipo de Identificación no Válido para realizar la busqueda.");
+            }
+         } else {
+            alert("Debe tener la Identificación y el tipo de Identificación para realizar la busqueda.");
+         }
+      }
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+               <a class="btn btn-sm btn-success" href="#" id="b_nuevo_cliente">
+                  <span class="bi bi-person-plus-fill"></span>
+                  <span class="d-none d-sm-block">&nbsp; Nuevo</span>
+               </a>
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-people-fill" aria-hidden="true"></i>
+               Clientes <span class="badge bg-secondary">{$gsc->cantidad}</span>
+            </h2>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row"><hr></div>
+      <div class="row">
+         <form name="f_buscador" action="{$gsc->page->url()}" method="post" class="form" role="form">
+            <div class="row">
+               <div class="col-sm-4">
+                  <div class="form-group">
+                     <label for="query" class="col-form-label">Buscador:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="query">
+                           <i class="bi bi-search"></i>
+                        </span>
+                     <input class="form-control form-control-sm" type="query" name="query" value="{$gsc->query}" id="query" autocomplete="off" placeholder="Buscador" onchange="this.form.submit()" autofocus="" />
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-4">
+                  <div class="form-group">
+                     <label for="b_tipoid" class="col-form-label">Tipo Identificación:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="b_tipoid">
+                           <i class="bi bi-card-heading"></i>
+                        </span>
+                        <select class="form-control form-control-sm" name="b_tipoid" id="b_tipoid" onchange="this.form.submit()">
+                           <option value="">Seleccione una identificación</option>
+                           {loop="function=tiposIdentificacion()"}
+                              <option value="{$key}" {if="$gsc->b_tipoid == $key"}selected{/if}>{$value}</option>
+                           {/if}
+                        </select>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-4">
+                  <div class="form-group">
+                     <label for="b_regimen" class="col-form-label">Regimén:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="b_regimen">
+                           <i class="bi bi-card-heading"></i>
+                        </span>
+                        <select class="form-control form-control-sm" name="b_regimen" id="b_regimen" onchange="this.form.submit()">
+                           <option value="">Seleccione Regimen</option>
+                           {loop="function=regimen()"}
+                              <option value="{$key}" {if="$gsc->b_regimen == $key"}selected{/if}>{$value}</option>
+                           {/if}
+                        </select>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th>Identificacion</th>
+                     <th>Razon Social</th>
+                     <th>Nombre Comercial</th>
+                     <th>Teléfono</th>
+                     <th>Email</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {loop="$gsc->resultados"}
+                     <tr>
+                        <td><a href="{$value->url()}" target="_blank">{$value->identificacion}</a></td>
+                        <td>{$value->razonsocial}</td>
+                        <td>{$value->nombrecomercial}</td>
+                        <td>{$value->telefono}</td>
+                        <td>{$value->email}</td>
+                     </tr>
+                  {else}
+                     <tr class="table-warning">
+                        <td colspan="5">Sin Resultados.!</td>
+                     </tr>
+                  {/loop}
+               </tbody>
+            </table>
+         </div>
+      </div>
+      {if="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+         <div class="row"><br></div>
+         <div class="row">
+            <div class="col-sm-12 ">
+               <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+                     {loop="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+                        <li class="page-item {if="$value['actual']"}active{/if}">
+                           <a class="page-link" href="{$value['url']}">{$value['num']}</a>
+                        </li>
+                     {/loop}
+                  </ul>
+               </nav>
+            </div>
+         </div>
+      {/if}
+   </div>
+   <div class="modal" id="modal_nuevo_cliente">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+         <div class="modal-content">
+            <form name="f_nuevo_cliente" class="form" role="form" action="{$gsc->url()}" method="post">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-person-plus-fill" aria-hidden="true"></i>&nbsp; Crear Cliente</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="row">
+                     <div class="col-sm-5">
+                        <label for="tipoid" class="col-form-label">Tipo de Identificación:</label>
+                        <select class="form-control form-control-sm" name="tipoid" id="tipoid" onchange="cambio_ident();">
+                           {loop="function=tiposIdentificacion()"}
+                              <option value="{$key}" {if="'C' == $key"}selected{/if}>{$value}</option>
+                           {/if}
+                        </select>
+                     </div>
+                     <div class="col-sm-7">
+                        <label for="identificacion" class="col-form-label">Nro. Identificación:</label>
+                        <div class="input-group">
+                           <input type="text" class="form-control form-control-sm ident" id="identificacion" name="identificacion" placeholder="Nro. Identificación" minlength="13" maxlength="13" required>
+                           <button class="btn btn-outline-primary" type="button" id="btn_buscarcli" onclick="buscar_cliente()"><i class="bi bi-search"></i></button>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-6">
+                        <label for="razonsocial" class="col-form-label">Razon Social:</label>
+                        <input type="text" class="form-control form-control-sm mayusculas" id="razonsocial" name="razonsocial" placeholder="Razon Social" minlength="1" maxlength="250" required>
+                     </div>
+                     <div class="col-sm-6">
+                        <label for="nombrecomercial" class="col-form-label">Nombre Comercial</label>
+                        <input type="text" class="form-control form-control-sm mayusculas" id="nombrecomercial" name="nombrecomercial" placeholder="Nombre Comercial" minlength="1" maxlength="250">
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <label for="telefono" class="col-form-label">Teléfono:</label>
+                        <input type="text" class="form-control form-control-sm solo_numeros" id="telefono" name="telefono" placeholder="Teléfono" minlength="1" maxlength="50" required>
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="celular" class="col-form-label">Celular</label>
+                        <input type="text" class="form-control form-control-sm solo_numeros" id="celular" name="celular" placeholder="Celular" minlength="1" maxlength="50">
+                     </div>
+                     <div class="col-sm-4">
+                        <label for="email" class="col-form-label">Email</label>
+                        <input type="email" class="form-control form-control-sm solo_correos minusculas" id="email" name="email" placeholder="Email" minlength="1" maxlength="150" required>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-12">
+                        <label for="direccion" class="col-form-label">Dirección:</label>
+                        <input type="text" class="form-control form-control-sm mayusculas" id="direccion" name="direccion" placeholder="Dirección" minlength="1" maxlength="250" required>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <div class="form-group">
+                           <label for="regimen" class="col-form-label">Regimén:</label>
+                           <select class="form-control form-control-sm" name="regimen" id="regimen">
+                              <option value="">Seleccione Regimen</option>
+                              {loop="function=regimen()"}
+                                 <option value="{$key}" {if="'GE' == $key"}selected{/if}>{$value}</option>
+                              {/if}
+                           </select>
+                        </div>
+                     </div>
+                     <div class="col-sm-8">
+                        <label for="otros" class="col-form-label"></label>
+                        <div class="checkbox">
+                           <label>
+                              <input type="checkbox" name="obligado" value="TRUE"/>
+                              Obligado a llevar Contabilidad
+                           </label>
+                           <br>
+                           <label>
+                              <input type="checkbox" name="agretencion" value="TRUE"/>
+                              Agente de Retención
+                           </label>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+                  <button class="btn btn-sm btn-primary" type="submit">
+                     <span class="bi bi-save2"></span>&nbsp; Guardar
+                  </button>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+{include="footer"}

@@ -1,0 +1,143 @@
+{include="header"}
+   <script type="text/javascript">
+      let url = "{$gsc->url()}";
+
+      $(document).ready(function() {
+         $("#b_nueva_caja").click(function(event) {
+            event.preventDefault();
+            $("#modal_nueva_caja").modal('show');
+            document.f_nueva_caja.nombre.focus();
+         });
+      });
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+               <a class="btn btn-sm btn-success" href="#" id="b_nueva_caja">
+                  <span class="bi bi-person-plus-fill"></span>
+                  <span class="d-none d-sm-block">&nbsp; Nuevo</span>
+               </a>
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-bag-check-fill" aria-hidden="true"></i>
+               Cajas
+            </h2>
+         </div>
+      </div>
+      <div class="row"><hr></div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="accordion" id="cajas">
+            {loop="$gsc->resultados"}
+               <div class="accordion-item">
+                  <h2 class="accordion-header" id="h_{$value->idcaja}">
+                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c_{$value->idcaja}" id="id_{$value->idcaja}" aria-expanded="false" aria-controls="c_{$value->idcaja}">
+                        <span class="bi bi-cart-check"></span>&nbsp; {$value->nombre}&nbsp;
+                     </button>
+                  </h2>
+                  <div id="c_{$value->idcaja}" class="accordion-collapse collapse" aria-labelledby="c_{$value->idcaja}" data-bs-parent="#cajas">
+                     <div class="accordion-body">
+                        <form name="f_cajas" class="form" role="form" action="{$gsc->url()}" method="post">
+                           <input type="hidden" name="idcaja" value="{$value->idcaja}">
+                           <div class="row">
+                              <div class="col-sm-5">
+                                 <label for="nombre" class="col-form-label">Nombre de la Caja:</label>
+                                 <input type="text" class="form-control form-control-sm" id="nombre" name="nombre" placeholder="Nombre de la Caja" maxlength="100" required value="{$value->nombre}">
+                              </div>
+                              <div class="col-sm-5">
+                                 <label for="codigo" class="col-form-label">Establecimiento:</label>
+                                 <select id="idestablecimiento" name="idestablecimiento" class="form-select form-select-sm" required>
+                                    <option value="" selected>Seleccione</option>
+                                    {loop="$gsc->establecimiento->get_by_idempresa($gsc->empresa->idempresa)"}
+                                       <option value="{$value->idestablecimiento}" {if="$value1->idestablecimiento == $value2->idestablecimiento"} selected{/if}>{$value->nombre}</option>
+                                    {/loop}
+                                 </select>
+                              </div>
+                              <div class="col-sm-2">
+                                 <label for="inicial" class="col-form-label">D. Inicial:</label>
+                                 <input type="text" class="form-control form-control-sm solo_precios text-end" id="inicial" name="inicial" placeholder="D. Inicial" maxlength="100" required value="{$value->inicial}">
+                              </div>
+                           </div>
+                           <div class="row"><br></div>
+                           <div class="row"><hr></div>
+                           <div class="row">
+                              <div class="col-sm-12 text-end">
+                                 <button class="btn btn-sm btn-success" type="submit">
+                                    <span class="bi bi-collection-play-fill"></span>&nbsp; Editar
+                                 </button>
+                              </div>
+                           </div>
+                        </form>
+                     </div>
+                  </div>
+               </div>
+            {else}
+               <div class="accordion-item">
+                  <h2 class="accordion-header" id="0">
+                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#0" id="sinresultados" aria-expanded="false" aria-controls="0">
+                        <span class="bi bi-cart-x-fill"></span>&nbsp; Sin Resultados&nbsp;
+                     </button>
+                  </h2>
+               </div>
+            {/loop}
+         </div>
+      </div>
+   </div>
+   <div class="modal" id="modal_nueva_caja">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+         <div class="modal-content">
+            <form name="f_nueva_caja" class="form" role="form" action="{$gsc->url()}" method="post">
+               <input type="hidden" name="nueva_caja">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-bag-check-fill" aria-hidden="true"></i>&nbsp; Crear Caja</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="row">
+                     <div class="col-sm-5">
+                        <label for="nombre" class="col-form-label">Nombre de la Caja:</label>
+                        <input type="text" class="form-control form-control-sm" id="nombre" name="nombre" placeholder="Nombre de la Caja" required maxlength="100">
+                     </div>
+                     <div class="col-sm-5">
+                        <label for="idestablecimiento" class="col-form-label">Establecimiento:</label>
+                        <select id="idestablecimiento" name="idestablecimiento" class="form-select form-select-sm" required>
+                           <option value="" selected>Seleccione</option>
+                           {loop="$gsc->establecimiento->get_by_idempresa($gsc->empresa->idempresa)"}
+                              <option value="{$value->idestablecimiento}">{$value->nombre}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                     <div class="col-sm-2">
+                        <label for="inicial" class="col-form-label">D. Inicial:</label>
+                        <input type="text" class="form-control form-control-sm solo_precios text-end" id="inicial" name="inicial" placeholder="D. Inicial" maxlength="100" required value="0.00">
+                     </div>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+                  <button class="btn btn-sm btn-primary" type="submit">
+                     <span class="bi bi-save2"></span>&nbsp; Guardar
+                  </button>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+{include="footer"}

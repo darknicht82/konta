@@ -1,0 +1,115 @@
+{include="header"}
+   {if="$gsc->ejercicio"}
+      <script type="text/javascript">
+         let idejercicio = "{$gsc->ejercicio->idejercicio}";
+         let ejercicio_url = "{$gsc->ejercicio->url()}";
+         let url = "{$gsc->url()}";
+         let allow_delete = "{$gsc->allow_delete}";
+         let editar = 0;
+         {if="$gsc->allow_modify"}
+            editar = 1;
+         {/if}
+      </script>
+      <script src="{#JG_PATH#}plugins/contabilidad/view/js/ver_ejercicio.js"></script>
+      <div class='container-fluid'>
+      <div class="row">
+         <div class="container-fluid">
+            <div class="row">
+               <div class="col-sm-6">
+                  <div class="btn-group">
+                     <a class="btn btn-sm btn-secondary" href="index.php?page=lista_ejercicios">
+                        <span class="bi bi-arrow-left"></span>
+                        <span class="d-none d-sm-block">&nbsp; Ejercicios</span>
+                     </a>
+                     <a class="btn btn-sm btn-dark" href="{$gsc->ejercicio->url()}" title="recargar la página">
+                        <span class="bi bi-bootstrap-reboot"></span>
+                     </a>
+                     {if="$gsc->ejercicio->existsPlanCuentas()"}
+                        <a class="btn btn-sm btn-info" target="_blank" href="index.php?page=impresion_contabilidad&tipo=pdf&idejercicio={$gsc->ejercicio->idejercicio}" title="Descargar Plan de Cuentas en PDF">
+                           <span class="bi bi-file-earmark-pdf"></span>
+                           <span class="d-none d-sm-block">&nbsp; PDF</span>
+                        </a>
+                        <a class="btn btn-sm btn-success" target="_blank" href="index.php?page=impresion_contabilidad&tipo=xls&idejercicio={$gsc->ejercicio->idejercicio}" title="Descargar Plan de Cuentas en Excel">
+                           <span class="bi bi-filetype-xls"></span>
+                           <span class="d-none d-sm-block">&nbsp; EXCEL</span>
+                        </a>
+                     {/if}
+                  </div>
+               </div>
+               <div class="col-sm-6" style="text-align: right;">
+                  <h2 style="margin-top: 0px;">
+                     <i class="bi bi-hdd-stack-fill" aria-hidden="true"></i>
+                     Ejercicio <span class="badge bg-secondary">{$gsc->ejercicio->nombre}</span>
+                  </h2>
+               </div>
+            </div>
+            <div class="row"><br></div>
+            <div class="row"><hr></div>
+            <div class="row">
+               <div class="table-responsive">
+                  <table class="table table-hover">
+                     <thead>
+                        <tr>
+                           <th class="text-center">Codigo</th>
+                           <th class="text-center">Nombre</th>
+                           <th class="text-center">Debe</th>
+                           <th class="text-center">Haber</th>
+                           <th class="text-center">Saldo</th>
+                           <th class="text-center">Acciones</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        {loop="$gsc->ejercicio->getPlanCuentas()"}
+                           <tr>
+                              <td>{$value->codigo}</td>
+                              <td>
+                                 {if="$value->tipo == 'G' || $value->tipo == 'SG'"}
+                                    <b>{$value->nivel}{$value->nombre}</b>
+                                 {else}
+                                    {$value->nivel}{$value->nombre}
+                                 {/if}
+                              </td>
+                              <td class="text-end">
+                                 {if="$value->tipo == 'G' || $value->tipo == 'SG'"}
+                                    <b>0.00 $</b>
+                                 {else}
+                                    0.00 $
+                                 {/if}
+                              </td>
+                              <td class="text-end">
+                                 {if="$value->tipo == 'G' || $value->tipo == 'SG'"}
+                                    <b>0.00 $</b>
+                                 {else}
+                                    0.00 $
+                                 {/if}
+                              </td>
+                              <td class="text-end">
+                                 {if="$value->tipo == 'G' || $value->tipo == 'SG'"}
+                                    <b>0.00 $</b>
+                                 {else}
+                                    0.00 $
+                                 {/if}
+                              </td>
+                              <td></td>
+                           </tr>
+                        {else}
+                           <tr class="table-warning">
+                              <td colspan="6">Plan de Cuentas No Encontrado.!</td>
+                           </tr>
+                        {/loop}
+                     </tbody>
+                     <tfoot>
+                     </tfoot>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </div>
+   {else}
+      <div class="thumbnail">
+         <center>
+            <img src="{#JG_PATH#}view/img/fuuu_face.png" alt="fuuuuu"/>
+         </center>
+      </div>
+   {/if}
+{include="footer"}

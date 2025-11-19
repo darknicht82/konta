@@ -1,0 +1,278 @@
+<form class="form" action="{$gsc->url()}&caca={$gsc->random_string(4)}#avanzado" method="post">
+    <div class="container-fluid" style="margin-top: 10px;">
+        <div class="row">
+            <div class="col-md-3 col-sm-4">
+                <div class="form-group">
+                    Zona horaria:
+                    <select class="form-control" name="zona_horaria">
+                        {loop="$gsc->settings->get_timezone_list()"}
+                        {if="$value['zone']==$GLOBALS['config2']['zona_horaria']"}
+                        <option value="{$value['zone']}" selected="">{$value['diff_from_GMT']} - {$value['zone']}</option>
+                        {else}
+                        <option value="{$value['zone']}">{$value['diff_from_GMT']} - {$value['zone']}</option>
+                        {/if}
+                        {/loop}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <div class="form-group">
+                    Portada:
+                    <select name="homepage" class="form-control">
+                        {loop="$gsc->paginas"}
+                        {if="$value->name==$GLOBALS['config2']['homepage']"}
+                        <option value="{$value->name}" selected="">{$value->name}</option>
+                        {else}
+                        <option value="{$value->name}">{$value->name}</option>
+                        {/if}
+                        {/loop}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <div class="form-group">
+                    Decimales de los totales:
+                    <select name="nf0" class="form-control">
+                        {loop="$gsc->settings->nf0()"}
+                        {if="$value==$GLOBALS['config2']['nf0']"}
+                        <option value="{$value}" selected="">{$value}</option>
+                        {else}
+                        <option value="{$value}">{$value}</option>
+                        {/if}
+                        {/loop}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <div class="form-group">
+                    Decimales de los precios:
+                    <select name="nf0_art" class="form-control">
+                        {loop="$gsc->settings->nf0()"}
+                        {if="$value==$GLOBALS['config2']['nf0_art']"}
+                        <option value="{$value}" selected="">{$value}</option>
+                        {else}
+                        <option value="{$value}">{$value}</option>
+                        {/if}
+                        {/loop}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row"><br></div>
+        <div class="row">
+            <div class="col-md-3 col-sm-3">
+                <div class="form-group">
+                    Separador para los Decimales:
+                    <select name="nf1" class="form-control">
+                        {loop="$gsc->settings->nf1()"}
+                        {if="$key==$GLOBALS['config2']['nf1']"}
+                        <option value="{$key}" selected="">{$value}</option>
+                        {else}
+                        <option value="{$key}">{$value}</option>
+                        {/if}
+                        {/loop}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <div class="form-group">
+                    Separador para los Millares:
+                    <select name="nf2" class="form-control">
+                        <option value="">(Ninguno)</option>
+                        {loop="$gsc->settings->nf1()"}
+                        {if="$key==$GLOBALS['config2']['nf2']"}
+                        <option value="{$key}" selected="">{$value}</option>
+                        {else}
+                        <option value="{$key}">{$value}</option>
+                        {/if}
+                        {/loop}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row"><br></div>
+        <div class="row bg-success">
+            <div class="row"><br></div>
+            <div class="col-md-12 col-sm-12">
+                <h2>
+                    <i class="bi bi-chat-left-text"></i>&nbsp; Traducciones:
+                </h2>
+            </div>
+            <div class="row">
+                {loop="$gsc->settings->traducciones()"}
+                    <div class="col-md-2 col-sm-3">
+                        <div class="form-group">
+                            <span class="text-uppercase">{$value['nombre']}:</span>
+                            <input class="form-control" type="text" name="{$value['nombre']}" value="{$value['valor']}" autocomplete="off"/>
+                        </div>
+                    </div>
+                {/loop}
+            </div>
+            <div class="row"><br></div>
+        </div>
+        <div class="row bg-warning">
+            <div class="row"><br></div>
+            <div class="col-md-12 col-sm-12">
+                <h2>
+                    <span class="bi bi-keyboard" aria-hidden="true"></span>
+                    &nbsp; Desarrollo:
+                </h2>
+                <p class='help-block'>
+                    Estos son parametros de configuración sensibles. No
+                    los modifiques si no sabes lo que haces.
+                </p>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        Comprobaciones en la base de datos:
+                        <select name="check_db_types" class="form-control">
+                            {if="$GLOBALS['config2']['check_db_types']==1"}
+                            <option value="1" selected=''>Comprobar los tipos de las columnas de las tablas</option>
+                            <option value="0">No comprobar los tipos</option>
+                            {else}
+                            <option value="1">Comprobar los tipos de las columnas de las tablas</option>
+                            <option value="0" selected=''>No comprobar los tipos</option>
+                            {/if}
+                        </select>
+                        <p class="help-block">
+                            Tendrás que <a href="index.php?page=admin_info">limpiar la caché</a>
+                            para que comiencen las comprobaciones.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        Tipo entero:
+                        <input class="form-control" type="text" name="db_integer" value="{$GLOBALS['config2']['db_integer']}"/>
+                        <p class="help-block">Tipo a usar en la base de datos (MySQL).</p>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <!--{$form_class=''}-->
+                    {if="$GLOBALS['config2']['foreign_keys']==0"}<!--{$form_class=' has-warning'}-->{/if}
+                    <div class="form-group{$form_class}">
+                        Comprobar claves ajenas:
+                        <select name="foreign_keys" class="form-control">
+                            {if="$GLOBALS['config2']['foreign_keys']==1"}
+                            <option value="1" selected=''>Si</option>
+                            <option value="0">No</option>
+                            {else}
+                            <option value="1">Si</option>
+                            <option value="0" selected=''>No</option>
+                            {/if}
+                        </select>
+                        <p class="help-block">
+                            {if="strtolower(JG_DB_TYPE)=='mysql'"}
+                            Peligro: no tocar si no sabes lo que haces.
+                            {else}
+                            Sólo se puede desactivar en MySQL.
+                            {/if}
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        Permitir acceso desde estas IPs:
+                        <input class="form-control" type="text" name="ip_whitelist" value="{$GLOBALS['config2']['ip_whitelist']}"/>
+                        <p class="help-block">Los admninistradores pueden acceder desde cualquier IP.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row"><br></div>
+        </div>
+        <div class="row bg-info">
+            <div class="row"><br></div>
+            <div class="col-md-12 col-sm-12">
+                <h2>
+                    <i class="bi bi-database-fill-gear"></i>&nbsp; Configuraciones Generales:
+                </h2>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        Valor Máximo Cons. Final:
+                        <input class="form-control text-end" type="number" min="0" name="max_cf" value="{$GLOBALS['config2']['max_cf']}"/>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        Imp. Codigo Auxiliar:
+                        <input class="form-control text-end" type="number" min="0" name="imp_codauxiliar" value="{$GLOBALS['config2']['imp_codauxiliar']}"/>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        Configuraciones Ecaute:
+                        <select name="ecaute" class="form-control">
+                            {if="$GLOBALS['config2']['ecaute']==1"}
+                            <option value="1" selected=''>Si</option>
+                            <option value="0">No</option>
+                            {else}
+                            <option value="1">Si</option>
+                            <option value="0" selected=''>No</option>
+                            {/if}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row"><br></div>
+        </div>
+        <div class="row bg-secondary text-white">
+            <div class="row"><br></div>
+            <div class="col-md-12 col-sm-12">
+                <h2>
+                    <i class="bi bi-send-check-fill"></i>&nbsp; Configuraciones Correo Electronico:
+                </h2>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        Mail User:
+                        <input class="form-control text-end" type="text" name="mail_user" value="{$GLOBALS['config2']['mail_user']}"/>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        Mail Host:
+                        <input class="form-control text-end" type="text" name="mail_host" value="{$GLOBALS['config2']['mail_host']}"/>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        Mail Encriptacion:
+                        <input class="form-control text-end" type="text" name="mail_enc" value="{$GLOBALS['config2']['mail_enc']}"/>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        Mail Port:
+                        <input class="form-control text-end" type="text" name="mail_port" value="{$GLOBALS['config2']['mail_port']}"/>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        Mail Password:
+                        <div class="input-group">
+                            <input class="form-control text-end" type="password" id="pss1" name="mail_password" value="{$GLOBALS['config2']['mail_password']}"/>
+                            <button class="btn btn-info btn-sm" onclick="ver_password('pass1', 'pss1', 'icon1')" type="button" id="pass1"><i id="icon1" class="bi bi-eye-slash-fill"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row"><br></div>
+        </div>
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-md-6 col-sm-6">
+                <button class="btn btn-sm btn-danger" type="button" onclick="window.location.href = '{$gsc->url()}&caca={$gsc->random_string(4)}&reset=TRUE#avanzado'">
+                    <span class="bi bi-pencil-square"></span>&nbsp; Configuración por defecto
+                </button>
+            </div>
+            <div class="col-md-6 col-sm-6" style="text-align: right;">
+                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled = true;this.form.submit();">
+                    <span class="bi bi-save"></span>&nbsp; Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

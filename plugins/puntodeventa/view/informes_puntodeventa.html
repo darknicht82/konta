@@ -1,0 +1,173 @@
+{include="header"}
+   <script type="text/javascript">
+      let url = "{$gsc->url()}";
+   </script>
+   <script src="{#JG_PATH#}plugins/puntodeventa/view/js/informes_puntodeventa.js?v=1"></script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-signpost-2" aria-hidden="true"></i>
+               Informes de Artículos
+            </h2>
+         </div>
+      </div>
+      <div class="row"><br></div>
+      <div class="row"><hr></div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="col-sm-12">
+            <form target="_blank" name="f_inf_ptoventa" action="{$gsc->page->url()}" method="post" class="form" role="form">
+               <input type="hidden" name="inf_ptoventa" value="xarticulo">
+               <div class="card">
+                  <div class="card-header bg-info text-white">
+                     <h5><center><b>Informe de Stock por Artículo y Establecimiento</b></center></h5>
+                  </div>
+                  <div class="card-body">
+                     <div class="row">
+                        <div class="col-sm-3">
+                           <label for="idarticulo" class="col-form-label">Artículo:</label>
+                           <select id="idarticulo" name="idarticulo" class="form-select form-select-sm">
+                           </select>
+                        </div>
+                        <div class="col-sm-3">
+                           <label for="fec_desde" class="col-form-label">Fecha Desde:</label>
+                           <input type="date" class="form-control form-control-sm" id="fec_desde" name="fec_desde" required>
+                        </div>
+                        <div class="col-sm-3">
+                           <label for="fec_hasta" class="col-form-label">Fecha Hasta:</label>
+                           <input type="date" class="form-control form-control-sm" id="fec_hasta" name="fec_hasta" required>
+                        </div>
+                        <div class="col-sm-3">
+                           <label for="idestablecimiento" class="col-form-label">Establecimiento:</label>
+                           <select id="idestablecimiento" name="idestablecimiento" class="form-select form-select-sm">
+                              <option value="" selected>Todos</option>
+                              {loop="$gsc->establecimiento->get_by_idempresa($gsc->empresa->idempresa)"}
+                                 <option value="{$value->idestablecimiento}">{$value->nombre}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <label for="idgrupo" class="col-form-label">Grupo:</label>
+                           <select class="form-control form-control-sm" name="idgrupo" id="idgrupo">
+                              <option value="">Seleccione Grupo</option>
+                              {loop="$gsc->grupos->mostrarGrupos($gsc->user->idempresa)"}
+                                 <option value="{$value->idgrupo}" {if="$gsc->idgrupo == $value->idgrupo"}selected{/if}>{$value->nivel}{$value->nombre}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                        <div class="col-sm-4">
+                           <label for="idmarca" class="col-form-label">Marca:</label>
+                           <select class="form-control form-control-sm" name="idmarca" id="idmarca">
+                              <option value="">Seleccione Marca</option>
+                              {loop="$gsc->marcas->mostrarMarcas($gsc->user->idempresa)"}
+                                 <option value="{$value->idmarca}" {if="$gsc->idmarca == $value->idmarca"}selected{/if}>{$value->nivel}{$value->nombre}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                        <div class="col-sm-4">
+                           <label for="formato" class="col-form-label">Formato:</label>
+                           <select id="formato" name="formato" class="form-select form-select-sm">
+                              <option value="pdf" selected>PDF</option>
+                              <option value="xls">EXCEL</option>
+                           </select>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="card-footer">
+                     <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-outline-primary" type="submit">Generar</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+         <div class="col-sm-12">
+            <form target="_blank" name="f_inf_ptoventa" action="{$gsc->page->url()}" method="post" class="form" role="form">
+               <input type="hidden" name="inf_ptoventa" value="xproducto">
+               <div class="card">
+                  <div class="card-header bg-info text-white">
+                     <h5><center><b>Informe de Ventas por Producto</b></center></h5>
+                  </div>
+                  <div class="card-body">
+                     <div class="row">
+                        <div class="col-sm-3">
+                           <label for="idarticulo" class="col-form-label">Artículo:</label>
+                           <select id="idarticulo2" name="idarticulo" class="form-select form-select-sm">
+                           </select>
+                        </div>
+                        <div class="col-sm-3">
+                           <label for="fec_desde" class="col-form-label">Fecha Desde:</label>
+                           <input type="date" class="form-control form-control-sm" id="fec_desde" name="fec_desde" required>
+                        </div>
+                        <div class="col-sm-3">
+                           <label for="fec_hasta" class="col-form-label">Fecha Hasta:</label>
+                           <input type="date" class="form-control form-control-sm" id="fec_hasta" name="fec_hasta" required>
+                        </div>
+                        <div class="col-sm-3">
+                           <label for="idestablecimiento" class="col-form-label">Establecimiento:</label>
+                           <select id="idestablecimiento" name="idestablecimiento" class="form-select form-select-sm">
+                              <option value="" selected>Todos</option>
+                              {loop="$gsc->establecimiento->get_by_idempresa($gsc->empresa->idempresa)"}
+                                 <option value="{$value->idestablecimiento}">{$value->nombre}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <label for="idgrupo" class="col-form-label">Grupo:</label>
+                           <select class="form-control form-control-sm" name="idgrupo" id="idgrupo">
+                              <option value="">Seleccione Grupo</option>
+                              {loop="$gsc->grupos->mostrarGrupos($gsc->user->idempresa)"}
+                                 <option value="{$value->idgrupo}" {if="$gsc->idgrupo == $value->idgrupo"}selected{/if}>{$value->nivel}{$value->nombre}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                        <div class="col-sm-4">
+                           <label for="idmarca" class="col-form-label">Marca:</label>
+                           <select class="form-control form-control-sm" name="idmarca" id="idmarca">
+                              <option value="">Seleccione Marca</option>
+                              {loop="$gsc->marcas->mostrarMarcas($gsc->user->idempresa)"}
+                                 <option value="{$value->idmarca}" {if="$gsc->idmarca == $value->idmarca"}selected{/if}>{$value->nivel}{$value->nombre}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                        <div class="col-sm-4">
+                           <label for="formato" class="col-form-label">Formato:</label>
+                           <select id="formato" name="formato" class="form-select form-select-sm">
+                              <option value="pdf" selected>PDF</option>
+                              <option value="xls">EXCEL</option>
+                           </select>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="card-footer">
+                     <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-sm btn btn-outline-primary" type="submit">Generar</button>
+                     </div>
+                  </div>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+{include="footer"}

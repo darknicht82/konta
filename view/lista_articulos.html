@@ -1,0 +1,232 @@
+{include="header"}
+   <script type="text/javascript">
+      $(document).ready(function() {
+         if(window.location.hash.substring(1) == 'nuevo')
+         {
+            $("#modal_nuevo_articulo").modal('show');
+            document.f_nuevo_articulo.codprincipal.focus();
+         }
+         $("#b_nuevo_articulo").click(function(event) {
+            event.preventDefault();
+            $("#modal_nuevo_articulo").modal('show');
+            document.f_nuevo_articulo.codprincipal.focus();
+         });
+      });
+   </script>
+   <div class='container-fluid'>
+      <div class="row">
+         <div class="col-sm-6">
+            <div class="btn-group">
+               <a class="btn btn-sm btn-dark" href="{$gsc->url()}" title="recargar la página">
+                  <span class="bi bi-bootstrap-reboot"></span>
+               </a>
+               {if="$gsc->page->is_default()"}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=FALSE" title="Desmarcar como página de inicio.">
+                     <i class="bi bi-house-fill" aria-hidden="true"></i>
+                  </a>
+               {else}
+                  <a class="btn btn-sm btn-outline-info" href="{$gsc->url()}&amp;default_page=TRUE" title="Marcar como página de inicio.">
+                     <i class="bi bi-house" aria-hidden="true"></i>
+                  </a>
+               {/if}
+               <a class="btn btn-sm btn-success" href="#" id="b_nuevo_articulo">
+                  <span class="bi bi-person-plus-fill"></span>
+                  <span class="d-none d-sm-block">&nbsp; Nuevo</span>
+               </a>
+            </div>
+         </div>
+         <div class="col-sm-6 col-xs-5" style="text-align: right;">
+            <h2 style="margin-top: 0px;">
+               <i class="bi bi-bag-check-fill" aria-hidden="true"></i>
+               Articulos <span class="badge bg-secondary">{$gsc->cantidad}</span>
+            </h2>
+         </div>
+      </div>
+      <div class="row"><hr></div>
+      <div class="row">
+         <form name="f_buscador" action="{$gsc->page->url()}" method="post" class="form" role="form">
+            <div class="row">
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="query" class="col-form-label">Buscador:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="query">
+                           <i class="bi bi-search"></i>
+                        </span>
+                     <input class="form-control form-control-sm" type="query" name="query" value="{$gsc->query}" id="query" autocomplete="off" placeholder="Buscador" onchange="this.form.submit()" autofocus="" />
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="b_grupo" class="col-form-label">Grupo:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="b_grupo">
+                           <i class="bi bi-boxes"></i>
+                        </span>
+                        <select class="form-control form-control-sm" name="b_grupo" id="b_grupo" onchange="this.form.submit()">
+                           <option value="">Seleccione Grupo</option>
+                           {loop="$gsc->grupos->mostrarGrupos($gsc->user->idempresa)"}
+                              <option value="{$value->idgrupo}" {if="$gsc->b_grupo == $value->idgrupo"}selected{/if}>{$value->nivel}{$value->nombre}</option>
+                           {/if}
+                        </select>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="b_marca" class="col-form-label">Marca:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="b_marca">
+                           <i class="bi bi-reddit"></i>
+                        </span>
+                        <select class="form-control form-control-sm" name="b_marca" id="b_marca" onchange="this.form.submit()">
+                           <option value="">Seleccione Marca</option>
+                           {loop="$gsc->marcas->mostrarMarcas($gsc->user->idempresa)"}
+                              <option value="{$value->idmarca}" {if="$gsc->b_marca == $value->idmarca"}selected{/if}>{$value->nivel}{$value->nombre}</option>
+                           {/if}
+                        </select>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-sm-3">
+                  <div class="form-group">
+                     <label for="b_impuesto" class="col-form-label">Impuesto:</label>
+                     <div class="input-group">
+                        <span class="input-group-text" id="b_impuesto">
+                           <i class="bi bi-percent"></i>
+                        </span>
+                        <select class="form-control form-control-sm" name="b_impuesto" id="b_impuesto" onchange="this.form.submit()">
+                           <option value="">Seleccione Impuesto</option>
+                           {loop="function=listar_impuestos()"}
+                              <option value="{$value->idimpuesto}" {if="$gsc->b_impuesto == $value->idimpuesto"}selected{/if}>{$value->nombre}</option>
+                           {/if}
+                        </select>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </form>
+      </div>
+      <div class="row"><br></div>
+      <div class="row">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th>Codigo</th>
+                     <th>Nombre</th>
+                     <th>Grupo</th>
+                     <th>Marca</th>
+                     <th class="text-end">Precio</th>
+                     <th class="text-end">% IVA</th>
+                     <th class="text-end">Precio + IVA</th>
+                     <th class="text-end">Stock</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {loop="$gsc->resultados"}
+                     <tr>
+                        <td><a href="{$value->url()}" target="_blank">{$value->codprincipal}</a></td>
+                        <td>{$value->nombre}</td>
+                        <td>{$value->get_nombre_grupo()}</td>
+                        <td>{$value->get_nombre_marca()}</td>
+                        <td class="text-end">{$value->get_precio()} $</td>
+                        <td class="text-end">{$value->get_porcentaje_impuesto()}</td>
+                        <td class="text-end">{$value->get_precio_iva()} $</td>
+                        <td class="text-end">{$value->getstock()}</td>
+                     </tr>
+                  {else}
+                     <tr class="table-warning">
+                        <td colspan="8">Sin Resultados.!</td>
+                     </tr>
+                  {/loop}
+               </tbody>
+            </table>
+         </div>
+      </div>
+      {if="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+         <div class="row"><br></div>
+         <div class="row">
+            <div class="col-sm-12 ">
+               <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+                     {loop="$gsc->paginas($gsc->url(), $gsc->filtros, $gsc->cantidad, $gsc->offset)"}
+                        <li class="page-item {if="$value['actual']"}active{/if}">
+                           <a class="page-link" href="{$value['url']}">{$value['num']}</a>
+                        </li>
+                     {/loop}
+                  </ul>
+               </nav>
+            </div>
+         </div>
+      {/if}
+   </div>
+   <div class="modal" id="modal_nuevo_articulo">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+         <div class="modal-content">
+            <form name="f_nuevo_articulo" class="form" role="form" action="{$gsc->url()}" method="post">
+               <div class="modal-header">
+                  <h5 class="modal-title"><i class="bi bi-bag-check" aria-hidden="true"></i>&nbsp; Crear Articulo</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body">
+                  <div class="row">
+                     <div class="col-sm-4">
+                        <label for="codprincipal" class="col-form-label">Codigo Principal:</label>
+                        <input type="text" class="form-control form-control-sm" id="codprincipal" name="codprincipal" placeholder="Código Principal" minlength="1" maxlength="100" required>
+                     </div>
+                     <div class="col-sm-8">
+                        <label for="nombre" class="col-form-label">Nombre:</label>
+                        <input type="text" class="form-control form-control-sm" id="nombre" name="nombre" placeholder="Nombre" minlength="8" maxlength="250" required>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-6">
+                        <label for="idgrupo" class="col-form-label">Grupo:</label>
+                        <select class="form-control form-control-sm" id="idgrupo" name="idgrupo">
+                           <option value="">Seleccione Grupo</option>
+                           {loop="$gsc->grupos->mostrarGrupos($gsc->user->idempresa)"}
+                              <option value="{$value->idgrupo}">{$value->nivel}{$value->nombre}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                     <div class="col-sm-6">
+                        <label for="idmarca" class="col-form-label">Marca:</label>
+                        <select class="form-control form-control-sm" id="idmarca" name="idmarca">
+                           <option value="">Seleccione Marca</option>
+                           {loop="$gsc->marcas->mostrarMarcas($gsc->user->idempresa)"}
+                              <option value="{$value->idmarca}">{$value->nivel}{$value->nombre}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                  </div>
+                  <div class="row">
+                     <div class="col-sm-6">
+                        <label for="idimpuesto" class="col-form-label">Impuesto:</label>
+                        <select class="form-control form-control-sm" id="idimpuesto" name="idimpuesto" required>
+                           <option value="">Seleccione Impuesto</option>
+                           {loop="function=listar_impuestos()"}
+                              <option value="{$value->idimpuesto}">{$value->nombre}</option>
+                           {/loop}
+                        </select>
+                     </div>
+                     <div class="col-sm-6">
+                        <label for="precio" class="col-form-label">Precio + IVA:</label>
+                        <input type="text" class="form-control form-control-sm solo_precios" id="precio" name="precio" value="0" placeholder="Precio" required>
+                     </div>
+                  </div>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                     <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                  </button>
+                  <button class="btn btn-sm btn-primary" type="submit">
+                     <span class="bi bi-save2"></span>&nbsp; Guardar
+                  </button>
+               </div>
+            </form>
+         </div>
+      </div>
+   </div>
+{include="footer"}

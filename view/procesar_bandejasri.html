@@ -1,0 +1,687 @@
+{include="header"}
+   {if="$gsc->factura"}
+      <script type="text/javascript">
+         let idbandejasri = "{$gsc->factura->idbandejasri}";
+         let coddocumento = "{$gsc->factura->coddocumento}";
+         let doc_url = "{$gsc->factura->url()}";
+         let agretencion_empresa = "{$gsc->empresa->agretencion}";
+         let impuestos = {function="json_encode(listar_impuestos())"};
+         let grupos = {function="json_encode(traer_grupos($gsc->empresa->idempresa))"};
+         let marcas = {function="json_encode(traer_marcas($gsc->empresa->idempresa))"};
+      </script>
+      <script src="{#JG_PATH#}view/js/bandeja/procesar_bandejasri.js?v=1"></script>
+      <div class='container-fluid'>
+         <div class="row">
+            <div class="container-fluid">
+               <div class="row">
+                  <div class="col-sm-6">
+                     <div class="btn-group">
+                        <a class="btn btn-sm btn-secondary" href="index.php?page=bandeja_sri">
+                           <span class="bi bi-arrow-left"></span>
+                           <span class="d-none d-sm-block">&nbsp; Bandeja SRI</span>
+                        </a>
+                        <a class="btn btn-sm btn-dark" href="{$gsc->factura->url()}" title="Recargar la página">
+                           <span class="bi bi-bootstrap-reboot"></span>
+                        </a>
+                     </div>
+                  </div>
+                  <div class="col-sm-6" style="text-align: right;">
+                     <div class="btn-group">
+                        {if="$gsc->factura->estado == 0"}
+                           <a href="#" id="b_homologacion_masiva" class="btn btn-sm btn-info">
+                              <span class="bi bi-bezier2"></span>
+                              <span class="d-none d-sm-block">&nbsp;Homologación Masiva</span>
+                           </a>
+                           <a href="#" id="b_noprocesar" class="btn btn-sm btn-warning">
+                              <span class="bi bi-clipboard-x"></span>
+                              <span class="d-none d-sm-block">&nbsp;No Procesar Documento</span>
+                           </a>
+                           <a href="#" id="b_procesar" class="btn btn-sm btn-primary">
+                              <span class="bi bi-play-btn"></span>
+                              <span class="d-none d-sm-block">&nbsp;Procesar Documento</span>
+                           </a>
+                        {/if}
+                     </div>
+                  </div>
+               </div>
+               <hr>
+               <div class="row">
+                  <div class="col-sm-12">
+                     <div class="page-header">
+                        <h1>
+                           <i class="bi bi-person-circle" aria-hidden="true"></i>
+                           {$gsc->factura->get_tipodoc()} <small class="fs-6">{$gsc->factura->numero_documento} de {$gsc->factura->razonsocial} </small>
+                        </h1>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="row"><br></div>
+         <div class="row">
+            <ul class="nav nav-tabs" role="tablist">
+               <li class="nav-item" role="presentation">
+                  <a class="nav-link active" data-bs-toggle="tab" href="#datos" role="tab" aria-selected="true">
+                     <div class="d-flex align-items-center"> 
+                        <div class="tab-icon"><i class="bi bi-person-circle"></i></div>
+                        <div class="tab-title">&nbsp;Datos {$gsc->factura->get_tipodoc()}</div>
+                     </div>
+                  </a>
+               </li>
+            </ul>
+            <div class="tab-content py-3">
+               <div class="tab-pane fade active show" id="datos" role="tabpanel">
+                  <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+                     <div class="card-body">
+                        <div class="table-responsive">
+                           <table class="table table-borderless">
+                              <tbody>
+                                 <tr>
+                                    <th>Numero de Documento</th>
+                                    <th>Numero de Autorización</th>
+                                    <th>Razón Social</th>
+                                    <th>Identificación</th>
+                                 </tr>
+                                 <tr>
+                                    <td>{$gsc->factura->numero_documento}</td>
+                                    <td>{$gsc->factura->nro_autorizacion}</td>
+                                    <td>{$gsc->factura->razonsocial}</td>
+                                    <td>{$gsc->factura->identificacion}</td>
+                                 </tr>
+                                 <tr>
+                                    <th>Fecha de Emisión</th>
+                                    <th>Hora de Emisión</th>
+                                    <th>Fecha de Autorización</th>
+                                    <th>Hora de Autorización</th>
+                                 </tr>
+                                 <tr>
+                                    <td>{$gsc->factura->fec_emision}</td>
+                                    <td>{$gsc->factura->hora_emision}</td>
+                                    <td>{$gsc->factura->fec_autorizacion}</td>
+                                    <td>{$gsc->factura->hor_autorizacion}</td>
+                                 </tr>
+                              </tbody>
+                              {if="$gsc->factura->coddocumento == '04' || $gsc->factura->coddocumento == '05'"}
+                                 <tfoot style="background-color: #D6EAF8; font-weight:bold;">
+                                    <tr><th colspan="4"></th></tr>
+                                    <tr>
+                                       <th colspan="2">Documento Modificado</th>
+                                       <th colspan="2">Fecha Doc. Modificado</th>
+                                    </tr>
+                                    <tr>
+                                       <td colspan="2">
+                                          {if="$gsc->factura->idfactura_mod"}
+                                             <a href="index.php?page=ver_factura_proveedor&id={$gsc->factura->idfactura_mod}" target="_blank">
+                                          {/if} 
+                                             {$gsc->factura->numero_documento_mod}
+                                          {if="$gsc->factura->idfactura_mod"}
+                                             </a>
+                                          {/if}
+                                       </td>
+                                       <td colspan="2">{$gsc->factura->fecdoc_modificado}</td>
+                                    </tr>
+                                 </tfoot>
+                              {/if}
+                           </table>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+                     <div class="card-body">
+                        <div class="table-responsive">
+                           <table class="table table-hover">
+                              <thead>
+                                 <tr>
+                                    <th width="12%" style="text-align: center;">Código</th>
+                                    <th width="50%" style="text-align: center;">Nombre</th>
+                                    <th width="12%" style="text-align: center;">Cantidad</th>
+                                    <th width="12%" style="text-align: center;">Total</th>
+                                    <th width="14%" style="text-align: center;"></th>
+                                 </tr>
+                              </thead>
+                              <tbody id="detalle_fac">
+                              </tbody>
+                              <tfoot>
+                                 <tr>
+                                    <th style="text-align: right;" colspan="3">Subtotal Gravado</th>
+                                    <th style="text-align: right;" id="base_gra">0.00</th>
+                                    <th>$</th>
+                                 </tr>
+                                 <tr>
+                                    <th style="text-align: right;" colspan="3">Subtotal 0%</th>
+                                    <th style="text-align: right;" id="base_0">0.00</th>
+                                    <th>$</th>
+                                 </tr>
+                                 <tr>
+                                    <th style="text-align: right;" colspan="3">Subtotal No Objeto de IVA</th>
+                                    <th style="text-align: right;" id="base_noi">0.00</th>
+                                    <th>$</th>
+                                 </tr>
+                                 <tr>
+                                    <th style="text-align: right;" colspan="3">Subtotal Excento de IVA</th>
+                                    <th style="text-align: right;" id="base_exc">0.00</th>
+                                    <th>$</th>
+                                 </tr>
+                                 <tr>
+                                    <th style="text-align: right;" colspan="3">Subtotal Sin Impuestos</th>
+                                    <th style="text-align: right;" id="subtotal">0.00</th>
+                                    <th>$</th>
+                                 </tr>
+                                 <tr>
+                                    <th style="text-align: right;" colspan="3">Total Descuento</th>
+                                    <th style="text-align: right;" id="totaldescuento">0.00</th>
+                                    <th>$</th>
+                                 </tr>
+                                 <tr>
+                                    <th style="text-align: right;" colspan="3">ICE</th>
+                                    <th style="text-align: right;" id="totalice">0.00</th>
+                                    <th>$</th>
+                                 </tr>
+                                 <tr>
+                                    <th style="text-align: right;" colspan="3">IVA</th>
+                                    <th style="text-align: right;" id="totaliva">0.00</th>
+                                    <th>$</th>
+                                 </tr>
+                                 <tr>
+                                    <th style="text-align: right;" colspan="3">IRBPNR</th>
+                                    <th style="text-align: right;" id="totalirpb">0.00</th>
+                                    <th>$</th>
+                                 </tr>
+                                 <tr>
+                                    <th style="text-align: right;" colspan="3">Total</th>
+                                    <th style="text-align: right;" id="totalfac">0.00</th>
+                                    <th>$</th>
+                                 </tr>
+                              </tfoot>
+                           </table>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="modal" tabindex="-1" id="modal_procesar">
+         <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+               <form name="f_procesar" class="form" role="form" action="index.php?page=bandeja_sri" method="post">
+                  <input type="hidden" name="procesar" value="{$gsc->factura->idbandejasri}">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-play-btn" aria-hidden="true"></i>&nbsp; Procesar Documento</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="col-sm-6">
+                           <label for="idsustento" class="col-form-label">Sustento SRI:</label>
+                           <select id="idsustento" name="idsustento" class="form-select" required>
+                                 <option value="" selected>Seleccione</option>
+                              {loop="$gsc->sustentos->all_by_iddocumento($gsc->factura->iddocumento)"}
+                                 <option value="{$value->idsustento}">{$value->codigo} - {$value->nombre}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                        <div class="col-sm-6">
+                           <label for="idestablecimiento" class="col-form-label">Establecimiento:</label>
+                           <select id="idestablecimiento" name="idestablecimiento" class="form-select" required>
+                                 <option value="" selected>Seleccione</option>
+                              {loop="$gsc->establecimiento->get_by_idempresa($gsc->empresa->idempresa)"}
+                                 <option value="{$value->idestablecimiento}">{$value->nombre}</option>
+                              {/loop}
+                           </select>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <label for="telefono" class="col-form-label">Teléfono</label>
+                           <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Teléfono" minlength="1" maxlength="50" required>
+                        </div>
+                        <div class="col-sm-8">
+                           <label for="email" class="col-form-label">Email</label>
+                           <input type="email" class="form-control solo_correos" id="email" name="email" placeholder="Email" minlength="1" maxlength="150" required>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <label for="direccion" class="col-form-label">Dirección:</label>
+                           <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Dirección" minlength="1" maxlength="250" required>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-3">
+                           <label for="diascredito" class="col-form-label">Dias Crédito:</label>
+                           <input type="number" class="form-control solo_numeros" id="diascredito" name="diascredito" placeholder="Dias Crédito" value="1" required>
+                        </div>
+                        <div class="col-sm-9">
+                           <label for="observaciones" class="col-form-label">Observaciones:</label>
+                           <textarea cols="5" name="observaciones" id="observaciones" class="form-control" maxlength="300"></textarea>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                     <button class="btn btn-sm btn-success" type="submit">
+                        <span class="bi bi-collection-play-fill"></span>&nbsp; Procesar
+                     </button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+      <div class="modal" tabindex="-1" id="modal_editar_cantidad">
+         <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+               <form name="f_editar_cantidad" id="f_editar_cantidad" class="form" role="form" action="{$gsc->url()}" method="post">
+                  <input type="hidden" id="editar_linea" name="editar_linea">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-bezier2" aria-hidden="true"></i>&nbsp; Editar Cantidad</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <label for="ref_proveedor2" class="col-form-label">Ref. Proveedor:</label>
+                           <input type="text" class="form-control form-control-sm" id="ref_proveedor2" placeholder="Ref. Proveedor" readonly>
+                        </div>
+                        <div class="col-sm-8">
+                           <label for="desc_proveedor2" class="col-form-label">Desc. Proveedor:</label>
+                           <input type="text" class="form-control form-control-sm" id="desc_proveedor2" placeholder="Desc. Proveedor" readonly>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-6">
+                           <label for="cant_ant" class="col-form-label">Cantidad Anterior:</label>
+                           <input type="text" class="form-control form-control-sm text-end solo_precios" id="cant_ant" placeholder="Cantidad Anterior" readonly>
+                        </div>
+                        <div class="col-sm-6">
+                           <label for="cant_new" class="col-form-label">Cantidad Nueva:</label>
+                           <input type="text" class="form-control form-control-sm text-end solo_precios" id="cant_new" name="cant_new" required placeholder="Cantidad Nueva">
+                        </div>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                     <button class="btn btn-sm btn-primary" type="submit">
+                        <span class="bi bi-collection-play-fill"></span>&nbsp; Editar
+                     </button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+      <div class="modal" tabindex="-1" id="modal_homologar">
+         <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+               <form name="f_homologar" id="f_homologar" class="form" role="form" action="{$gsc->url()}" method="post">
+                  <input type="hidden" id="hom_linea" name="hom_linea">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-bezier2" aria-hidden="true"></i>&nbsp; Homologación</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <label for="ref_proveedor" class="col-form-label">Ref. Proveedor:</label>
+                           <input type="text" class="form-control form-control-sm" id="ref_proveedor" name="ref_proveedor" placeholder="Ref. Proveedor" readonly>
+                           <div class="form-check form-switch" style="margin-top: 0.5rem;">
+                              <input class="form-check-input" type="checkbox" id="crearart" name="crearart" onclick="mostrar_div_crearart()">
+                              <label class="form-check-label" for="crearart">Desea Crear el Producto?</label>
+                           </div>
+                        </div>
+                        <div class="col-sm-8">
+                           <label for="desc_proveedor" class="col-form-label">Desc. Proveedor:</label>
+                           <input type="text" class="form-control form-control-sm" id="desc_proveedor" name="desc_proveedor" placeholder="Ref. Proveedor" maxlength="250" readonly>
+                        </div>
+                     </div>
+                     <div class="row" id="div_new_art">
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <div class="form-group">
+                              <label for="idarticulo" class="col-form-label">Artículo Homologado:</label>
+                              <select id="idarticulo" name="idarticulo" class="form-select form-select-sm" required></select>
+                           </div>
+                        </div>
+                     </div>
+                     {if="$gsc->empresa->agretencion && $gsc->factura->coddocumento == '01'"}
+                        <div class="row">
+                           <div class="col-sm-12">
+                              <br>
+                              <h4>Retenciones: </h4>
+                           </div>
+                           <div class="col-sm-6">
+                              <label for="idretencion_renta" class="col-form-label">Ret. Renta:</label>
+                              <select class="form-control form-control-sm" name="idretencion_renta" id="idretencion_renta" required>
+                                 <option value="">Seleccione Ret. Renta</option>
+                                 {loop="$gsc->tiposretenciones->lista_retenciones($gsc->factura->idempresa, 'renta', false, true)"}
+                                    <option value="{$value->idtiporetencion}">{$value->codigo} -  {$value->nombre}</option>
+                                 {/loop}
+                              </select>
+                           </div>
+                           <div class="col-sm-6">
+                              <label for="idretencion_iva" class="col-form-label">Ret. IVA:</label>
+                              <select class="form-control form-control-sm" name="idretencion_iva" id="idretencion_iva" required>
+                                 <option value="">Seleccione Ret. IVA</option>
+                                 {loop="$gsc->tiposretenciones->lista_retenciones($gsc->factura->idempresa, 'iva', false, true)"}
+                                    <option value="{$value->idtiporetencion}">{$value->codigo} -  {$value->nombre}</option>
+                                 {/loop}
+                              </select>
+                           </div>
+                        </div>
+                     {/if}
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                     <button class="btn btn-sm btn-success" type="submit">
+                        <span class="bi bi-collection-play-fill"></span>&nbsp; Homologar
+                     </button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+      <div class="modal" tabindex="-1" id="modal_homologar_masivo">
+         <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+               <form name="f_homologar_masiva" id="f_homologar_masiva" class="form" role="form" action="{$gsc->url()}" method="post">
+                  <input type="hidden" id="homologar_masivo" name="homologar_masivo">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-bezier2" aria-hidden="true"></i>&nbsp; Homologación Masiva</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <label for="ref_proveedor_mas" class="col-form-label">Ref. Proveedor:</label>
+                           <input type="text" class="form-control form-control-sm" id="ref_proveedor_mas" name="ref_proveedor" placeholder="Ref. Proveedor" readonly>
+                           <div class="form-check form-switch" style="margin-top: 0.5rem;">
+                              <input class="form-check-input" type="checkbox" id="crearartmas" name="crearart" onclick="mostrar_div_crearart_masivo()">
+                              <label class="form-check-label" for="crearartmas">Desea Crear el Producto?</label>
+                           </div>
+                        </div>
+                        <div class="col-sm-8">
+                           <label for="desc_proveedor_mas" class="col-form-label">Desc. Proveedor:</label>
+                           <input type="text" class="form-control form-control-sm" id="desc_proveedor_mas" name="desc_proveedor" placeholder="Desc. Proveedor" maxlength="250" readonly>
+                        </div>
+                     </div>
+                     <div class="row" id="div_new_art_mas">
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <div class="form-group">
+                              <label for="idarticulo_mas" class="col-form-label">Artículo Homologado:</label>
+                              <select id="idarticulo_mas" name="idarticulo" class="form-select form-select-sm" required></select>
+                           </div>
+                        </div>
+                     </div>
+                     {if="$gsc->empresa->agretencion && $gsc->factura->coddocumento == '01'"}
+                        <div class="row">
+                           <div class="col-sm-12">
+                              <br>
+                              <h4>Retenciones: </h4>
+                           </div>
+                           <div class="col-sm-6">
+                              <label for="idretencion_renta" class="col-form-label">Ret. Renta:</label>
+                              <select class="form-control form-control-sm" name="idretencion_renta" id="idretencion_renta" required>
+                                 <option value="">Seleccione Ret. Renta</option>
+                                 {loop="$gsc->tiposretenciones->lista_retenciones($gsc->factura->idempresa, 'renta', false, true)"}
+                                    <option value="{$value->idtiporetencion}">{$value->codigo} -  {$value->nombre}</option>
+                                 {/loop}
+                              </select>
+                           </div>
+                           <div class="col-sm-6">
+                              <label for="idretencion_iva" class="col-form-label">Ret. IVA:</label>
+                              <select class="form-control form-control-sm" name="idretencion_iva" id="idretencion_iva" required>
+                                 <option value="">Seleccione Ret. IVA</option>
+                                 {loop="$gsc->tiposretenciones->lista_retenciones($gsc->factura->idempresa, 'iva', false, true)"}
+                                    <option value="{$value->idtiporetencion}">{$value->codigo} -  {$value->nombre}</option>
+                                 {/loop}
+                              </select>
+                           </div>
+                        </div>
+                     {/if}
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                     <button class="btn btn-sm btn-success" type="submit">
+                        <span class="bi bi-collection-play-fill"></span>&nbsp; Homologar Masivo
+                     </button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   {elseif="$gsc->retencion"}
+      <script type="text/javascript">
+         let idbandejasri = "{$gsc->retencion->idbandejasri}";
+         let coddocumento = "{$gsc->retencion->coddocumento}";
+         let doc_url = "{$gsc->retencion->url()}";
+         let agretencion_empresa = "{$gsc->empresa->agretencion}";
+      </script>
+      <script src="{#JG_PATH#}view/js/bandeja/procesar_bandejasri_ret.js"></script>
+      <div class='container-fluid'>
+         <div class="row">
+            <div class="container-fluid">
+               <div class="row">
+                  <div class="col-sm-6">
+                     <div class="btn-group">
+                        <a class="btn btn-sm btn-secondary" href="index.php?page=bandeja_sri">
+                           <span class="bi bi-arrow-left"></span>
+                           <span class="d-none d-sm-block">&nbsp; Bandeja SRI</span>
+                        </a>
+                        <a class="btn btn-sm btn-dark" href="{$gsc->retencion->url()}" title="Recargar la página">
+                           <span class="bi bi-bootstrap-reboot"></span>
+                        </a>
+                     </div>
+                  </div>
+                  <div class="col-sm-6" style="text-align: right;">
+                     <div class="btn-group">
+                        {if="$gsc->retencion->estado == 0"}
+                           <a href="#" id="b_noprocesar" class="btn btn-sm btn-warning">
+                              <span class="bi bi-clipboard-x"></span>
+                              <span class="d-none d-sm-block">&nbsp;No Procesar Documento</span>
+                           </a>
+                           <a href="#" id="b_procesar" class="btn btn-sm btn-primary">
+                              <span class="bi bi-play-btn"></span>
+                              <span class="d-none d-sm-block">&nbsp;Procesar Documento</span>
+                           </a>
+                        {/if}
+                     </div>
+                  </div>
+               </div>
+               <hr>
+               <div class="row">
+                  <div class="col-sm-12">
+                     <div class="page-header">
+                        <h1>
+                           <i class="bi bi-person-circle" aria-hidden="true"></i>
+                           {$gsc->retencion->get_tipodoc()} <small class="fs-6">{$gsc->retencion->numero_documento} de {$gsc->retencion->razonsocial} </small>
+                        </h1>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="row"><br></div>
+         <div class="row">
+            <ul class="nav nav-tabs" role="tablist">
+               <li class="nav-item" role="presentation">
+                  <a class="nav-link active" data-bs-toggle="tab" href="#datos" role="tab" aria-selected="true">
+                     <div class="d-flex align-items-center"> 
+                        <div class="tab-icon"><i class="bi bi-person-circle"></i></div>
+                        <div class="tab-title">&nbsp;Datos {$gsc->retencion->get_tipodoc()}</div>
+                     </div>
+                  </a>
+               </li>
+            </ul>
+            <div class="tab-content py-3">
+               <div class="tab-pane fade active show" id="datos" role="tabpanel">
+                  <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+                     <div class="card-body">
+                        <div class="table-responsive">
+                           <table class="table table-borderless">
+                              <tbody>
+                                 <tr>
+                                    <th>Numero de {$gsc->retencion->get_tipodoc()}</th>
+                                    <th>Numero de Autorización</th>
+                                    <th>Fecha Emisión</th>
+                                    <th>Fecha Registro</th>
+                                 </tr>
+                                 <tr>
+                                    <td>{$gsc->retencion->numero_documento}</td>
+                                    <td>{$gsc->retencion->nro_autorizacion}</td>
+                                    <td>{$gsc->retencion->fec_emision}</td>
+                                    <td>{$gsc->retencion->fec_registro}</td>
+                                 </tr>
+                                 <tr>
+                                    <th colspan="2">Razón Social</th>
+                                    <th colspan="2">Identificación</th>
+                                 </tr>
+                                 <tr>
+                                    <td colspan="2">{$gsc->retencion->razonsocial}</td>
+                                    <td colspan="2">{$gsc->retencion->identificacion}</td>
+                                 </tr>
+                              </tbody>
+                           </table>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="card p-1 p-sm-2 shadow rounded-0 overflow-hidden">
+                     <div class="card-body">
+                        <div class="table-responsive">
+                           <table class="table table-hover">
+                              <thead>
+                                 <tr>
+                                    <th width="16%" style="text-align: center;">Número Doc.</th>
+                                    <th width="12%" style="text-align: center;">Fecha Emision</th>
+                                    <th width="12%" style="text-align: center;">Base Imponible</th>
+                                    <th width="12%" style="text-align: center;">Impuesto</th>
+                                    <th width="12%" style="text-align: center;">Codigo</th>
+                                    <th width="12%" style="text-align: center;">Porcentaje</th>
+                                    <th width="12%" style="text-align: center;">Valor</th>
+                                    <th width="12%" style="text-align: center;"></th>
+                                 </tr>
+                              </thead>
+                              <tbody id="detalle_ret">
+                              </tbody>
+                              <tfoot>
+                                 <tr>
+                                    <th style="text-align: right;" colspan="6">Total Retenido:</th>
+                                    <th style="text-align: right;" id="totalret">0.00</th>
+                                    <th>$</th>
+                                 </tr>
+                              </tfoot>
+                           </table>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="modal" tabindex="-1" id="modal_procesar">
+         <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+               <form name="f_procesar" class="form" role="form" action="index.php?page=bandeja_sri" method="post">
+                  <input type="hidden" name="procesar_ret" value="{$gsc->retencion->idbandejasri}">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-play-btn" aria-hidden="true"></i>&nbsp; Procesar Documento</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <label for="telefono" class="col-form-label">Teléfono</label>
+                           <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Teléfono" minlength="1" maxlength="50" required>
+                        </div>
+                        <div class="col-sm-8">
+                           <label for="email" class="col-form-label">Email</label>
+                           <input type="email" class="form-control solo_correos" id="email" name="email" placeholder="Email" minlength="1" maxlength="150" required>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <label for="direccion" class="col-form-label">Dirección:</label>
+                           <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Dirección" minlength="1" maxlength="250" required>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                     <button class="btn btn-sm btn-success" type="submit">
+                        <span class="bi bi-collection-play-fill"></span>&nbsp; Procesar
+                     </button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+      <div class="modal" tabindex="-1" id="modal_homologar">
+         <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+               <form name="f_homologar" id="f_homologar" class="form" role="form" action="{$gsc->url()}" method="post">
+                  <input type="hidden" id="hom_linea" name="hom_linea_ret">
+                  <div class="modal-header">
+                     <h5 class="modal-title"><i class="bi bi-bezier2" aria-hidden="true"></i>&nbsp; Homologación</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="row">
+                        <div class="col-sm-4">
+                           <label for="codigobase" class="col-form-label">Código Base:</label>
+                           <input type="text" class="form-control form-control-sm text-end" id="codigobase" name="codigobase" placeholder="Ref. Proveedor" readonly>
+                           <div class="form-check form-switch" style="margin-top: 0.5rem;">
+                              <input class="form-check-input" type="checkbox" id="crearret" name="crearret" onclick="mostrar_div_crearret()">
+                              <label class="form-check-label" for="crearret">Desea Crear la Retención?</label>
+                           </div>
+                        </div>
+                        <div class="col-sm-4">
+                           <label for="especie_ret" class="col-form-label">Especie:</label>
+                           <input type="text" class="form-control form-control-sm text-end" id="especie_ret" name="especie_ret" placeholder="Especie" readonly>
+                        </div>
+                        <div class="col-sm-4">
+                           <label for="porcentaje_ret" class="col-form-label">Porcentaje:</label>
+                           <input type="text" class="form-control form-control-sm text-end" id="porcentaje_ret" name="porcentaje_ret" placeholder="Porcentaje" readonly>
+                        </div>
+                     </div>
+                     <div class="row" id="div_new_ret">
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-12">
+                           <div class="form-group">
+                              <label for="idtiporetencion" class="col-form-label">Retención Homologada:</label>
+                              <select id="idtiporetencion" name="idtiporetencion" class="form-select form-select-sm" required></select>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">
+                        <span class="bi bi-x-circle-fill"></span>&nbsp; Cerrar
+                     </button>
+                     <button class="btn btn-sm btn-success" type="submit">
+                        <span class="bi bi-collection-play-fill"></span>&nbsp; Homologar
+                     </button>
+                  </div>
+               </form>
+            </div>
+         </div>
+      </div>
+   {else}
+      <div class="thumbnail">
+         <center>
+            <img src="{#JG_PATH#}view/img/fuuu_face.png" alt="fuuuuu"/>
+         </center>
+      </div>
+   {/if}
+{include="footer"}

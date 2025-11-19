@@ -1,0 +1,14 @@
+            </main>
+            <a href="javaScript:;" class="back-to-top"><i class="bi bi-arrow-bar-up"></i></a>
+        </div>
+    </body>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.solo_numeros').validCampo('1234567890');
+            $('.solo_precios').validCampo('1234567890.');
+            $('.solo_letras').validCampo(' abcdefghijklmnñopqrstuvwxyzáéíóú');
+            $('.solo_correos').validCampo('1234567890abcdefghijklmnopqrstuvwxyz,.-_@');
+            $('.solo_valores').validCampo('abcdefghijklmnñopqrstuvwxyz0123456789');
+        });
+    </script>
+</html>

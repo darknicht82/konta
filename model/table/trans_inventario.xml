@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : trans_inventario.xml
+    Author     : Jonathan Guamba
+    Description:
+        Estructura de la tabla trans_inventario.
+-->
+<tabla>
+    <columna>
+        <nombre>idtransinv</nombre>
+        <tipo>serial</tipo>
+        <nulo>NO</nulo>
+        <defecto>nextval('trans_inventario_id_seq'::regclass)</defecto>
+    </columna>
+    <columna>
+        <nombre>idempresa</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idestablecimiento</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idproveedor</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idcliente</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idarticulo</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idlineafacprov</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idlineafaccli</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idlineamovimiento</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>idlinearegularizacion</nombre>
+        <tipo>integer</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>origen</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>url</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nomestab</nombre>
+        <tipo>character varying(250)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_trans</nombre>
+        <tipo>timestamp without time zone</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fecha</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>hora</nombre>
+        <tipo>time</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>egresos</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>ingresos</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>movimiento</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>costo</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>costototal</nombre>
+        <tipo>decimal(16, 6)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>aplica_stock</nombre>
+        <tipo>boolean</tipo>
+        <nulo>NO</nulo>
+        <defecto>false</defecto>
+    </columna>
+    <columna>
+        <nombre>fec_creacion</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_creacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fec_modificacion</nombre>
+        <tipo>date</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <columna>
+        <nombre>nick_modificacion</nombre>
+        <tipo>character varying(25)</tipo>
+        <nulo>YES</nulo>
+    </columna>
+    <restriccion>
+        <nombre>trans_inventario_pkey</nombre>
+        <consulta>PRIMARY KEY (idtransinv)</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_empresa_trans_inventario</nombre>
+        <consulta>FOREIGN KEY (idempresa) REFERENCES empresa (idempresa) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_establecimiento_trans_inventario</nombre>
+        <consulta>FOREIGN KEY (idestablecimiento) REFERENCES establecimiento (idestablecimiento) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_proveedores_trans_inventario</nombre>
+        <consulta>FOREIGN KEY (idproveedor) REFERENCES proveedores (idproveedor) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_clientes_trans_inventario</nombre>
+        <consulta>FOREIGN KEY (idcliente) REFERENCES clientes (idcliente) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_articulos_trans_inventario</nombre>
+        <consulta>FOREIGN KEY (idarticulo) REFERENCES articulos (idarticulo) ON DELETE RESTRICT ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_lineasfacturasprov_trans_inventario</nombre>
+        <consulta>FOREIGN KEY (idlineafacprov) REFERENCES lineasfacturasprov (idlineafacprov) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_lineasfacturascli_trans_inventario</nombre>
+        <consulta>FOREIGN KEY (idlineafaccli) REFERENCES lineasfacturascli (idlineafaccli) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_lineasmovimientos_trans_inventario</nombre>
+        <consulta>FOREIGN KEY (idlineamovimiento) REFERENCES lineasmovimientos (idlineamovimiento) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+    <restriccion>
+        <nombre>fk_lineasregularizaciones_trans_inventario</nombre>
+        <consulta>FOREIGN KEY (idlinearegularizacion) REFERENCES lineasregularizaciones (idlinearegularizacion) ON DELETE CASCADE ON UPDATE CASCADE</consulta>
+    </restriccion>
+</tabla>
